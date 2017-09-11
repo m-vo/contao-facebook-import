@@ -1,0 +1,15 @@
+services:
+  _instanceof:
+    Contao\CoreBundle\Framework\FrameworkAwareInterface:
+      calls:
+        - ["setFramework", ["@contao.framework"]]
+
+    Symfony\Component\DependencyInjection\ContainerAwareInterface:
+      calls:
+        - ["setContainer", ["@service_container"]]
+
+  mvo_contao_facebook.listener.import_posts:
+    class: 'Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener'
+
+  mvo_contao_facebook.listener.import_events:
+    class: 'Mvo\ContaoFacebookImport\EventListener\ImportFacebookEventsListener'

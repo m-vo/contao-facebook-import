@@ -1,0 +1,38 @@
+{
+  "name": "mvo/contao-facebook-import",
+  "type": "contao-bundle",
+  "description": "Facebook posts and events for Contao Open Source CMS",
+  "keywords": [
+    "contao",
+    "facebook",
+    "import",
+    "social",
+    "posts",
+    "events"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Moritz Vondano",
+      "homepage": "https://github.com/m-vo/contao-facebook-import"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "contao/core-bundle": "^4.4.0",
+    "facebook/graph-sdk": "^5.5",
+    "guzzlehttp/guzzle": "~6.0",
+    "codefog/contao-haste": "^4.17.2"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mvo\\ContaoFacebook\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "Mvo\\ContaoFacebookImport\\ContaoManager\\Plugin"
+  }
+}

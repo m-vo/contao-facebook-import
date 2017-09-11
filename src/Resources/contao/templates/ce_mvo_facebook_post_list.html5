@@ -1,0 +1,30 @@
+<div class="<?php echo $this->class ?>"<?php echo $this->cssID ?><?php if ($this->style): ?> style="<?php echo $this->style ?>"<?php endif ?>>
+	<?php if ($this->headline): ?>
+		<<?php echo $this->hl ?>><?php echo $this->headline ?></<?php echo $this->hl ?>>
+	<?php endif ?>
+
+<?php if($this->hasPosts): ?>
+<?php foreach ($this->posts as $post): ?>
+    <article class="facebook-post<?php echo $post['class']; ?>">
+        <div class="facebook-post-image">
+            <?php if($post['hasImage']): ?><?php echo $post['image']; ?>
+            <?php else: ?>
+                <div class="facebook-post-image-replacement"></div>
+            <?php endif ?>
+        </div>
+        <p class="facebook-post-info">Post via Facebook</p>
+        <time class="facebook-post-date" datetime="<?php echo $post['datetime']; ?>">
+            <?php echo $this->parseDate('d', $post['time']) ?>
+            <b><?php echo $this->parseDate('M', $post['time']) ?></b>
+        </time>
+        <h2><a href="<?php echo $post['href']; ?>"><?php echo $post['headline']; ?></a></h2>
+        <p class="facebook-post-message"><?php echo $post['mediumMessage']; ?></p>
+
+        <p class="facebook-post-link"><a href="<?php echo $post['href']; ?>">read more&hellip;</a></p>
+    </article>
+<?php endforeach; ?>
+<?php else:?>
+    <p class="no-posts"><?php echo $this->empty; ?></p>
+<?php endif;?>
+
+</div>

@@ -1,0 +1,28 @@
+<div class="<?php echo $this->class ?>"<?php echo $this->cssID ?><?php if ($this->style): ?> style="<?php echo $this->style ?>"<?php endif ?>>
+	<?php if ($this->headline): ?>
+		<<?php echo $this->hl ?>><?php echo $this->headline ?></<?php echo $this->hl ?>>
+	<?php endif ?>
+
+<?php if($this->hasEvents): ?>
+<?php foreach ($this->events as $event): ?>
+    <article class="facebook-event<?php echo $event['class']; ?>">
+        <time class="facebook-event-date" datetime="<?php echo $event['datetime']; ?>">
+            <b><?php echo $this->parseDate('jS \of F y (l)', $event['time']); ?></b> @ <?php echo $this->parseDate('h:i A', $event['time']); ?>
+        </time>
+        <h2><a href="<?php echo $event['href']; ?>"><?php echo $event['name']; ?></a></h2>
+        <div>
+            <?php if($event['hasImage']): ?>
+                <div class="facebook-event-image">
+                    <?php echo $event['image']; ?>
+                </div>
+            <?php endif ?>
+            <p class="facebook-event-description"><?php echo $event['description']; ?></p>
+        </div>
+        <a class="facebook-event-link" href="<?php echo $event['href']; ?>">Event on Facebook</a>
+    </article>
+<?php endforeach; ?>
+<?php else:?>
+<p class="no-events"><?php echo $this->empty; ?></p>
+<?php endif;?>
+
+</div>
