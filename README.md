@@ -56,8 +56,10 @@ class AppKernel extends Kernel
 }
 ```
  
-#### Step 3: Use the Bundle
+Use the Bundle
+--------------
 
+#### Basic usage
 Create one or more Facebook nodes in the backend. To make your application able
 to connect to Facebook's API, you need to create a Facebook app and an access
 token.   
@@ -74,7 +76,7 @@ events, see what got imported or hide certain elements head to the respective
 posts / events child views of your Facebook node.
 
 
-#### Step 4: Make sure the contao cron job is set up
+#### Make sure the contao cron job is set up
 The import system gets triggered by the internal 'minutely cron job'. Disable
 the periodic command scheduler to make sure the import only gets triggered by a 
 real cron job with the ``_contao/cron`` route and not during regular site
