@@ -50,13 +50,13 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] = array
             (
                 'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['events'],
                 'href'  => 'table=tl_mvo_facebook_event',
-                'icon'  => 'down.svg'
+                'icon'  => 'bundles/mvocontaofacebookimport/img/events.svg'
             ),
             'posts'  => array
             (
                 'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['posts'],
                 'href'  => 'table=tl_mvo_facebook_post',
-                'icon'  => 'down.svg'
+                'icon'  => 'bundles/mvocontaofacebookimport/img/posts.svg'
             ),
             'toggle' => array
             (
