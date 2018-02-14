@@ -27,34 +27,13 @@ following command to download the latest stable version of this bundle:
 $ composer require mvo/contao-facebook-import
 ```
 
-#### Step 2: Enable the Bundle
+If you are using the Contao Standard-Edition, don't forget to register the App in the app/AppBundle.php
 
-**Skip this point if you are using a *Managed Edition* of Contao.**
-
-Enable the bundle by adding it to the list of registered bundles
-in the `app/AppKernel.php` file of your project:
-
-```php
-<?php
-// app/AppKernel.php
-
-// ...
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-
-            new \Mvo\ContaoFacebookImport\MvoContaoFacebookImportBundle(),
-        );
-
-        // ...
-    }
-
-    // ...
-}
-```
+### Step 2: Add a real cronjob
+The import system gets triggered by the internal 'minutely cron job'. Disable
+the periodic command scheduler to make sure the import only gets triggered by a 
+real cron job with the ``_contao/cron`` route and not during regular site
+visits.
  
 Use the Bundle
 --------------
@@ -75,11 +54,5 @@ If you enable auto import, you're good to go. To manually import posts and
 events, see what got imported or hide certain elements head to the respective
 posts / events child views of your Facebook node.
 
-
-#### Make sure the contao cron job is set up
-The import system gets triggered by the internal 'minutely cron job'. Disable
-the periodic command scheduler to make sure the import only gets triggered by a 
-real cron job with the ``_contao/cron`` route and not during regular site
-visits.
 
 [Graph API Explorer]: https://developers.facebook.com/tools/explorer/
