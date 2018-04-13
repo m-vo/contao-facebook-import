@@ -1,5 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * Contao Facebook Import Bundle for Contao Open Source CMS
+ *
+ * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @license    MIT
+ * @link       https://github.com/m-vo/contao-facebook-import
+ *
+ * @author     Moritz Vondano
+ */
+
 namespace Mvo\ContaoFacebookImport\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -16,6 +28,7 @@ class MvoContaoFacebookImportExtension extends Extension
      * @param ContainerBuilder $container A ContainerBuilder instance
      *
      * @throws \InvalidArgumentException When provided tag is not defined in this extension
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
     {

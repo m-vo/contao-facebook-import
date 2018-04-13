@@ -1,5 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * Contao Facebook Import Bundle for Contao Open Source CMS
+ *
+ * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @license    MIT
+ * @link       https://github.com/m-vo/contao-facebook-import
+ *
+ * @author     Moritz Vondano
+ */
+
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['new'] = ['Add new Facebook node'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['edit'][1] = 'Edit Facebook node';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['events'][1] = 'Show imported events';
