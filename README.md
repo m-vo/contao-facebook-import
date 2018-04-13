@@ -64,9 +64,10 @@ Create one or more Facebook nodes in the backend. To make your application able
 to connect to Facebook's API, you need to create a Facebook app and an access
 token.   
 
-For the latter open the [Graph API Explorer][Graph API Explorer], select your
-app in the app drop down menu and then *Request app access token* from the
-drop down menu below.
+The latter you can generate via the [Graph API Explorer][Graph API Explorer].
+There are further steps necessary to generate a **non-expiring** token out of
+this token - e.g. see this topic on [Stack Overflow][Stack Overflow Token].
+This step is planned to get automated in later versions.
 
 To limit the maximum amount of API calls you can set a minimum cache time for
 each node. Default is 250 seconds. 
@@ -83,3 +84,4 @@ real cron job with the ``_contao/cron`` route and not during regular site
 visits.
 
 [Graph API Explorer]: https://developers.facebook.com/tools/explorer/
+[Stack Overflow Token]: https://stackoverflow.com/a/43605020/3146819

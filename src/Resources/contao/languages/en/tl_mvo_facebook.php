@@ -27,7 +27,7 @@ $GLOBALS['TL_LANG']['tl_mvo_facebook']['fbPageName'] = ['Name or ID of the Faceb
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['api_legend'] = 'Facebook API';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAppId'] = ['Facebook App ID'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAppSecret'] = ['Facebook App Secret'];
-$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAccessToken'] = ['Facebook Access Token'];
+$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAccessToken'] = ['Non-expiring Facebook Access Token'];
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['import_legend'] = 'Import';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['importEnabled'] = ['Enable auto import'];
