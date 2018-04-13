@@ -42,7 +42,7 @@ class ContentPostList extends ContentElement
      *
      * @return string Parsed element
      */
-    public function generate()
+    public function generate(): string
     {
         if (TL_MODE === 'BE') {
             $objTemplate           = new BackendTemplate('be_wildcard');
@@ -62,7 +62,7 @@ class ContentPostList extends ContentElement
      *
      * @return void
      */
-    protected function compile()
+    protected function compile(): void
     {
         $this->Template = new FrontendTemplate($this->strTemplate);
         $this->Template->setData($this->arrData);
@@ -82,7 +82,7 @@ class ContentPostList extends ContentElement
         );
 
         $arrPosts = [];
-        if (null != $objPosts) {
+        if (null !== $objPosts) {
             $i     = 0;
             $total = $objPosts->count();
 
@@ -105,25 +105,25 @@ class ContentPostList extends ContentElement
                 ];
 
                 // css enumeration
-                $arrPost['class'] = ((1 == $i % 2) ? ' even' : ' odd') .
-                                    ((0 == $i) ? ' first' : '') .
-                                    (($total - 1 == $i) ? ' last' : '');
+                $arrPost['class'] = ((1 === $i % 2) ? ' even' : ' odd') .
+                                    ((0 === $i) ? ' first' : '') .
+                                    (($total - 1 === $i) ? ' last' : '');
                 $i++;
 
                 // image
-                if (null != $post->image
-                    && null != $objFile = FilesModel::findByUuid($post->image)
+                if (null !== $post->image
+                    && null !== $objFile = FilesModel::findByUuid($post->image)
                 ) {
                     $objImageTemplate = new FrontendTemplate('image');
 
                     $arrMeta = deserialize($objFile->meta, true);
-                    $strAlt  = (array_key_exists('caption', $arrMeta)
-                                && is_array($arrMeta['caption'])
-                                && array_key_exists('caption', $arrMeta['caption']))
-                               && '' != $arrMeta['caption']['caption']
+                    $strAlt  = (\array_key_exists('caption', $arrMeta)
+                                && \is_array($arrMeta['caption'])
+                                && \array_key_exists('caption', $arrMeta['caption']))
+                               && '' !== $arrMeta['caption']['caption']
                         ? $arrMeta['caption']['caption'] : 'Facebook Post Image';
 
-                    $this->addImageToTemplate(
+                    static::addImageToTemplate(
                         $objImageTemplate,
                         [
                             'singleSRC' => $objFile->path,
@@ -142,7 +142,7 @@ class ContentPostList extends ContentElement
             }
         }
         $this->Template->posts    = $arrPosts;
-        $this->Template->hasPosts = 0 != count($arrPosts);
+        $this->Template->hasPosts = 0 !== \count($arrPosts);
 
         if (!$this->Template->hasPosts) {
             self::loadLanguageFile('templates');

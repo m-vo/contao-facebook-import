@@ -33,6 +33,7 @@ services:
   mvo_contao_facebook.listener.datacontainer.facebook_node:
     class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookNode'
     arguments:
+    - '@database_connection'
     - '@mvo_contao_facebook.listener.import_posts'
     - '@mvo_contao_facebook.listener.import_events'
     - '@logger'

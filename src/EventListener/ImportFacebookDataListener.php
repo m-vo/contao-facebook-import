@@ -116,7 +116,7 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
         $nodes = FacebookModel::findAll();
         /** @var FacebookModel $node */
         foreach ($nodes as $node) {
-            $this->onImport($node->id, $forceImport);
+            $this->onImport((int)$node->id, $forceImport);
         }
     }
 }

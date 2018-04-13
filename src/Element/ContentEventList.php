@@ -24,7 +24,7 @@ use Mvo\ContaoFacebookImport\Facebook\Tools;
 use Mvo\ContaoFacebookImport\Model\FacebookEventModel;
 
 /**
- * @property int mvo_facebook_node
+ * @property int  mvo_facebook_node
  * @property bool fullsize
  */
 class ContentEventList extends ContentElement
@@ -41,7 +41,7 @@ class ContentEventList extends ContentElement
      *
      * @return string Parsed element
      */
-    public function generate()
+    public function generate(): string
     {
         if (TL_MODE === 'BE') {
             $objTemplate        = new BackendTemplate('be_wildcard');
@@ -57,7 +57,7 @@ class ContentEventList extends ContentElement
      *
      * @return void
      */
-    protected function compile()
+    protected function compile(): void
     {
         $this->Template = new FrontendTemplate($this->strTemplate);
         $this->Template->setData($this->arrData);
@@ -70,7 +70,7 @@ class ContentEventList extends ContentElement
         );
 
         $arrEvents = [];
-        if (null != $objEvents) {
+        if (null !== $objEvents) {
             $i     = 0;
             $total = $objEvents->count();
 
@@ -88,25 +88,25 @@ class ContentEventList extends ContentElement
                 ];
 
                 // css enumeration
-                $arrEvent['class'] = ((1 == $i % 2) ? ' even' : ' odd') .
-                                     ((0 == $i) ? ' first' : '') .
-                                     (($total - 1 == $i) ? ' last' : '');
+                $arrEvent['class'] = ((1 === $i % 2) ? ' even' : ' odd') .
+                                     ((0 === $i) ? ' first' : '') .
+                                     (($total - 1 === $i) ? ' last' : '');
                 $i++;
 
                 // image
-                if (null != $event->image
-                    && null != $objFile = FilesModel::findByUuid($event->image)
+                if (null !== $event->image
+                    && null !== $objFile = FilesModel::findByUuid($event->image)
                 ) {
                     $objImageTemplate = new FrontendTemplate('image');
 
                     $arrMeta = deserialize($objFile->meta, true);
-                    $strAlt  = (array_key_exists('caption', $arrMeta)
-                                && is_array($arrMeta['caption'])
-                                && array_key_exists('caption', $arrMeta['caption']))
-                               && '' != $arrMeta['caption']['caption']
+                    $strAlt  = (\array_key_exists('caption', $arrMeta)
+                                && \is_array($arrMeta['caption'])
+                                && \array_key_exists('caption', $arrMeta['caption']))
+                               && '' !== $arrMeta['caption']['caption']
                         ? $arrMeta['caption']['caption'] : 'Facebook Post Image';
 
-                    $this->addImageToTemplate(
+                    static::addImageToTemplate(
                         $objImageTemplate,
                         [
                             'singleSRC' => $objFile->path,
@@ -126,7 +126,7 @@ class ContentEventList extends ContentElement
         }
 
         $this->Template->events    = $arrEvents;
-        $this->Template->hasEvents = 0 != count($arrEvents);
+        $this->Template->hasEvents = 0 !== \count($arrEvents);
 
         if (!$this->Template->hasEvents) {
             self::loadLanguageFile('templates');
