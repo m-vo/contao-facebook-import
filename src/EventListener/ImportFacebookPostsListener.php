@@ -19,7 +19,7 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
      *
      * @return integer
      */
-    protected function getLastTimeStamp($pid): int
+    protected function getLastTimeStamp(int $pid): int
     {
         return FacebookPostModel::getLastTimestamp($pid);
     }
@@ -29,9 +29,11 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
      *
      * @param FacebookModel $node
      *
-     * @throws \Exception
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function import(FacebookModel $node)
+    protected function import(FacebookModel $node) : void
     {
         // find existing posts
         $objPosts       = FacebookPostModel::findByPid($node->id);
@@ -60,14 +62,14 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
             ],
             ['limit' => $node->numberOfPosts]
         );
-        if (null == $graphEdge) {
+        if (null === $graphEdge) {
             return;
         }
 
         // merge the data
         $uploadDirectory = FilesModel::findById($node->uploadDirectory);
         if(!$uploadDirectory || !$uploadDirectory->path) {
-            throw new \Exception('No or invalid upload path.');
+            throw new \InvalidArgumentException('No or invalid upload path.');
         }
         $imageScraper    =  new ImageScraper($uploadDirectory->path, $node->getOpenGraphInstance());
 
@@ -80,9 +82,9 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
 
             // skip if message is empty or type is 'link' and the message only contains an URL
             $message = $graphNode->getField('message', '');
-            if ('' == $message
+            if ('' === $message
                 || ('link' === $graphNode->getField('type', '')
-                    && 1 == preg_match('~^\s*https://\S*\s*?$~', $message))
+                    && 1 === preg_match('~^\s*https://\S*\s*?$~', $message))
             ) {
                 continue;
             }
@@ -111,7 +113,7 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
             if ($post->image && $file = FilesModel::findByUuid($post->image)) {
                 /** @var Collection $objPosts */
                 $objPosts = FacebookPostModel::findBy('image', $post->image);
-                if ($objPosts->count() == 1) {
+                if (1 === $objPosts->count()) {
                     Files::getInstance()->delete($file->path);
                     Dbafs::deleteResource($file->path);
                 }
@@ -126,17 +128,21 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
      *
      * @return bool
      */
-    private function updateRequired(GraphNode $graphNode, FacebookPostModel $post)
+    private function updateRequired(GraphNode $graphNode, FacebookPostModel $post): bool
     {
-        return $this->getTime($graphNode, 'updated_time') != $post->lastChanged;
+        return $this->getTime($graphNode, 'updated_time') !== $post->lastChanged;
     }
 
     /**
      * @param FacebookPostModel $event
      * @param GraphNode         $graphNode
      * @param ImageScraper      $imageScraper
+     *
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    private function updatePost(FacebookPostModel $event, GraphNode $graphNode, ImageScraper $imageScraper)
+    private function updatePost(FacebookPostModel $event, GraphNode $graphNode, ImageScraper $imageScraper): void
     {
         $event->tstamp      = time();
         $event->postTime    = $this->getTime($graphNode, 'created_time');
@@ -153,7 +159,7 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
      *
      * @return int
      */
-    private function getTime(GraphNode $graphNode, string $field)
+    private function getTime(GraphNode $graphNode, string $field): int
     {
         /** @var \DateTime $date */
         $date = $graphNode->getField($field, null);
@@ -165,8 +171,9 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
      * @param ImageScraper $imageScraper
      *
      * @return null|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    private function getImage(GraphNode $graphNode, ImageScraper $imageScraper)
+    private function getImage(GraphNode $graphNode, ImageScraper $imageScraper): ?string
     {
         if (null !== $graphNode->getField('picture', null)) {
             $metaData  = [
