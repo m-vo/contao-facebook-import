@@ -155,9 +155,9 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
         GraphNode $graphNode,
         string $uploadPath
     ): void {
-        $event->tstamp      = time();
+        $event->tstamp      = \time();
         $event->postTime    = $this->getTime($graphNode, 'created_time');
-        $event->message     = Tools::encodeText($graphNode->getField('message', ''));
+        $event->message     = \utf8_encode($graphNode->getField('message', ''));
         $event->image       = $this->getImage($parser, $graphNode, $uploadPath);
         $event->lastChanged = $this->getTime($graphNode, 'updated_time');
 

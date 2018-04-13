@@ -145,11 +145,11 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
         GraphNode $graphNode,
         string $uploadPath
     ): void {
-        $event->tstamp       = time();
-        $event->name         = Tools::encodeText($graphNode->getField('name', ''));
-        $event->description  = Tools::encodeText($graphNode->getField('description', ''));
+        $event->tstamp       = \time();
+        $event->name         = \utf8_encode($graphNode->getField('name', ''));
+        $event->description  = \utf8_encode($graphNode->getField('description', ''));
         $event->startTime    = $this->getTime($graphNode, 'start_time');
-        $event->locationName = Tools::encodeText($this->getLocationName($graphNode));
+        $event->locationName = \utf8_encode($this->getLocationName($graphNode));
         $event->image        = $this->getImage($parser, $graphNode, $uploadPath);
         $event->ticketUri    = $graphNode->getField('ticket_uri', '');
         $event->lastChanged  = $this->getTime($graphNode, 'updated_time');
