@@ -23,9 +23,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class ImageScraper
+class ImageScraper implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -103,12 +107,14 @@ class ImageScraper
      */
     public function scrapeFile(string $identifier, string $sourceUri, string $uploadPath): ?FilesModel
     {
+        $uploadFilePath = $this->getUploadFilePath($uploadPath, $identifier);
+
         // return if file already exists
-        if (null !== $fileModel = FilesModel::findByPath($this->getUploadFilePath($uploadPath, $identifier))) {
+        if (null !== $fileModel = FilesModel::findByPath($uploadFilePath)) {
             return $fileModel;
         }
 
-        return $this->scrape($sourceUri, $uploadPath);
+        return $this->scrape($sourceUri, $uploadFilePath);
     }
 
     /**
@@ -196,7 +202,8 @@ class ImageScraper
     {
         try {
             // download file
-            $this->downloadFile($sourceUri, $uploadPath);
+            $absoluteUploadPath = sprintf('%s/%s', $this->container->getParameter('kernel.project_dir'), $uploadPath);
+            $this->downloadFile($sourceUri, $absoluteUploadPath);
 
             // update db filesystem
             return Dbafs::addResource($uploadPath);

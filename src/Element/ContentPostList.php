@@ -20,8 +20,8 @@ use Contao\Config;
 use Contao\ContentElement;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
-use Mvo\ContaoFacebookImport\Facebook\Tools;
 use Mvo\ContaoFacebookImport\Model\FacebookPostModel;
+use Mvo\ContaoFacebookImport\String\Tools;
 
 /**
  * @property int  mvo_facebook_node
@@ -100,7 +100,7 @@ class ContentPostList extends ContentElement
                     'mediumMessage' => Tools::formatText($post->message, 50),
                     'headline'      => $headline,
                     'time'          => $post->postTime,
-                    'datetime'      => date(Config::get('datimFormat'), $post->postTime),
+                    'datetime'      => date(Config::get('datimFormat'), (int) $post->postTime),
                     'href'          => sprintf('https://facebook.com/%s', $post->postId),
                 ];
 
@@ -112,7 +112,7 @@ class ContentPostList extends ContentElement
 
                 // image
                 if (null !== $post->image
-                    && null !== $objFile = FilesModel::findByUuid($post->image)
+                    && null !== ($objFile = FilesModel::findByUuid($post->image))
                 ) {
                     $objImageTemplate = new FrontendTemplate('image');
 

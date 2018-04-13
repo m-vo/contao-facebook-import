@@ -20,7 +20,6 @@ use Contao\FilesModel;
 use Contao\Model\Collection;
 use Facebook\GraphNodes\GraphNode;
 use Mvo\ContaoFacebookImport\Facebook\OpenGraphParser;
-use Mvo\ContaoFacebookImport\Facebook\Tools;
 use Mvo\ContaoFacebookImport\Model\FacebookModel;
 use Mvo\ContaoFacebookImport\Model\FacebookPostModel;
 

@@ -101,7 +101,7 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
      */
     private function shouldReImport(FacebookModel $node): bool
     {
-        $diff = time() - $this->getLastTimeStamp($node->id);
+        $diff = time() - $this->getLastTimeStamp((int)$node->id);
         return $diff >= $node->minimumCacheTime;
     }
 

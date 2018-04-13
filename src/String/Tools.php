@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @author     Moritz Vondano
  */
 
-namespace Mvo\ContaoFacebookImport\Facebook;
+namespace Mvo\ContaoFacebookImport\String;
 
 class Tools
 {

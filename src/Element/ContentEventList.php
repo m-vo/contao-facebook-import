@@ -20,8 +20,8 @@ use Contao\Config;
 use Contao\ContentElement;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
-use Mvo\ContaoFacebookImport\Facebook\Tools;
 use Mvo\ContaoFacebookImport\Model\FacebookEventModel;
+use Mvo\ContaoFacebookImport\String\Tools;
 
 /**
  * @property int  mvo_facebook_node
@@ -83,7 +83,7 @@ class ContentEventList extends ContentElement
                     'description'  => Tools::formatText($event->description),
                     'locationName' => Tools::formatText($event->locationName),
                     'time'         => $event->startTime,
-                    'datetime'     => date(Config::get('datimFormat'), $event->startTime),
+                    'datetime'     => date(Config::get('datimFormat'), (int) $event->startTime),
                     'href'         => sprintf('https://facebook.com/%s', $event->eventId),
                 ];
 
@@ -95,7 +95,7 @@ class ContentEventList extends ContentElement
 
                 // image
                 if (null !== $event->image
-                    && null !== $objFile = FilesModel::findByUuid($event->image)
+                    && null !== ($objFile = FilesModel::findByUuid($event->image))
                 ) {
                     $objImageTemplate = new FrontendTemplate('image');
 
