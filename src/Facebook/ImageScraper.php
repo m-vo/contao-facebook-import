@@ -39,6 +39,7 @@ class ImageScraper implements ContainerAwareInterface
      * @param string $serializedMetaData
      *
      * @return FilesModel|null
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function scrapeObject(string $objectId, string $type, $serializedMetaData = '')
     {
@@ -69,6 +70,7 @@ class ImageScraper implements ContainerAwareInterface
      * @param string $serializedMetaData
      *
      * @return FilesModel|null
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function scrapeFile(string $identifier, string $sourceUri, $serializedMetaData = '')
     {
@@ -93,6 +95,8 @@ class ImageScraper implements ContainerAwareInterface
      * @param $serializedMetaData
      *
      * @return FilesModel|null
+     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function scrape($sourceUri, $uploadPath, $identifier, $serializedMetaData)
     {
@@ -120,11 +124,11 @@ class ImageScraper implements ContainerAwareInterface
     private function getSourceUri(string $objectId, string $type)
     {
         // only 'photo' and 'event' supported
-        if ('photo' != $type && 'event' != $type) {
+        if ('photo' !== $type && 'event' !== $type) {
             return null;
         }
 
-        if ('event' == $type) {
+        if ('event' === $type) {
             $cover = $this->openGraph->queryObject($objectId, ['cover']);
             if (null != $cover && is_array($cover) && array_key_exists('cover', $cover)
                 && is_array($cover['cover'])
@@ -195,6 +199,7 @@ class ImageScraper implements ContainerAwareInterface
      * @param $pathTo
      *
      * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function downloadFile($uriFrom, $pathTo)
     {

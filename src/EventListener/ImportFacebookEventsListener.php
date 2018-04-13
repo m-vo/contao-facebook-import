@@ -28,6 +28,8 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
      * Entry point: Import/update facebook events.
      *
      * @param FacebookModel $node
+     *
+     * @throws \Exception
      */
     protected function import(FacebookModel $node)
     {

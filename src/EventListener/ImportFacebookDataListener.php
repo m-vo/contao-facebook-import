@@ -34,6 +34,8 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
      * Trigger import for a certain node.
      *
      * @param integer $id
+     *
+     * @throws \Exception
      */
     public function onImport($id)
     {
@@ -69,6 +71,8 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
      * Trigger import without checking cache time / auto import setting for a certain node.
      *
      * @param DC_Table|integer $callerOrId
+     *
+     * @throws \Exception
      */
     public function onForceImport($callerOrId)
     {
@@ -101,6 +105,8 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
 
     /**
      * Trigger import for all nodes
+     *
+     * @throws \Exception
      */
     public function onImportAll()
     {
@@ -113,6 +119,8 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
 
     /**
      * Trigger import without checking cache time / auto import setting for all nodes.
+     *
+     * @throws \Exception
      */
     public function onForceImportAll()
     {

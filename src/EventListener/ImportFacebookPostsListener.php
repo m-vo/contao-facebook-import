@@ -28,6 +28,8 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
      * Entry point: Import/update facebook events.
      *
      * @param FacebookModel $node
+     *
+     * @throws \Exception
      */
     protected function import(FacebookModel $node)
     {
@@ -79,7 +81,7 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
             // skip if message is empty or type is 'link' and the message only contains an URL
             $message = $graphNode->getField('message', '');
             if ('' == $message
-                || ('link' == $graphNode->getField('type', '')
+                || ('link' === $graphNode->getField('type', '')
                     && 1 == preg_match('~^\s*https://\S*\s*?$~', $message))
             ) {
                 continue;

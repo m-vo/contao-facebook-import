@@ -28,6 +28,8 @@ class OpenGraph implements ContainerAwareInterface
      * @param string $appSecret
      * @param string $accessToken
      * @param string $pageName
+     *
+     * @throws \Exception
      */
     public function __construct($appId, $appSecret, $accessToken, $pageName)
     {
