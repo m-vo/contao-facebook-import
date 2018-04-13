@@ -14,7 +14,9 @@ $GLOBALS['BE_MOD']['mvo_facebook_integration'] = [
     ]
 ];
 
-$GLOBALS['TL_CSS'][] = 'bundles/mvocontaofacebookimport/css/backend_svg.css';
+if ('BE' === TL_MODE) {
+    $GLOBALS['TL_CSS'][] = 'bundles/mvocontaofacebookimport/css/backend.css';
+}
 
 // FE
 $GLOBALS['TL_CTE']['mvo_facebook']['mvo_facebook_post_list']  = 'Mvo\\ContaoFacebookImport\\Element\\ContentPostList';
