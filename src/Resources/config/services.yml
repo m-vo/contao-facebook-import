@@ -8,15 +8,31 @@ services:
       calls:
         - ["setContainer", ["@service_container"]]
 
+  mvo_contao_facebook.opengraph_parser_factory:
+    class: 'Mvo\ContaoFacebookImport\Facebook\OpenGraphParserFactory'
+    arguments:
+    - '@logger'
+
+  mvo_contao_facebook.image_scraper:
+    class: 'Mvo\ContaoFacebookImport\Facebook\ImageScraper'
+    arguments:
+    - '@logger'
+
   mvo_contao_facebook.listener.import_posts:
     class: 'Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener'
+    arguments:
+    - '@mvo_contao_facebook.opengraph_parser_factory'
+    - '@mvo_contao_facebook.image_scraper'
 
   mvo_contao_facebook.listener.import_events:
     class: 'Mvo\ContaoFacebookImport\EventListener\ImportFacebookEventsListener'
+    arguments:
+    - '@mvo_contao_facebook.opengraph_parser_factory'
+    - '@mvo_contao_facebook.image_scraper'
 
   mvo_contao_facebook.listener.datacontainer.facebook_node:
     class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookNode'
     arguments:
-    - '@database_connection'
     - '@mvo_contao_facebook.listener.import_posts'
     - '@mvo_contao_facebook.listener.import_events'
+    - '@logger'

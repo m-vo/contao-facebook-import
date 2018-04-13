@@ -20,7 +20,7 @@
   "require": {
     "php": ">=7.1",
     "contao/core-bundle": "^4.4.0",
-    "facebook/graph-sdk": "^5.5",
+    "facebook/graph-sdk": "^5.6",
     "guzzlehttp/guzzle": "~6.0",
     "codefog/contao-haste": "^4.17.2"
   },

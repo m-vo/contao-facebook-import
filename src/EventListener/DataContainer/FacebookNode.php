@@ -17,10 +17,12 @@ namespace Mvo\ContaoFacebookImport\EventListener\DataContainer;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
+use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\DataContainer;
 use Doctrine\DBAL\Connection;
 use Mvo\ContaoFacebookImport\EventListener\ImportFacebookEventsListener;
 use Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener;
+use Psr\Log\LoggerInterface;
 
 class FacebookNode implements FrameworkAwareInterface
 {
@@ -35,21 +37,24 @@ class FacebookNode implements FrameworkAwareInterface
     /** @var ImportFacebookEventsListener */
     private $eventImporter;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * FacebookNode constructor.
      *
-     * @param Connection                   $database
      * @param ImportFacebookPostsListener  $postImporter
      * @param ImportFacebookEventsListener $eventImporter
+     * @param LoggerInterface              $logger
      */
     public function __construct(
-        Connection $database,
         ImportFacebookPostsListener $postImporter,
-        ImportFacebookEventsListener $eventImporter
+        ImportFacebookEventsListener $eventImporter,
+        LoggerInterface $logger
     ) {
-        $this->database      = $database;
         $this->postImporter  = $postImporter;
         $this->eventImporter = $eventImporter;
+        $this->logger        = $logger;
     }
 
 
@@ -57,12 +62,19 @@ class FacebookNode implements FrameworkAwareInterface
      * Force import of posts.
      *
      * @param DataContainer $dc
-     *
-     * @throws \InvalidArgumentException
      */
     public function onImportPosts(DataContainer $dc): void
     {
-        $this->postImporter->onImport((int)$dc->id, true);
+        try {
+            $this->postImporter->onImport((int) $dc->id, true);
+        } catch (\Exception $e) {
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+            $this->logger->warning(
+                sprintf('Facebook Import: Unknown error when importing posts of node ID%s.', $dc->id),
+                ['exception' => $e, 'contao' => new ContaoContext(__METHOD__, ContaoContext::ERROR)]
+            );
+        }
+
         $this->redirectBack();
     }
 
@@ -75,7 +87,16 @@ class FacebookNode implements FrameworkAwareInterface
      */
     public function onImportEvents(DataContainer $dc): void
     {
-        $this->eventImporter->onImport((int)$dc->id, true);
+        try {
+            $this->eventImporter->onImport((int) $dc->id, true);
+        } catch (\Exception $e) {
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+            $this->logger->warning(
+                sprintf('Facebook Import: Unknown error when importing events of node ID%s.', $dc->id),
+                ['exception' => $e, 'contao' => new ContaoContext(__METHOD__, ContaoContext::ERROR)]
+            );
+        }
+
         $this->redirectBack();
     }
 

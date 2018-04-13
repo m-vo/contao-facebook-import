@@ -20,120 +20,116 @@ use Contao\Dbafs;
 use Contao\FilesModel;
 use Facebook\GraphNodes\GraphNode;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
-use Psr\Log\LogLevel;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Psr\Log\LoggerInterface;
 
-class ImageScraper implements ContainerAwareInterface
+class ImageScraper
 {
-    use ContainerAwareTrait;
-
-    private $uploadPath;
-    private $openGraph;
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
      * ImageScraper constructor.
      *
-     * @param string    $uploadPath relative to the root
-     * @param OpenGraph $openGraph
+     * @param LoggerInterface $logger
      */
-    public function __construct($uploadPath, OpenGraph $openGraph)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->uploadPath = $uploadPath;
-        $this->openGraph  = $openGraph;
+        $this->logger = $logger;
     }
 
     /**
-     * @param string $objectId
-     * @param string $type
-     * @param string $serializedMetaData
+     * @param OpenGraphParser $parser
+     * @param string          $objectId
+     * @param string          $uploadPath
      *
      * @return FilesModel|null
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function scrapeObject(string $objectId, string $type, $serializedMetaData = '')
+    public function scrapePhoto(OpenGraphParser $parser, string $objectId, string $uploadPath): ?FilesModel
     {
-        $uploadPath = $this->getUploadPath(sprintf('%s.jpg', $objectId));
+        return $this->scrapeObject($parser, 'photo', $objectId, $uploadPath);
+    }
 
-        // update metadata and return if file already exists
-        if (null != $fileModel = FilesModel::findByPath($uploadPath)) {
-            if ($serializedMetaData != $fileModel->meta) {
-                self::updateMetaData($fileModel, $objectId, $serializedMetaData);
-            }
+    /**
+     * @param OpenGraphParser $parser
+     * @param string          $objectId
+     * @param string          $uploadPath
+     *
+     * @return FilesModel|null
+     */
+    public function scrapeEvent(OpenGraphParser $parser, string $objectId, string $uploadPath): ?FilesModel
+    {
+        return $this->scrapeObject($parser, 'event', $objectId, $uploadPath);
+    }
 
+    /**
+     * @param OpenGraphParser $parser
+     * @param string          $type
+     * @param string          $objectId
+     * @param string          $uploadPath
+     *
+     * @return FilesModel|null
+     */
+    public function scrapeObject(
+        OpenGraphParser $parser,
+        string $type,
+        string $objectId,
+        string $uploadPath
+    ): ?FilesModel {
+        $uploadFilePath = $this->getUploadFilePath($uploadPath, $objectId);
+
+        // return if file already exists
+        if (null !== $fileModel = FilesModel::findByPath($uploadFilePath)) {
             return $fileModel;
         }
 
         // try to find best fitting image uri (by scanning the graph)
-        $sourceUri = self::getSourceUri($objectId, $type);
-        if (null == $sourceUri) {
+        $sourceUri = $this->getSourceUri($parser, $objectId, $type);
+        if (null === $sourceUri) {
             return null;
         }
 
         // scrape it!
-        return self::scrape($sourceUri, $uploadPath, $objectId, $serializedMetaData);
+        return $this->scrape($sourceUri, $uploadFilePath);
     }
 
     /**
      * @param string $identifier
      * @param string $sourceUri
-     * @param string $serializedMetaData
+     * @param string $uploadPath
      *
      * @return FilesModel|null
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function scrapeFile(string $identifier, string $sourceUri, $serializedMetaData = '')
+    public function scrapeFile(string $identifier, string $sourceUri, string $uploadPath): ?FilesModel
     {
-        $uploadPath = $this->getUploadPath(sprintf('%s.jpg', $identifier));
-
-        // update metadata and return if file already exists
-        if (null != $fileModel = FilesModel::findByPath($this->getUploadPath($uploadPath))) {
-            if ($serializedMetaData != $fileModel->meta) {
-                self::updateMetaData($fileModel, $identifier, $serializedMetaData);
-            }
-
+        // return if file already exists
+        if (null !== $fileModel = FilesModel::findByPath($this->getUploadFilePath($uploadPath, $identifier))) {
             return $fileModel;
         }
 
-        return self::scrape($sourceUri, $uploadPath, $identifier, $serializedMetaData);
+        return $this->scrape($sourceUri, $uploadPath);
     }
 
     /**
-     * @param $sourceUri
-     * @param $uploadPath
-     * @param $identifier
-     * @param $serializedMetaData
+     * @param string $uploadPath
+     * @param string $identifier
      *
-     * @return FilesModel|null
-     * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return string
      */
-    private function scrape($sourceUri, $uploadPath, $identifier, $serializedMetaData)
+    private function getUploadFilePath(string $uploadPath, string $identifier): string
     {
-        // download file
-        if (!self::downloadFile($sourceUri, $uploadPath)) {
-            return null;
-        }
-
-        // update db filesystem & add meta data
-        $fileModel = Dbafs::addResource($uploadPath);
-        if (null == $fileModel) {
-            return null;
-        }
-
-        self::updateMetaData($fileModel, $identifier, $serializedMetaData);
-        return $fileModel;
+        return sprintf('%s/%s.jpg', $uploadPath, $identifier);
     }
 
     /**
-     * @param string $objectId
-     * @param string $type
+     * @param OpenGraphParser $parser
+     * @param string          $objectId
+     * @param string          $type
      *
      * @return string|null
      */
-    private function getSourceUri(string $objectId, string $type)
+    private function getSourceUri(OpenGraphParser $parser, string $objectId, string $type): ?string
     {
         // only 'photo' and 'event' supported
         if ('photo' !== $type && 'event' !== $type) {
@@ -141,10 +137,10 @@ class ImageScraper implements ContainerAwareInterface
         }
 
         if ('event' === $type) {
-            $cover = $this->openGraph->queryObject($objectId, ['cover']);
-            if (null != $cover && is_array($cover) && array_key_exists('cover', $cover)
-                && is_array($cover['cover'])
-                && array_key_exists('id', $cover['cover'])
+            $cover = $parser->queryObject($objectId, ['cover']);
+            if (null !== $cover && \is_array($cover) && \array_key_exists('cover', $cover)
+                && \is_array($cover['cover'])
+                && \array_key_exists('id', $cover['cover'])
             ) {
                 $objectId = $cover['cover']['id'];
             } else {
@@ -153,41 +149,37 @@ class ImageScraper implements ContainerAwareInterface
         }
 
         // get available images
-        $arrData = $this->openGraph->queryObject($objectId, ['images']);
-        if (null == $arrData || !is_array($arrData) || !array_key_exists('images', $arrData)) {
+        $arrData = $parser->queryObject($objectId, ['images']);
+        if (null === $arrData || !\is_array($arrData) || !\array_key_exists('images', $arrData)) {
             return null;
         }
 
         // get source uri of biggest image
-        $sourceUri = self::getBiggestImageSource($arrData['images']);
-        if ('' == $sourceUri) {
-            return null;
-        }
-
-        return $sourceUri;
+        return $this->getBiggestImageSource($arrData['images']);
     }
 
     /**
-     * @param array $data
+     * @param GraphNode[] $data
      *
-     * @return string
+     * @return string|null
      */
-    private function getBiggestImageSource(array $data)
+    private function getBiggestImageSource(array $data): ?string
     {
         $widthLimit  = Config::get('gdMaxImgWidth');
         $heightLimit = Config::get('gdMaxImgHeight');
 
         $maxHeight = 0;
-        $source    = '';
+        $source    = null;
 
         /** @var GraphNode $graphNode */
         foreach ($data as $item) {
-            $height = array_key_exists('height', $item) ? $item['height'] : 0;
-            $width  = array_key_exists('width', $item) ? $item['width'] : 0;
+            $height = \array_key_exists('height', $item) ? $item['height'] : 0;
+            $width  = \array_key_exists('width', $item) ? $item['width'] : 0;
 
-            if ($height > $maxHeight && $height <= $heightLimit && $width <= $widthLimit) {
+            if ($height > $maxHeight && $height <= $heightLimit && $width <= $widthLimit
+                && \array_key_exists('source', $item)) {
                 $maxHeight = $height;
-                $source    = array_key_exists('source', $item) ? $item['source'] : '';
+                $source    = $item['source'];
             }
         }
 
@@ -195,72 +187,51 @@ class ImageScraper implements ContainerAwareInterface
     }
 
     /**
-     * @param string $fileName
+     * @param string $sourceUri
+     * @param string $uploadPath
      *
-     * @return string
+     * @return FilesModel|null
      */
-    private function getUploadPath(string $fileName)
+    private function scrape(string $sourceUri, string $uploadPath): ?FilesModel
     {
-        //$projectDir = $this->container->getParameter('kernel.project_dir');
+        try {
+            // download file
+            $this->downloadFile($sourceUri, $uploadPath);
 
-        return $this->uploadPath . '/' . $fileName;
+            // update db filesystem
+            return Dbafs::addResource($uploadPath);
+
+        } catch (GuzzleException|\Exception $e) {
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+            $this->logger->warning(
+                sprintf('Image Scraper: An error occurred trying to integrate the following URI:%s.', $sourceUri),
+                ['exception' => $e, 'contao' => new ContaoContext(__METHOD__, ContaoContext::ERROR)]
+            );
+            return null;
+        }
     }
 
     /**
-     * @param $uriFrom
-     * @param $pathTo
+     * @param string $uriFrom
+     * @param string $pathTo
      *
-     * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    private function downloadFile($uriFrom, $pathTo)
+    private function downloadFile(string $uriFrom, string $pathTo): void
     {
         $client = new Client();
 
-        try {
-            // remove file if already existing
-            if (file_exists($pathTo)) {
-                unlink($pathTo);
-            }
-
-            // synchronous download
-            $client->send(
-                new Request('get', $uriFrom),
-                [
-                    'sink' => $pathTo
-                ]
-            );
-        } catch (Exception $e) {
-            self::logError($e->getMessage());
-            return false;
+        // remove file if already existing
+        if (file_exists($pathTo)) {
+            unlink($pathTo);
         }
 
-        return true;
-    }
-
-    /**
-     * @param FilesModel $fileModel
-     * @param string     $name
-     * @param string     $metaDescription
-     */
-    private function updateMetaData(FilesModel $fileModel, string $name, string $metaDescription)
-    {
-        $fileModel->name = $name;
-        $fileModel->meta = $metaDescription;
-        $fileModel->save();
-    }
-
-    /**
-     * @param $str
-     */
-    private function logError($str)
-    {
-        $logger = $this->container->get('monolog.logger.contao');
-
-        $logger->log(
-            LogLevel::ERROR,
-            $str,
-            array('contao' => new ContaoContext(debug_backtrace()[1]['function'], TL_ERROR))
+        // synchronous download
+        $client->send(
+            new Request('get', $uriFrom),
+            [
+                'sink' => $pathTo
+            ]
         );
     }
 }

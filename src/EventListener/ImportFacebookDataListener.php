@@ -16,18 +16,40 @@ namespace Mvo\ContaoFacebookImport\EventListener;
 
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
+use Mvo\ContaoFacebookImport\Facebook\ImageScraper;
+use Mvo\ContaoFacebookImport\Facebook\OpenGraphParser;
+use Mvo\ContaoFacebookImport\Facebook\OpenGraphParserFactory;
 use Mvo\ContaoFacebookImport\Model\FacebookModel;
 
 abstract class ImportFacebookDataListener implements FrameworkAwareInterface
 {
     use FrameworkAwareTrait;
 
+    /** @var OpenGraphParserFactory */
+    private $openGraphParserFactory;
+
+    /** @var ImageScraper */
+    protected $imageScraper;
+
+    /**
+     * ImportFacebookDataListener constructor.
+     *
+     * @param OpenGraphParserFactory $openGraphParserFactory
+     * @param ImageScraper           $imageScraper
+     */
+    public function __construct(OpenGraphParserFactory $openGraphParserFactory, ImageScraper $imageScraper)
+    {
+        $this->openGraphParserFactory = $openGraphParserFactory;
+        $this->imageScraper           = $imageScraper;
+    }
+
     /**
      * Actually perform the import for the given node.
      *
-     * @param FacebookModel $node
+     * @param FacebookModel   $node
+     * @param OpenGraphParser $parser
      */
-    abstract protected function import(FacebookModel $node): void;
+    abstract protected function import(FacebookModel $node, OpenGraphParser $parser): void;
 
     /**
      * Get the most recent timestamp of an entry that belongs to the node with id $pid.
@@ -62,8 +84,14 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
             return;
         }
 
+        // initialize parser
+        $parser = $this->openGraphParserFactory->getParser($node);
+        if (null === $parser) {
+            return;
+        }
+
         // import
-        $this->import($node);
+        $this->import($node, $parser);
     }
 
     /**
@@ -81,6 +109,7 @@ abstract class ImportFacebookDataListener implements FrameworkAwareInterface
      * Trigger import for all nodes
      *
      * @param bool $forceImport
+     * @throws \InvalidArgumentException
      */
     public function onImportAll(bool $forceImport = false): void
     {

@@ -19,7 +19,7 @@ use Contao\Files;
 use Contao\FilesModel;
 use Contao\Model\Collection;
 use Facebook\GraphNodes\GraphNode;
-use Mvo\ContaoFacebookImport\Facebook\ImageScraper;
+use Mvo\ContaoFacebookImport\Facebook\OpenGraphParser;
 use Mvo\ContaoFacebookImport\Facebook\Tools;
 use Mvo\ContaoFacebookImport\Model\FacebookEventModel;
 use Mvo\ContaoFacebookImport\Model\FacebookModel;
@@ -39,13 +39,12 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
     /**
      * Entry point: Import/update facebook events.
      *
-     * @param FacebookModel $node
+     * @param FacebookModel   $node
+     * @param OpenGraphParser $parser
      *
-     * @throws \RuntimeException
      * @throws \InvalidArgumentException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function import(FacebookModel $node) : void
+    protected function import(FacebookModel $node, OpenGraphParser $parser): void
     {
         // find existing events
         $objEvents       = FacebookEventModel::findByPid($node->id);
@@ -59,7 +58,7 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
 
         // query facebook for upcoming events
         $searchSince = strtotime('today midnight');
-        $graphEdge   = $node->getOpenGraphInstance()->queryEdge(
+        $graphEdge   = $parser->queryEdge(
             'events',
             [
                 'id',
@@ -79,10 +78,9 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
 
         // merge the data
         $uploadDirectory = FilesModel::findById($node->uploadDirectory);
-        if(!$uploadDirectory || !$uploadDirectory->path) {
+        if (!$uploadDirectory || !$uploadDirectory->path) {
             throw new \InvalidArgumentException('No or invalid upload path.');
         }
-        $imageScraper    =  new ImageScraper($uploadDirectory->path, $node->getOpenGraphInstance());
 
         /** @var GraphNode $graphNode */
         foreach ($graphEdge as $graphNode) {
@@ -91,10 +89,10 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
                 continue;
             }
 
-            if (array_key_exists($fbId, $eventDictionary)) {
+            if (\array_key_exists($fbId, $eventDictionary)) {
                 // update existing item
                 if ($this->updateRequired($graphNode, $eventDictionary[$fbId])) {
-                    $this->updateEvent($eventDictionary[$fbId], $graphNode, $imageScraper);
+                    $this->updateEvent($parser, $eventDictionary[$fbId], $graphNode, $uploadDirectory->path);
                 }
                 unset($eventDictionary[$fbId]);
 
@@ -102,9 +100,9 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
                 // create new item
                 $event = new FacebookEventModel();
 
-                $event->pid    = $node->id;
+                $event->pid     = $node->id;
                 $event->eventId = $fbId;
-                $this->updateEvent($event, $graphNode, $imageScraper);
+                $this->updateEvent($parser, $event, $graphNode, $uploadDirectory->path);
             }
         }
 
@@ -136,25 +134,27 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
     }
 
     /**
+     * @param OpenGraphParser    $parser
      * @param FacebookEventModel $event
      * @param GraphNode          $graphNode
-     * @param ImageScraper       $imageScraper
-     *
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param string             $uploadPath
      */
-    private function updateEvent(FacebookEventModel $event, GraphNode $graphNode, ImageScraper $imageScraper): void
-    {
+    private function updateEvent(
+        OpenGraphParser $parser,
+        FacebookEventModel $event,
+        GraphNode $graphNode,
+        string $uploadPath
+    ): void {
         $event->tstamp       = time();
         $event->name         = Tools::encodeText($graphNode->getField('name', ''));
         $event->description  = Tools::encodeText($graphNode->getField('description', ''));
         $event->startTime    = $this->getTime($graphNode, 'start_time');
         $event->locationName = Tools::encodeText($this->getLocationName($graphNode));
-        $event->image        = $this->getImage($graphNode, $imageScraper);
+        $event->image        = $this->getImage($parser, $graphNode, $uploadPath);
         $event->ticketUri    = $graphNode->getField('ticket_uri', '');
         $event->lastChanged  = $this->getTime($graphNode, 'updated_time');
 
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         $event->save();
     }
 
@@ -184,33 +184,42 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
     }
 
     /**
-     * @param GraphNode    $graphNode
-     * @param ImageScraper $imageScraper
+     * @param OpenGraphParser $parser
+     * @param GraphNode       $graphNode
+     * @param string          $uploadPath
      *
      * @return null|string
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    private function getImage(GraphNode $graphNode, ImageScraper $imageScraper): ?string
+    private function getImage(OpenGraphParser $parser, GraphNode $graphNode, string $uploadPath): ?string
     {
-        if (null !== ($cover = $graphNode->getField('cover', null))
-            && null !== ($objectId = $cover->getField('id', null))
+        if (null === ($cover = $graphNode->getField('cover', null))
+            || null === ($objectId = $cover->getField('id', null))
         ) {
-            $metaData = [
+            return null;
+        }
+
+        $metaData = serialize(
+            [
                 'caption' =>
                     [
                         'caption' => $graphNode->getField('name', ''),
                         'link'    => sprintf('https://facebook.com/%s', $graphNode->getField('id', ''))
                     ]
-            ];
+            ]
+        );
 
-            $fileModel = $imageScraper->scrapeObject(
-                $objectId,
-                'photo',
-                serialize($metaData)
-            );
-            return (null !== $fileModel) ? $fileModel->uuid : null;
+        // scrape/retrieve image
+        $fileModel = $this->imageScraper->scrapePhoto($parser, $objectId, $uploadPath);
+
+        // update meta data
+        if (null !== $fileModel && $metaData !== $fileModel->meta) {
+            $fileModel->name = $objectId;
+            $fileModel->meta = $metaData;
+
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+            $fileModel->save();
         }
 
-        return null;
+        return (null !== $fileModel) ? $fileModel->uuid : null;
     }
 }

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Mvo\ContaoFacebookImport\Model;
 
 use Contao\Model;
-use Mvo\ContaoFacebookImport\Facebook\OpenGraph;
 
 /**
  * Reads and writes projects
@@ -44,12 +43,4 @@ class FacebookModel extends Model
      * @var string
      */
     protected static $strTable = 'tl_mvo_facebook';
-
-    /**
-     * @return OpenGraph
-     */
-    public function getOpenGraphInstance()
-    {
-        return new OpenGraph($this->fbAppId, $this->fbAppSecret, $this->fbAccessToken, $this->fbPageName);
-    }
 }
