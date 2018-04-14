@@ -1,3 +1,6 @@
+### v2.1.0
+ - added automatic live long token generation via the backend
+
 ### v2.0.0
  - lots of small fixes and optimizations
  - code reorganization

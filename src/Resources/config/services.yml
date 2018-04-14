@@ -18,6 +18,9 @@ services:
     arguments:
     - '@logger'
 
+  mvo_contao_facebook.access_token_generator:
+    class: 'Mvo\ContaoFacebookImport\Facebook\AccessTokenGenerator'
+
   mvo_contao_facebook.listener.import_posts:
     class: 'Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener'
     arguments:
@@ -36,4 +39,5 @@ services:
     - '@database_connection'
     - '@mvo_contao_facebook.listener.import_posts'
     - '@mvo_contao_facebook.listener.import_events'
+    - '@mvo_contao_facebook.access_token_generator'
     - '@logger'

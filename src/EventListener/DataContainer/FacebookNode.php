@@ -25,6 +25,7 @@ use Contao\FilesModel;
 use Doctrine\DBAL\Connection;
 use Mvo\ContaoFacebookImport\EventListener\ImportFacebookEventsListener;
 use Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener;
+use Mvo\ContaoFacebookImport\Facebook\AccessTokenGenerator;
 use Psr\Log\LoggerInterface;
 
 class FacebookNode implements FrameworkAwareInterface
@@ -40,6 +41,9 @@ class FacebookNode implements FrameworkAwareInterface
     /** @var ImportFacebookEventsListener */
     private $eventImporter;
 
+    /** @var AccessTokenGenerator */
+    private $accessTokenGenerator;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -49,18 +53,21 @@ class FacebookNode implements FrameworkAwareInterface
      * @param Connection                   $database
      * @param ImportFacebookPostsListener  $postImporter
      * @param ImportFacebookEventsListener $eventImporter
+     * @param AccessTokenGenerator         $accessTokenGenerator
      * @param LoggerInterface              $logger
      */
     public function __construct(
         Connection $database,
         ImportFacebookPostsListener $postImporter,
         ImportFacebookEventsListener $eventImporter,
+        AccessTokenGenerator $accessTokenGenerator,
         LoggerInterface $logger
     ) {
-        $this->database      = $database;
-        $this->postImporter  = $postImporter;
-        $this->eventImporter = $eventImporter;
-        $this->logger        = $logger;
+        $this->database             = $database;
+        $this->postImporter         = $postImporter;
+        $this->eventImporter        = $eventImporter;
+        $this->accessTokenGenerator = $accessTokenGenerator;
+        $this->logger               = $logger;
     }
 
 
@@ -175,6 +182,26 @@ class FacebookNode implements FrameworkAwareInterface
      */
     public function onGeneratePostLabel(array $row)
     {
-        return sprintf('<div class="mvo_facebook_integration_post">%s</div>',nl2br(utf8_decode($row['message'])));
+        return sprintf('<div class="mvo_facebook_integration_post">%s</div>', nl2br(utf8_decode($row['message'])));
+    }
+
+
+    /**
+     * @param string        $varValue
+     * @param DataContainer $dc
+     */
+    public function onGenerateAccessToken(string $varValue, DataContainer $dc): string
+    {
+        $token = $this->accessTokenGenerator->generateNeverExpiringAccessToken(
+            $dc->activeRecord->fbAppId,
+            $dc->activeRecord->fbAppSecret,
+            $varValue
+        );
+
+        if ($token) {
+            return $token;
+        }
+
+        throw new \InvalidArgumentException('Could not convert access token.');
     }
 }

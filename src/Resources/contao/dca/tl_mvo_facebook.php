@@ -24,10 +24,10 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                 'enableVersioning' => true,
                 'sql'              =>
                     [
-            'keys' =>
-                [
-                'id' => 'primary',
-                ]
+                        'keys' =>
+                            [
+                                'id' => 'primary',
+                            ]
                     ]
             ],
 
@@ -51,45 +51,45 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                     [
                         'edit'   =>
                             [
-                'label' => &$GLOBALS['TL_LANG']['tl_theme']['edit'],
-                'href'  => 'act=edit',
-                'icon'  => 'edit.svg'
+                                'label' => &$GLOBALS['TL_LANG']['tl_theme']['edit'],
+                                'href'  => 'act=edit',
+                                'icon'  => 'edit.svg'
                             ],
                         'events' =>
                             [
-                'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['events'],
-                'href'  => 'table=tl_mvo_facebook_event',
-                'icon'  => 'bundles/mvocontaofacebookimport/img/events.svg'
+                                'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['events'],
+                                'href'  => 'table=tl_mvo_facebook_event',
+                                'icon'  => 'bundles/mvocontaofacebookimport/img/events.svg'
                             ],
                         'posts'  =>
                             [
-                'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['posts'],
-                'href'  => 'table=tl_mvo_facebook_post',
-                'icon'  => 'bundles/mvocontaofacebookimport/img/posts.svg'
+                                'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['posts'],
+                                'href'  => 'table=tl_mvo_facebook_post',
+                                'icon'  => 'bundles/mvocontaofacebookimport/img/posts.svg'
                             ],
                         'toggle' =>
                             [
-                'label'                => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['toggle'],
-                'attributes'           => 'onclick="Backend.getScrollOffset();"',
-                'haste_ajax_operation' => [
-                    'field'   => 'importEnabled',
-                    'options' => [
-                        [
-                            'value' => '',
-                            'icon'  => 'invisible.svg'
-                        ],
-                        [
-                            'value' => '1',
-                            'icon'  => 'visible.svg'
-                        ]
-                    ]
-                ]
+                                'label'                => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['toggle'],
+                                'attributes'           => 'onclick="Backend.getScrollOffset();"',
+                                'haste_ajax_operation' => [
+                                    'field'   => 'importEnabled',
+                                    'options' => [
+                                        [
+                                            'value' => '',
+                                            'icon'  => 'invisible.svg'
+                                        ],
+                                        [
+                                            'value' => '1',
+                                            'icon'  => 'visible.svg'
+                                        ]
+                                    ]
+                                ]
                             ],
                         'delete' =>
                             [
-                'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['delete'],
-                'href'  => 'act=delete',
-                'icon'  => 'delete.svg'
+                                'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['delete'],
+                                'href'  => 'act=delete',
+                                'icon'  => 'delete.svg'
                             ]
                     ]
             ],
@@ -97,13 +97,13 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
         // Select
         'select'      =>
             [
-        'buttons_callback' => []
+                'buttons_callback' => []
             ],
 
         // Edit
         'edit'        =>
             [
-        'buttons_callback' => []
+                'buttons_callback' => []
             ],
 
         // Palettes
@@ -111,9 +111,9 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
             [
                 '__selector__' => [''],
                 'default'      => '{basic_legend},description,fbPageName;' .
-                          '{api_legend},fbAppId,fbAppSecret,fbAccessToken;' .
-                          '{import_legend},importEnabled,minimumCacheTime,numberOfPosts;' .
-                          '{media_legend},uploadDirectory;'
+                                  '{api_legend},fbAppId,fbAppSecret,fbAccessToken;' .
+                                  '{import_legend},importEnabled,minimumCacheTime,numberOfPosts;' .
+                                  '{media_legend},uploadDirectory;'
             ],
 
         // Subpalettes
@@ -125,11 +125,11 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
             [
                 'id'     =>
                     [
-            'sql' => "int(10) unsigned NOT NULL auto_increment"
+                        'sql' => "int(10) unsigned NOT NULL auto_increment"
                     ],
                 'tstamp' =>
                     [
-            'sql' => "int(10) unsigned NOT NULL default '0'"
+                        'sql' => "int(10) unsigned NOT NULL default '0'"
                     ],
 
                 'description'      =>
@@ -156,13 +156,19 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
                         'sql'       => "varchar(255) NOT NULL default ''"
                     ],
-                'fbAccessToken'   =>
+                'fbAccessToken'    =>
                     [
-                        'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAccessToken'],
-                        'exclude'   => true,
-                        'inputType' => 'text',
-                        'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
-                        'sql'       => "varchar(255) NOT NULL default ''"
+                        'label'         => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAccessToken'],
+                        'exclude'       => true,
+                        'inputType'     => 'text',
+                        'eval'          => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+                        'sql'           => "varchar(255) NOT NULL default ''",
+                        'save_callback' => [
+                            [
+                                'mvo_contao_facebook.listener.datacontainer.facebook_node',
+                                'onGenerateAccessToken'
+                            ]
+                        ]
                     ],
                 'fbPageName'       =>
                     [
@@ -177,7 +183,12 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['minimumCacheTime'],
                         'exclude'   => true,
                         'inputType' => 'text',
-                        'eval'      => ['mandatory' => true, 'maxlength' => 6, 'rgxp' => 'natural', 'tl_class' => 'w50'],
+                        'eval'      => [
+                            'mandatory' => true,
+                            'maxlength' => 6,
+                            'rgxp'      => 'natural',
+                            'tl_class'  => 'w50'
+                        ],
                         'sql'       => "int(6) unsigned NOT NULL default '250'"
                     ],
                 'numberOfPosts'    =>
@@ -185,7 +196,12 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['numberOfPosts'],
                         'exclude'   => true,
                         'inputType' => 'text',
-                        'eval'      => ['mandatory' => true, 'maxlength' => 5, 'rgxp' => 'natural', 'tl_class' => 'w50'],
+                        'eval'      => [
+                            'mandatory' => true,
+                            'maxlength' => 5,
+                            'rgxp'      => 'natural',
+                            'tl_class'  => 'w50'
+                        ],
                         'sql'       => "int(5) unsigned NOT NULL default '15'"
                     ],
                 'importEnabled'    =>
@@ -197,7 +213,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['isBoolean' => true],
                         'sql'       => "char(1) NOT NULL default '0'"
                     ],
-                'uploadDirectory'     =>
+                'uploadDirectory'  =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['uploadDirectory'],
                         'exclude'   => true,
