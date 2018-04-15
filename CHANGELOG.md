@@ -1,3 +1,6 @@
+### v2.1.1
+ - fixed and optimized image pruning
+
 ### v2.1.0
  - added automatic live long token generation via the backend
 
