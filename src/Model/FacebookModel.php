@@ -31,6 +31,9 @@ use Contao\Model;
  * @property integer $numberOfPosts
  * @property bool    $importEnabled
  * @property string  $uploadDirectory
+ * @property bool    $createNativeEvents
+ * @property integer $calendarId
+ * @property integer calendarEventAuthor
  *
  * @method static FacebookModel|null findById($id, array $opt = array())
  *

@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\ContaoManager;
 
+use Contao\CalendarBundle\ContaoCalendarBundle;
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
@@ -31,7 +33,8 @@ class Plugin implements BundlePluginInterface, DependentPluginInterface
             BundleConfig::create(MvoContaoFacebookImportBundle::class)
                 ->setLoadAfter(
                     [
-                        \Contao\CoreBundle\ContaoCoreBundle::class,
+                        ContaoCoreBundle::class,
+                        ContaoCalendarBundle::class,
                         'haste'
                     ]
                 ),

@@ -118,7 +118,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 
         // Subpalettes
         'subpalettes' =>
-            ['createNativeEvents' => 'calendarId'],
+            ['createNativeEvents' => 'calendarId,calendarEventAuthor'],
 
         // Fields
         'fields'      =>
@@ -132,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'sql' => "int(10) unsigned NOT NULL default '0'"
                     ],
 
-                'description'        =>
+                'description'         =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['description'],
                         'exclude'   => true,
@@ -140,7 +140,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['mandatory' => true, 'maxlength' => 255],
                         'sql'       => "varchar(255) NOT NULL default ''"
                     ],
-                'fbAppId'            =>
+                'fbAppId'             =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAppId'],
                         'exclude'   => true,
@@ -148,7 +148,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
                         'sql'       => "varchar(255) NOT NULL default ''"
                     ],
-                'fbAppSecret'        =>
+                'fbAppSecret'         =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAppSecret'],
                         'exclude'   => true,
@@ -156,7 +156,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
                         'sql'       => "varchar(255) NOT NULL default ''"
                     ],
-                'fbAccessToken'      =>
+                'fbAccessToken'       =>
                     [
                         'label'         => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbAccessToken'],
                         'exclude'       => true,
@@ -170,7 +170,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                             ]
                         ]
                     ],
-                'fbPageName'         =>
+                'fbPageName'          =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fbPageName'],
                         'exclude'   => true,
@@ -178,7 +178,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
                         'sql'       => "varchar(255) NOT NULL default ''"
                     ],
-                'minimumCacheTime'   =>
+                'minimumCacheTime'    =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['minimumCacheTime'],
                         'exclude'   => true,
@@ -191,7 +191,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         ],
                         'sql'       => "int(6) unsigned NOT NULL default '250'"
                     ],
-                'numberOfPosts'      =>
+                'numberOfPosts'       =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['numberOfPosts'],
                         'exclude'   => true,
@@ -204,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         ],
                         'sql'       => "int(5) unsigned NOT NULL default '15'"
                     ],
-                'importEnabled'      =>
+                'importEnabled'       =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['importEnabled'],
                         'exclude'   => true,
@@ -213,7 +213,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['isBoolean' => true],
                         'sql'       => "char(1) NOT NULL default '0'"
                     ],
-                'uploadDirectory'    =>
+                'uploadDirectory'     =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['uploadDirectory'],
                         'exclude'   => true,
@@ -221,7 +221,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['mandatory' => true, 'fieldType' => 'radio'],
                         'sql'       => "blob NOT NULL"
                     ],
-                'createNativeEvents' =>
+                'createNativeEvents'  =>
                     [
                         'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['createNativeEvents'],
                         'exclude'   => true,
@@ -229,7 +229,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'eval'      => ['submitOnChange' => true, 'tl_class' => 'w50 m12'],
                         'sql'       => "char(1) NOT NULL default ''"
                     ],
-                'calendarId'         =>
+                'calendarId'          =>
                     [
                         'label'            => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['calendarId'],
                         'exclude'          => true,
@@ -238,8 +238,28 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                             'mvo_contao_facebook.listener.datacontainer.facebook',
                             'onGetCalendars'
                         ],
-                        'eval'             => ['mandatory' => true, 'tl_class' => 'w50'],
+                        'eval'             => [
+                            'chosen'             => true,
+                            'mandatory'          => true,
+                            'includeBlankOption' => true,
+                            'tl_class'           => 'w50'
+                        ],
                         'sql'              => "int(10) unsigned"
+                    ],
+                'calendarEventAuthor' =>
+                    [
+                        'label'      => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['calendarEventAuthor'],
+                        'default'    => BackendUser::getInstance()->id,
+                        'exclude'    => true,
+                        'inputType'  => 'select',
+                        'foreignKey' => 'tl_user.name',
+                        'eval'       => array(
+                            'chosen'             => true,
+                            'mandatory'          => true,
+                            'includeBlankOption' => true,
+                            'tl_class'           => 'w50'
+                        ),
+                        'sql'        => "int(10) unsigned NOT NULL default '0'",
                     ]
             ]
     ];

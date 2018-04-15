@@ -25,7 +25,8 @@
     "codefog/contao-haste": "^4.17"
   },
   "require-dev": {
-    "contao/manager-plugin": "^2.0"
+    "contao/manager-plugin": "^2.0",
+    "contao/calendar-bundle": "^4.4"
   },
   "autoload": {
     "psr-4": {

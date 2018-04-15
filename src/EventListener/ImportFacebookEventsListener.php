@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\EventListener;
 
+use Contao\CalendarEventsModel;
+use Contao\CalendarModel;
 use Contao\FilesModel;
 use Facebook\GraphNodes\GraphNode;
 use Mvo\ContaoFacebookImport\Facebook\OpenGraphParser;
@@ -99,6 +101,11 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
                 $event->pid     = $node->id;
                 $event->eventId = $fbId;
                 $this->updateEvent($parser, $event, $graphNode, $uploadDirectory->path);
+
+                // create referencing event
+                if ($node->createNativeEvents) {
+                    $this->createReferencingEvent($node, $event);
+                }
             }
         }
 
@@ -208,5 +215,47 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
         }
 
         return (null !== $fileModel) ? $fileModel->uuid : null;
+    }
+
+    /**
+     * Create a new node in the selected calendar.
+     *
+     * @param FacebookModel      $node
+     * @param FacebookEventModel $event
+     */
+    private function createReferencingEvent(FacebookModel $node, FacebookEventModel $event): void
+    {
+        if (0 === CalendarModel::countById($node->calendarId)) {
+            return;
+        }
+
+        // generate calendar event in the selected calendar
+        $calendarEvent            = new CalendarEventsModel();
+        $calendarEvent->tstamp    = time();
+        $calendarEvent->pid       = $node->calendarId;
+        $calendarEvent->published = true;
+        $calendarEvent->source    = 'default';
+
+        // referencing fields
+        $calendarEvent->title    = "{{fb_event::$event->eventId::name}}";
+        $calendarEvent->alias    = "fb_event_$event->eventId";
+        $calendarEvent->location = "{{fb_event::$event->eventId::locationName}}";
+        $calendarEvent->teaser   = "<p>{{fb_event::$event->eventId::description}}</p>";
+
+        // non-referencing fields
+        $calendarEvent->author    = $node->calendarEventAuthor;
+        $calendarEvent->startDate = \strtotime(\date('Y-m-d', (int) $event->startTime));
+        $calendarEvent->addTime   = true;
+        $calendarEvent->startTime = \strtotime(\date('Y-m-d H:i', (int) $event->startTime));
+        $calendarEvent->endTime   = $calendarEvent->startTime;
+        $calendarEvent->url       = $event->ticketUri;
+
+        if ($event->image) {
+            $calendarEvent->addImage  = true;
+            $calendarEvent->singleSRC = $event->image;
+        }
+
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+        $calendarEvent->save();
     }
 }
