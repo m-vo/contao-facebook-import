@@ -14,10 +14,7 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\EventListener;
 
-use Contao\Dbafs;
-use Contao\Files;
 use Contao\FilesModel;
-use Contao\Model\Collection;
 use Facebook\GraphNodes\GraphNode;
 use Mvo\ContaoFacebookImport\Facebook\OpenGraphParser;
 use Mvo\ContaoFacebookImport\Model\FacebookEventModel;
@@ -106,17 +103,8 @@ class ImportFacebookEventsListener extends ImportFacebookDataListener
         }
 
         // remove orphans
-        /** @var FacebookEventModel $post */
+        /** @var FacebookEventModel $event */
         foreach ($eventDictionary as $event) {
-            // todo: generalize with dca's ondelete_callback
-            if ($event->image && $file = FilesModel::findByUuid($event->image)) {
-                /** @var Collection $objEvents */
-                $objEvents = FacebookEventModel::findBy('image', $event->image);
-                if (1 === $objEvents->count()) {
-                    Files::getInstance()->delete($file->path);
-                    Dbafs::deleteResource($file->path);
-                }
-            }
             $event->delete();
         }
     }

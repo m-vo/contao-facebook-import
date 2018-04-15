@@ -19,16 +19,13 @@ use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\DataContainer;
-use Contao\Dbafs;
-use Contao\Files;
-use Contao\FilesModel;
 use Doctrine\DBAL\Connection;
 use Mvo\ContaoFacebookImport\EventListener\ImportFacebookEventsListener;
 use Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener;
 use Mvo\ContaoFacebookImport\Facebook\AccessTokenGenerator;
 use Psr\Log\LoggerInterface;
 
-class FacebookNode implements FrameworkAwareInterface
+class Facebook implements FrameworkAwareInterface
 {
     use FrameworkAwareTrait;
 
@@ -57,13 +54,11 @@ class FacebookNode implements FrameworkAwareInterface
      * @param LoggerInterface              $logger
      */
     public function __construct(
-        Connection $database,
         ImportFacebookPostsListener $postImporter,
         ImportFacebookEventsListener $eventImporter,
         AccessTokenGenerator $accessTokenGenerator,
         LoggerInterface $logger
     ) {
-        $this->database             = $database;
         $this->postImporter         = $postImporter;
         $this->eventImporter        = $eventImporter;
         $this->accessTokenGenerator = $accessTokenGenerator;
@@ -128,67 +123,13 @@ class FacebookNode implements FrameworkAwareInterface
         $controller->redirect($controller->addToUrl(null, true, ['key']));
     }
 
-    /**
-     * @param DataContainer $dc
-     *
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function onPrunePostImage(DataContainer $dc): void
-    {
-        $this->pruneImage($dc, 'SELECT id FROM tl_mvo_facebook_post WHERE image = ? AND id <> ?');
-    }
-
-
-    /**
-     * @param DataContainer $dc
-     *
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function onPruneEventImage(DataContainer $dc): void
-    {
-        $this->pruneImage($dc, 'SELECT id FROM tl_mvo_facebook_event WHERE image = ? AND id <> ?');
-    }
-
-    /**
-     * @param DataContainer $dc
-     * @param string        $activeElementsSelectorQuery
-     *
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    private function pruneImage(DataContainer $dc, string $activeElementsSelectorQuery): void
-    {
-        // delete image with record
-        $imageUuid = $dc->activeRecord->image;
-        if (null === $imageUuid) {
-            return;
-        }
-
-        $activeElementCount = $this->database
-            ->executeQuery($activeElementsSelectorQuery, [$imageUuid, $dc->id])
-            ->rowCount();
-
-        if (0 !== $activeElementCount || null === $objFile = FilesModel::findByUuid($imageUuid)) {
-            return;
-        }
-
-        Files::getInstance()->delete($objFile->path);
-        Dbafs::deleteResource($objFile->path);
-    }
-
-    /**
-     * @param array $row
-     *
-     * @return string
-     */
-    public function onGeneratePostLabel(array $row)
-    {
-        return sprintf('<div class="mvo_facebook_integration_post">%s</div>', nl2br(utf8_decode($row['message'])));
-    }
-
 
     /**
      * @param string        $varValue
      * @param DataContainer $dc
+     *
+     * @return string
+     * @throws \InvalidArgumentException
      */
     public function onGenerateAccessToken(string $varValue, DataContainer $dc): string
     {

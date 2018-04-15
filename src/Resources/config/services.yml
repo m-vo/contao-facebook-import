@@ -33,11 +33,16 @@ services:
     - '@mvo_contao_facebook.opengraph_parser_factory'
     - '@mvo_contao_facebook.image_scraper'
 
-  mvo_contao_facebook.listener.datacontainer.facebook_node:
-    class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookNode'
+  mvo_contao_facebook.listener.datacontainer.facebook:
+    class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\Facebook'
     arguments:
-    - '@database_connection'
     - '@mvo_contao_facebook.listener.import_posts'
     - '@mvo_contao_facebook.listener.import_events'
     - '@mvo_contao_facebook.access_token_generator'
     - '@logger'
+
+  mvo_contao_facebook.listener.datacontainer.facebook_post:
+    class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookPost'
+
+  mvo_contao_facebook.listener.datacontainer.facebook_event:
+    class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookEvent'

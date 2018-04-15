@@ -18,7 +18,6 @@ use Mvo\ContaoFacebookImport\Model\FacebookEventModel;
 use Mvo\ContaoFacebookImport\Model\FacebookPostModel;
 use Mvo\ContaoFacebookImport\Model\FacebookModel;
 
-
 // models
 $GLOBALS['TL_MODELS']['tl_mvo_facebook']       = FacebookModel::class;
 $GLOBALS['TL_MODELS']['tl_mvo_facebook_post']  = FacebookPostModel::class;
@@ -28,8 +27,8 @@ $GLOBALS['TL_MODELS']['tl_mvo_facebook_event'] = FacebookEventModel::class;
 $GLOBALS['BE_MOD']['mvo_facebook_integration'] = [
     'mvo_facebook' => [
         'tables'       => ['tl_mvo_facebook', 'tl_mvo_facebook_post', 'tl_mvo_facebook_event'],
-        'importPosts'  => ['mvo_contao_facebook.listener.datacontainer.facebook_node', 'onImportPosts'],
-        'importEvents' => ['mvo_contao_facebook.listener.datacontainer.facebook_node', 'onImportEvents'],
+        'importPosts'  => ['mvo_contao_facebook.listener.datacontainer.facebook', 'onImportPosts'],
+        'importEvents' => ['mvo_contao_facebook.listener.datacontainer.facebook', 'onImportEvents'],
     ]
 ];
 

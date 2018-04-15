@@ -24,8 +24,10 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_post'] =
                 'notEditable'       => true,
                 'closed'            => true,
                 'ondelete_callback' => [
-                    'mvo_contao_facebook.listener.datacontainer.facebook_node',
-                    'onPrunePostImage'
+                    [
+                        'mvo_contao_facebook.listener.datacontainer.facebook_post',
+                        'onDelete'
+                    ]
                 ],
                 'sql'               =>
                     [
@@ -49,9 +51,9 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_post'] =
                     ],
                 'label'             =>
                     [
-                        'fields' => ['message'],
+                        'fields'         => ['message'],
                         'label_callback' => [
-                            'mvo_contao_facebook.listener.datacontainer.facebook_node',
+                            'mvo_contao_facebook.listener.datacontainer.facebook_post',
                             'onGeneratePostLabel'
                         ]
                     ],

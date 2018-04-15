@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Mvo\ContaoFacebookImport\Model;
 
 use Contao\Database;
+use Contao\Dbafs;
+use Contao\Files;
+use Contao\FilesModel;
 use Contao\Model;
 
 /**
@@ -34,7 +37,7 @@ use Contao\Model;
  * @property string  $ticketUri
  * @property integer $lastChanged
  *
- * @method static Model\Collection|FacebookEventModel[]|FacebookEventModel|null findByPid($val, array $opt=array())
+ * @method static Model\Collection|FacebookEventModel[]|FacebookEventModel|null findByPid($val, array $opt = array())
  */
 class FacebookEventModel extends Model
 {
@@ -50,12 +53,30 @@ class FacebookEventModel extends Model
      *
      * @return int
      */
-    public static function getLastTimestamp($pid)
+    public static function getLastTimestamp($pid): int
     {
         $objResult = Database::getInstance()
-            ->prepare("SELECT tstamp FROM tl_mvo_facebook_event WHERE pid = ? ORDER BY tstamp DESC LIMIT 1")
+            ->prepare('SELECT tstamp FROM tl_mvo_facebook_event WHERE pid = ? ORDER BY tstamp DESC LIMIT 1')
             ->execute($pid);
 
-        return (0 == $objResult->numRows) ? 0 : $objResult->tstamp;
+        return (0 === $objResult->numRows) ? 0 : (int) $objResult->tstamp;
+    }
+
+    /**
+     * @return int
+     */
+    public function delete(): int
+    {
+        // remove image, if not used referenced by other entity
+        if ($this->image && 1 === self::countBy('image', $this->image)) {
+            $file = FilesModel::findByUuid($this->image);
+
+            if (null !== $file) {
+                Files::getInstance()->delete($file->path);
+                Dbafs::deleteResource($file->path);
+            }
+        }
+
+        return parent::delete();
     }
 }

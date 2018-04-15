@@ -165,7 +165,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                         'sql'           => "varchar(255) NOT NULL default ''",
                         'save_callback' => [
                             [
-                                'mvo_contao_facebook.listener.datacontainer.facebook_node',
+                                'mvo_contao_facebook.listener.datacontainer.facebook',
                                 'onGenerateAccessToken'
                             ]
                         ]

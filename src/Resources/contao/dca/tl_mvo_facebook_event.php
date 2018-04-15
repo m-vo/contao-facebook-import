@@ -24,8 +24,10 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_event'] =
                 'notEditable'       => true,
                 'closed'            => true,
                 'ondelete_callback' => [
-                    'mvo_contao_facebook.listener.datacontainer.facebook_node',
-                    'onPruneEventImage'
+                    [
+                        'mvo_contao_facebook.listener.datacontainer.facebook_event',
+                        'onDelete'
+                    ]
                 ],
                 'sql'               =>
                     [
