@@ -1,3 +1,7 @@
+### v2.2.0
+ - allow automatic creation of native Contao events on import
+ - insert tag for event data {{fb_event::@eventId::@parameter}}
+
 ### v2.1.1
  - fixed and optimized image pruning
 

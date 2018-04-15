@@ -7,12 +7,17 @@ Contao Open Source CMS. The following things are available:
 * Image scraper that automatically downloads high resolution
   images<sup>*)</sup> of posts and events into Contao's filesystem 
 * Content Elements to display events and posts
-* Support for multiple Facebook pages simultaneously  
+* Option to create native Contao events on import<sup>**)</sup>
+* Support for multiple Facebook pages simultaneously
  
  <sup>*)</sup> Note that the largest size of images being used will be smaller
  or equal the maximum size set in the Contao settings. (The system tries to
  download the biggest possible file with this constraint.)  
-    
+
+ <sup>**)</sup> Imported contao events won't be tracked - you can edit or
+ delete them like you wish. To keep the need for manual adaptions to a
+ minimum, insert tags are used to pull the data from the facebook events.
+ Note that this is not possible for all fields.
     
     
 Installation
