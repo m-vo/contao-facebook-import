@@ -39,6 +39,8 @@ services:
     - '@mvo_contao_facebook.listener.import_posts'
     - '@mvo_contao_facebook.listener.import_events'
     - '@mvo_contao_facebook.access_token_generator'
+    - '@security.token_storage'
+    - '@database_connection'
     - '@logger'
 
   mvo_contao_facebook.listener.datacontainer.facebook_post:

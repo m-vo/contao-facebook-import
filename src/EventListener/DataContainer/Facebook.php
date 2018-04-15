@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\EventListener\DataContainer;
 
+use Contao\BackendUser;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
@@ -24,10 +25,15 @@ use Mvo\ContaoFacebookImport\EventListener\ImportFacebookEventsListener;
 use Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener;
 use Mvo\ContaoFacebookImport\Facebook\AccessTokenGenerator;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class Facebook implements FrameworkAwareInterface
+class Facebook implements FrameworkAwareInterface, ContainerAwareInterface
 {
     use FrameworkAwareTrait;
+    use ContainerAwareTrait;
 
     /** @var Connection */
     private $database;
@@ -39,7 +45,10 @@ class Facebook implements FrameworkAwareInterface
     private $eventImporter;
 
     /** @var AccessTokenGenerator */
-    private $accessTokenGenerator;
+    private $facebookAccessTokenGenerator;
+
+    /** @var TokenInterface */
+    private $userToken;
 
     /** @var LoggerInterface */
     private $logger;
@@ -47,22 +56,27 @@ class Facebook implements FrameworkAwareInterface
     /**
      * FacebookNode constructor.
      *
-     * @param Connection                   $database
      * @param ImportFacebookPostsListener  $postImporter
      * @param ImportFacebookEventsListener $eventImporter
-     * @param AccessTokenGenerator         $accessTokenGenerator
+     * @param AccessTokenGenerator         $facebookAccessTokenGenerator
+     * @param TokenStorageInterface        $userTokenStorage
+     * @param Connection                   $connection
      * @param LoggerInterface              $logger
      */
     public function __construct(
         ImportFacebookPostsListener $postImporter,
         ImportFacebookEventsListener $eventImporter,
-        AccessTokenGenerator $accessTokenGenerator,
+        AccessTokenGenerator $facebookAccessTokenGenerator,
+        TokenStorageInterface $userTokenStorage,
+        Connection $connection,
         LoggerInterface $logger
     ) {
-        $this->postImporter         = $postImporter;
-        $this->eventImporter        = $eventImporter;
-        $this->accessTokenGenerator = $accessTokenGenerator;
-        $this->logger               = $logger;
+        $this->postImporter                 = $postImporter;
+        $this->eventImporter                = $eventImporter;
+        $this->facebookAccessTokenGenerator = $facebookAccessTokenGenerator;
+        $this->userToken                    = $userTokenStorage->getToken();
+        $this->database                     = $connection;
+        $this->logger                       = $logger;
     }
 
 
@@ -133,7 +147,7 @@ class Facebook implements FrameworkAwareInterface
      */
     public function onGenerateAccessToken(string $varValue, DataContainer $dc): string
     {
-        $token = $this->accessTokenGenerator->generateNeverExpiringAccessToken(
+        $token = $this->facebookAccessTokenGenerator->generateNeverExpiringAccessToken(
             $dc->activeRecord->fbAppId,
             $dc->activeRecord->fbAppSecret,
             $varValue
@@ -144,5 +158,36 @@ class Facebook implements FrameworkAwareInterface
         }
 
         throw new \InvalidArgumentException('Could not convert access token.');
+    }
+
+    /**
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function onGetCalendars(): array
+    {
+        if (!array_key_exists('ContaoCalendarBundle', $this->container->getParameter('kernel.bundles'))) {
+            return [];
+        }
+
+        /** @var BackendUser $user */
+        $user = $this->userToken->getUser();
+
+        if (!$user || (!$user->isAdmin && !\is_array($user->forms))) {
+            return [];
+        }
+
+        $calendarCandidates = $this->database
+            ->executeQuery('SELECT id, title FROM tl_calendar ORDER BY title')
+            ->fetchAll(\PDO::FETCH_KEY_PAIR);
+
+        $calendars = [];
+        foreach ($calendarCandidates as $id => $title) {
+            if ($user->hasAccess($id, 'calendars')) {
+                $calendars[$id] = $title . ' (ID ' . $id . ')';
+            }
+        }
+
+        return $calendars;
     }
 }

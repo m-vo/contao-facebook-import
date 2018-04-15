@@ -33,6 +33,8 @@ $GLOBALS['TL_LANG']['tl_mvo_facebook']['import_legend'] = 'Import';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['importEnabled'] = ['Auto-Import aktivieren'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['minimumCacheTime'] = ['Minimales Cache-Alter', 'minimale Zeit in Sekunden, bevor Elemente neu importiert werden'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['numberOfPosts'] = ['Post-Anzahl','maximale Anzahl an importierten Posts'];
+$GLOBALS['TL_LANG']['tl_mvo_facebook']['createNativeEvents'] = ['Native Contao Events erzeugen','Fügt beim Import Contao Events hinzu, die Facebook Veranstaltungen referenzieren'];
+$GLOBALS['TL_LANG']['tl_mvo_facebook']['calendarId'] = ['Kalender', 'Kalender wählen, in den die Veranstaltungen eingefügt werden sollen.'];
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['media_legend'] = 'Medien';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['uploadDirectory'] = ['Upload-Ordner', 'Ort, an dem die gescrapten Bilddaten ablegt werden'];
