@@ -46,3 +46,8 @@ services:
 
   mvo_contao_facebook.listener.datacontainer.facebook_event:
     class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookEvent'
+
+  mvo_contao_facebook.listener.insert_tags.facebook_post:
+      class: 'Mvo\ContaoFacebookImport\EventListener\InsertTags\FacebookEventListener'
+      tags:
+          - { name: contao.hook, hook: replaceInsertTags }
