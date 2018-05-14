@@ -1,3 +1,6 @@
+### v2.2.1
+ - added missing custom template option for content elements
+
 ### v2.2.0
  - allow automatic creation of native Contao events on import
  - insert tag for event data {{fb_event::@eventId::@parameter}}
