@@ -13,10 +13,10 @@ declare(strict_types=1);
  */
 
 $GLOBALS['TL_DCA']['tl_content']['palettes']['mvo_facebook_post_list'] =
-    '{type_legend},type,headline;{mvo_facebook_options_legend},mvo_facebook_node,mvo_facebook_numberOfPosts;{image_legend},size,fullsize;{expert_legend:hide},cssID;';
+    '{type_legend},type,headline;{mvo_facebook_options_legend},mvo_facebook_node,mvo_facebook_numberOfPosts;{image_legend},size,fullsize;{template_legend:hide},customTpl;{expert_legend:hide},cssID;';
 
 $GLOBALS['TL_DCA']['tl_content']['palettes']['mvo_facebook_event_list'] =
-    '{type_legend},type,headline;{mvo_facebook_options_legend},mvo_facebook_node;{image_legend},size,fullsize;{expert_legend:hide},cssID;';
+    '{type_legend},type,headline;{mvo_facebook_options_legend},mvo_facebook_node;{image_legend},size,fullsize;{template_legend:hide},customTpl;{expert_legend:hide},cssID;';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['mvo_facebook_node'] = [
     'label'      => &$GLOBALS['TL_LANG']['tl_content']['mvo_facebook_node'],
