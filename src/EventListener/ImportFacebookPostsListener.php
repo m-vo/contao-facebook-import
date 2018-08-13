@@ -159,7 +159,7 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
         $event->message     = \utf8_encode($graphNode->getField('message', ''));
         $event->image       = $this->getImage($parser, $graphNode, $uploadPath);
         $event->lastChanged = $this->getTime($graphNode, 'updated_time');
-        $event->link        = $graphNode->getField('link', sprintf('https://facebook.com/%s', $event->postId));
+        $event->link       = $graphNode->getField('link', sprintf('https://facebook.com/%s', $event->postId));
 
         /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         $event->save();
@@ -211,8 +211,9 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
                 $uploadPath
             );
         } elseif (null !== $pictureUri = $graphNode->getField('full_picture', null)) {
+            $objectId = 'p_' . $graphNode->getField('id');
             $fileModel = $this->imageScraper->scrapeFile(
-                'p_' . $graphNode->getField('id'),
+                $objectId,
                 $pictureUri,
                 $uploadPath
             );
