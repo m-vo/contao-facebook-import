@@ -20,6 +20,7 @@ use Contao\Config;
 use Contao\ContentElement;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
+use Contao\System;
 use Mvo\ContaoFacebookImport\Model\FacebookPostModel;
 use Mvo\ContaoFacebookImport\String\Tools;
 
@@ -81,6 +82,8 @@ class ContentPostList extends ContentElement
             $arrOptions
         );
 
+        $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+
         $arrPosts = [];
         if (null !== $objPosts) {
             $i     = 0;
@@ -114,6 +117,7 @@ class ContentPostList extends ContentElement
                 // image
                 if (null !== $post->image
                     && null !== ($objFile = FilesModel::findByUuid($post->image))
+                    && file_exists($rootDir . '/' . $objFile->path)
                 ) {
                     $objImageTemplate = new FrontendTemplate('image');
 
