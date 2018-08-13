@@ -20,6 +20,7 @@ use Contao\Config;
 use Contao\ContentElement;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
+use Contao\System;
 use Mvo\ContaoFacebookImport\Model\FacebookPostModel;
 use Mvo\ContaoFacebookImport\String\Tools;
 
@@ -81,6 +82,8 @@ class ContentPostList extends ContentElement
             $arrOptions
         );
 
+        $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+
         $arrPosts = [];
         if (null !== $objPosts) {
             $i     = 0;
@@ -102,6 +105,7 @@ class ContentPostList extends ContentElement
                     'time'          => $post->postTime,
                     'datetime'      => date(Config::get('datimFormat'), (int) $post->postTime),
                     'href'          => sprintf('https://facebook.com/%s', $post->postId),
+                    'link'          => $post->link,
                 ];
 
                 // css enumeration
@@ -113,6 +117,7 @@ class ContentPostList extends ContentElement
                 // image
                 if (null !== $post->image
                     && null !== ($objFile = FilesModel::findByUuid($post->image))
+                    && file_exists($rootDir . '/' . $objFile->path)
                 ) {
                     $objImageTemplate = new FrontendTemplate('image');
 
@@ -134,6 +139,12 @@ class ContentPostList extends ContentElement
                     );
                     $arrPost['image']    = $objImageTemplate->parse();
                     $arrPost['hasImage'] = true;
+
+                    //do not output pixel images!
+                    if ((int)$objImageTemplate->width == 1 && (int)$objImageTemplate->height == 1) {
+                        unset($arrPost['image']);
+                        $arrPost['hasImage'] = false;
+                    }
                 } else {
                     $arrPost['hasImage'] = false;
                 }

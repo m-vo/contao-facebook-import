@@ -33,6 +33,7 @@ $GLOBALS['TL_LANG']['tl_mvo_facebook']['import_legend'] = 'Import';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['importEnabled'] = ['Enable auto import'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['minimumCacheTime'] = ['Minimal Cache Age', 'minimal time in seconds before reimporting'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['numberOfPosts'] = ['Number of posts','maximal number of posts to be imported'];
+$GLOBALS['TL_LANG']['tl_mvo_facebook']['allPostTypes'] = ['All post types','Imports all post types that have message, picture or link'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['createNativeEvents'] = ['Additionally create native Contao events','Adds Contao events on import that reference the facebook events.'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['calendarId'] = ['Calendar', 'Choose the calendar into which the events should get inserted.'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['calendarEventAuthor'] = ['Author', 'Choose the author that the automatically created events will get assigned to.'];

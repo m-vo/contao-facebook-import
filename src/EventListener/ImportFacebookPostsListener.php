@@ -89,13 +89,23 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
                 continue;
             }
 
-            // skip if message is empty or type is 'link' and the message only contains an URL
-            $message = $graphNode->getField('message', '');
-            if ('' === $message
-                || ('link' === $graphNode->getField('type', '')
-                    && 1 === preg_match('~^\s*https://\S*\s*?$~', $message))
-            ) {
-                continue;
+            if ($node->allPostTypes) {
+                // skip if message, picture or link is empty
+                $message = $graphNode->getField('message', '');
+                $picture = $graphNode->getField('picture', '');
+                $link = $graphNode->getField('link', '');
+                if (empty($message) && empty($picture) || empty($link)) {
+                    continue;
+                }
+            } else {
+                // skip if message is empty or type is 'link' and the message only contains an URL
+                $message = $graphNode->getField('message', '');
+                if ('' === $message
+                    || ('link' === $graphNode->getField('type', '')
+                        && 1 === preg_match('~^\s*https://\S*\s*?$~', $message))
+                ) {
+                    continue;
+                }
             }
 
             if (\array_key_exists($fbId, $postDictionary)) {
@@ -159,6 +169,7 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
         $event->message     = \utf8_encode($graphNode->getField('message', ''));
         $event->image       = $this->getImage($parser, $graphNode, $uploadPath);
         $event->lastChanged = $this->getTime($graphNode, 'updated_time');
+        $event->link       = $graphNode->getField('link', sprintf('https://facebook.com/%s', $event->postId));
 
         /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         $event->save();
@@ -210,8 +221,9 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
                 $uploadPath
             );
         } elseif (null !== $pictureUri = $graphNode->getField('full_picture', null)) {
+            $objectId = 'p_' . $graphNode->getField('id');
             $fileModel = $this->imageScraper->scrapeFile(
-                'p_' . $graphNode->getField('id'),
+                $objectId,
                 $pictureUri,
                 $uploadPath
             );

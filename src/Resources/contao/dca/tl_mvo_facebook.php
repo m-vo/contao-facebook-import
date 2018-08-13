@@ -112,7 +112,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                 '__selector__' => ['createNativeEvents'],
                 'default'      => '{basic_legend},description,fbPageName;' .
                                   '{api_legend},fbAppId,fbAppSecret,fbAccessToken;' .
-                                  '{import_legend},importEnabled,minimumCacheTime,numberOfPosts,createNativeEvents;' .
+                                  '{import_legend},importEnabled,minimumCacheTime,numberOfPosts,allPostTypes,createNativeEvents;' .
                                   '{media_legend},uploadDirectory;'
             ],
 
@@ -203,6 +203,15 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                             'tl_class'  => 'w50'
                         ],
                         'sql'       => "int(5) unsigned NOT NULL default '15'"
+                    ],
+                'allPostTypes'       =>
+                    [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['allPostTypes'],
+                        'exclude'   => true,
+                        'default'   => false,
+                        'inputType' => 'checkbox',
+                        'eval'      => ['isBoolean' => true, 'tl_class'  => 'clr'],
+                        'sql'       => "char(1) NOT NULL default '0'"
                     ],
                 'importEnabled'       =>
                     [
