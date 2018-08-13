@@ -89,13 +89,23 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
                 continue;
             }
 
-            // skip if message is empty or type is 'link' and the message only contains an URL
-            $message = $graphNode->getField('message', '');
-            if ('' === $message
-                || ('link' === $graphNode->getField('type', '')
-                    && 1 === preg_match('~^\s*https://\S*\s*?$~', $message))
-            ) {
-                continue;
+            if ($node->allPostTypes) {
+                // skip if message, picture or link is empty
+                $message = $graphNode->getField('message', '');
+                $picture = $graphNode->getField('picture', '');
+                $link = $graphNode->getField('link', '');
+                if (empty($message) && empty($picture) || empty($link)) {
+                    continue;
+                }
+            } else {
+                // skip if message is empty or type is 'link' and the message only contains an URL
+                $message = $graphNode->getField('message', '');
+                if ('' === $message
+                    || ('link' === $graphNode->getField('type', '')
+                        && 1 === preg_match('~^\s*https://\S*\s*?$~', $message))
+                ) {
+                    continue;
+                }
             }
 
             if (\array_key_exists($fbId, $postDictionary)) {
