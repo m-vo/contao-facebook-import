@@ -148,5 +148,9 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_post'] =
                     [
                         'sql' => "int(10) unsigned NOT NULL default '0'"
                     ],
+                'link'     =>
+                    [
+                    'sql' => "mediumtext NULL"
+                    ],
             ]
     ];

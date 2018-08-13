@@ -33,6 +33,7 @@ use Contao\Model;
  * @property string  $message
  * @property string  $image
  * @property integer $lastChanged
+ * @property string $link
  *
  * @method static Model\Collection|FacebookPostModel[]|FacebookPostModel|null findByPid($val, array $opt=array())
  */

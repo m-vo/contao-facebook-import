@@ -102,6 +102,7 @@ class ContentPostList extends ContentElement
                     'time'          => $post->postTime,
                     'datetime'      => date(Config::get('datimFormat'), (int) $post->postTime),
                     'href'          => sprintf('https://facebook.com/%s', $post->postId),
+                    'link'          => $post->link,
                 ];
 
                 // css enumeration

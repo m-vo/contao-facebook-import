@@ -159,6 +159,7 @@ class ImportFacebookPostsListener extends ImportFacebookDataListener
         $event->message     = \utf8_encode($graphNode->getField('message', ''));
         $event->image       = $this->getImage($parser, $graphNode, $uploadPath);
         $event->lastChanged = $this->getTime($graphNode, 'updated_time');
+        $event->link        = $graphNode->getField('link', sprintf('https://facebook.com/%s', $event->postId));
 
         /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         $event->save();
