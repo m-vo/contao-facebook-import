@@ -134,6 +134,12 @@ class ContentPostList extends ContentElement
                     );
                     $arrPost['image']    = $objImageTemplate->parse();
                     $arrPost['hasImage'] = true;
+
+                    //do not output pixel images!
+                    if ((int)$objImageTemplate->width == 1 && (int)$objImageTemplate->height == 1) {
+                        unset($arrPost['image']);
+                        $arrPost['hasImage'] = false;
+                    }
                 } else {
                     $arrPost['hasImage'] = false;
                 }
