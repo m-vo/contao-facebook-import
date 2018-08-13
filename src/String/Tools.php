@@ -40,7 +40,7 @@ class Tools
     private static function replaceUrls(string $str)
     {
         // surround urls with <a> tags
-        return \preg_replace("#http://([\S]+?)#Uis", '<a rel="nofollow" href="http://\\1">\\1</a>', $str);
+        return \preg_replace("#(http|https):\/\/([\S]+?)#Uis", '<a rel="nofollow" href="\\1://\\2">\\2</a>', $str);
     }
 
     /**
