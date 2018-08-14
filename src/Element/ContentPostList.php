@@ -14,139 +14,138 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\Element;
 
-
 use Contao\BackendTemplate;
 use Contao\Config;
 use Contao\ContentElement;
-use Contao\FilesModel;
 use Contao\FrontendTemplate;
-use Mvo\ContaoFacebookImport\Model\FacebookPostModel;
+use Contao\StringUtil;
+use Mvo\ContaoFacebookImport\Entity\FacebookPost;
 use Mvo\ContaoFacebookImport\String\Tools;
 
 /**
  * @property int  mvo_facebook_node
- * @property int  mvo_facebook_numberOfPosts
+ * @property int  mvo_facebook_number_of_elements
+ * @property int  mvo_facebook_allowed_post_types
  * @property bool fullsize
  */
 class ContentPostList extends ContentElement
 {
-    /**
-     * Template
-     *
-     * @var string
-     */
-    protected $strTemplate = 'ce_mvo_facebook_post_list';
+	/**
+	 * Template
+	 *
+	 * @var string
+	 */
+	protected $strTemplate = 'ce_mvo_facebook_post_list';
 
-    /**
-     * Parse the template
-     *
-     * @return string Parsed element
-     */
-    public function generate(): string
-    {
-        if (TL_MODE === 'BE') {
-            $objTemplate           = new BackendTemplate('be_wildcard');
-            $objTemplate->title    = 'Facebook Posts';
-            $objTemplate->wildcard = sprintf(
-                'showing %s posts',
-                ($this->mvo_facebook_numberOfPosts > 0) ? $this->mvo_facebook_numberOfPosts : 'all available'
-            );
-            return $objTemplate->parse();
-        }
+	/**
+	 * Parse the template
+	 *
+	 * @return string Parsed element
+	 */
+	public function generate(): string
+	{
+		if (TL_MODE === 'BE') {
+			self::loadLanguageFile('elements');
 
-        return parent::generate();
-    }
+			$objTemplate = new BackendTemplate('be_wildcard');
 
-    /**
-     * Compile the content element
-     *
-     * @return void
-     */
-    protected function compile(): void
-    {
-        $this->Template = new FrontendTemplate($this->strTemplate);
-        $this->Template->setData($this->arrData);
+			$types = implode(', ', StringUtil::deserialize($this->mvo_facebook_allowed_post_types, true));
 
-        // get posts
-        $arrOptions = [
-            'order' => 'postTime DESC'
-        ];
-        if ($this->mvo_facebook_numberOfPosts > 0) {
-            $arrOptions['limit'] = $this->mvo_facebook_numberOfPosts;
-        }
+			$objTemplate->title    = 'Facebook Posts';
+			$objTemplate->wildcard = sprintf(
+				$GLOBALS['TL_LANG']['MSC']['mvo_facebook_postListDisplay'],
+				($this->mvo_facebook_number_of_elements
+				 > 0) ? $this->mvo_facebook_number_of_elements : $GLOBALS['TL_LANG']['MSC']['mvo_facebook_allAvailable'],
+				'' !== $types ? $types : '-'
+			);
 
-        $objPosts = FacebookPostModel::findBy(
-            ['pid = ? AND visible = ?'],
-            [$this->mvo_facebook_node, true],
-            $arrOptions
-        );
+			return $objTemplate->parse();
+		}
 
-        $arrPosts = [];
-        if (null !== $objPosts) {
-            $i     = 0;
-            $total = $objPosts->count();
+		return parent::generate();
+	}
 
-            /** @var FacebookPostModel $post */
-            foreach ($objPosts as $post) {
-                // base data
-                $headline = Tools::formatText($post->message, 5);
-                if (false !== $posBreak = strpos($headline, '<br>')) {
-                    $headline = substr($headline, 0, $posBreak);
-                }
+	/**
+	 * Compile the content element
+	 *
+	 * @return void
+	 */
+	protected function compile(): void
+	{
+		$doctrine = self::getContainer()->get('doctrine');
 
-                $arrPost = [
-                    'postId'        => $post->postId,
-                    'message'       => Tools::formatText($post->message),
-                    'mediumMessage' => Tools::formatText($post->message, 50),
-                    'headline'      => $headline,
-                    'time'          => $post->postTime,
-                    'datetime'      => date(Config::get('datimFormat'), (int) $post->postTime),
-                    'href'          => sprintf('https://facebook.com/%s', $post->postId),
-                ];
+		// retrieve posts
+		$posts = $doctrine
+			->getRepository(FacebookPost::class)
+			->findVisible(
+				(int) $this->mvo_facebook_node,
+				(int) $this->mvo_facebook_number_of_elements,
+				StringUtil::deserialize($this->mvo_facebook_allowed_post_types, true)
+			);
 
-                // css enumeration
-                $arrPost['class'] = ((1 === $i % 2) ? ' even' : ' odd') .
-                                    ((0 === $i) ? ' first' : '') .
-                                    (($total - 1 === $i) ? ' last' : '');
-                $i++;
+		// compile posts
+		$compiledPosts = [];
+		foreach ($posts as $post) {
+			$compiledPosts[] = $this->compilePost($post);
+		}
 
-                // image
-                if (null !== $post->image
-                    && null !== ($objFile = FilesModel::findByUuid($post->image))
-                ) {
-                    $objImageTemplate = new FrontendTemplate('image');
+		$this->Template = new FrontendTemplate($this->strTemplate);
+		$this->Template->setData($this->arrData);
 
-                    $arrMeta = deserialize($objFile->meta, true);
-                    $strAlt  = (\array_key_exists('caption', $arrMeta)
-                                && \is_array($arrMeta['caption'])
-                                && \array_key_exists('caption', $arrMeta['caption']))
-                               && '' !== $arrMeta['caption']['caption']
-                        ? $arrMeta['caption']['caption'] : 'Facebook Post Image';
+		$this->Template->posts    = $compiledPosts;
+		$this->Template->hasPosts = 0 !== \count($compiledPosts);
 
-                    static::addImageToTemplate(
-                        $objImageTemplate,
-                        [
-                            'singleSRC' => $objFile->path,
-                            'alt'       => $strAlt,
-                            'size'      => deserialize($this->size),
-                            'fullsize'  => $this->fullsize
-                        ]
-                    );
-                    $arrPost['image']    = $objImageTemplate->parse();
-                    $arrPost['hasImage'] = true;
-                } else {
-                    $arrPost['hasImage'] = false;
-                }
+		if (!$this->Template->hasPosts) {
+			self::loadLanguageFile('elements');
+			$this->Template->empty = $GLOBALS['TL_LANG']['MSC']['mvo_facebook_emptyPostList'];
+		}
+	}
 
-                $arrPosts[] = $arrPost;
-            }
-        }
-        $this->Template->posts    = $arrPosts;
-        $this->Template->hasPosts = 0 !== \count($arrPosts);
+	/**
+	 * @param FacebookPost $post
+	 *
+	 * @return array
+	 */
+	private function compilePost(FacebookPost $post): array
+	{
+		// base data
+		$compiledPost = [
+			'id'          => $post->getId(),
+			'postId'      => $post->getPostId(),
+			'lastChanged' => $post->getLastChanged(),
+			'type'        => $post->getType(),
+			'message'     => Tools::formatText($post->getMessage()),
+			'time'        => $post->getPostTime(),
+			'datetime'    => date(Config::get('datimFormat'), $post->getPostTime()),
+			'href'        => sprintf('https://facebook.com/%s', $post->getPostId())
+		];
 
-        if (!$this->Template->hasPosts) {
-            self::loadLanguageFile('templates');
-            $this->Template->empty = $GLOBALS['TL_LANG']['MSC']['mvo_facebook_emptyPostList'];
-        }
-    }
+		// image
+		if (null !== ($image = $post->getImage())
+			&& null !== ($file = $image->getFile())) {
+
+			$metaData = StringUtil::deserialize($file->meta, true);
+
+			$imageTemplate = new FrontendTemplate('image');
+			self::addImageToTemplate(
+				$imageTemplate,
+				[
+					'singleSRC' => $file->path,
+					'alt'       => $metaData['caption']['caption'] ?? 'Facebook Post Image',
+					'size'      => StringUtil::deserialize($this->size),
+					'fullsize'  => $this->fullsize
+				]
+			);
+			$compiledPost['image']    = $imageTemplate->parse();
+			$compiledPost['hasImage'] = true;
+		} else {
+			$compiledPost['hasImage'] = false;
+		}
+
+		$compiledPost['getExcerpt'] = function (int $words, int $wordOffset = 0) use ($compiledPost) {
+			return Tools::shortenText($compiledPost['message'], $words, $wordOffset);
+		};
+
+		return $compiledPost;
+	}
 }

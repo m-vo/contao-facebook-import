@@ -5,7 +5,7 @@
 
 <?php if($this->hasEvents): ?>
 <?php foreach ($this->events as $event): ?>
-    <article class="facebook-event<?php echo $event['class']; ?>">
+    <article class="facebook-event">
         <time class="facebook-event-date" datetime="<?php echo $event['datetime']; ?>">
             <b><?php echo $this->parseDate('jS \of F y (l)', $event['time']); ?></b> @ <?php echo $this->parseDate('h:i A', $event['time']); ?>
         </time>

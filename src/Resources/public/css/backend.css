@@ -3,6 +3,25 @@
     background-size: 15px 15px;
 }
 
-.mvo_facebook_integration_post {
-    margin: 15px 5px;
+.mvo_facebook_element {
+    display: flex;
+}
+
+.mvo_facebook_element > * {
+    margin: 10px;
+}
+
+.mvo_facebook_element-image img {
+    border: 1px solid #ddd;
+}
+
+.mvo_facebook_element-content h2 {
+    margin-bottom: 6px;
+    font-size: 1.3em;
+}
+
+.mvo_facebook_element-content h3 {
+    margin-bottom: 12px;
+    color: #999;
+    font-size: 1.1em;
 }

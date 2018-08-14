@@ -16,5 +16,7 @@ $GLOBALS['TL_LANG']['tl_content']['mvo_facebook_options_legend'] =
     'Facebook Content Options';
 $GLOBALS['TL_LANG']['tl_content']['mvo_facebook_node']           =
     ['Facebook Node', 'Select node to show entries from'];
-$GLOBALS['TL_LANG']['tl_content']['mvo_facebook_numberOfPosts']  =
-    ['Number of Posts', 'Enter 0 to show all available posts'];
+$GLOBALS['TL_LANG']['tl_content']['mvo_facebook_number_of_elements']  =
+    ['Number of Elements', 'Enter 0 to show all available elements'];
+$GLOBALS['TL_LANG']['tl_content']['mvo_facebook_allowed_post_types']  =
+    ['Allowed post types', 'Only posts of the selected object types will be shown'];

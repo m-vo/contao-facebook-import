@@ -1,7 +1,5 @@
 /phpunit.xml
 /.php_cs.cache
 .idea
-.todo
-
 /vendor
 /composer.lock

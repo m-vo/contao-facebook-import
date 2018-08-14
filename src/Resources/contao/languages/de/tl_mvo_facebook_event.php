@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @author     Moritz Vondano
  */
 
-$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['import']= 'Event-Update von Facebook erzwingen';
-$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['show'][1] = 'Event-Details anzeigen';
-$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['delete'][1] = 'Event löschen';
-$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['toggle'][1] = 'Event in Frontend anzeigen/ausblenden';
+$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['import']= 'Jetzt synchronisieren';
+$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['show'][1] = 'Details der Veranstaltung anzeigen';
+$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['delete'][1] = 'Veranstaltung löschen';
+$GLOBALS['TL_LANG']['tl_mvo_facebook_event']['toggle'][1] = 'Veranstaltungs in Frontend anzeigen/ausblenden';

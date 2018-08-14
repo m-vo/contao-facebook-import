@@ -14,123 +14,131 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\Element;
 
-
 use Contao\BackendTemplate;
 use Contao\Config;
 use Contao\ContentElement;
-use Contao\FilesModel;
 use Contao\FrontendTemplate;
-use Mvo\ContaoFacebookImport\Model\FacebookEventModel;
+use Contao\StringUtil;
+use Mvo\ContaoFacebookImport\Entity\FacebookEvent;
 use Mvo\ContaoFacebookImport\String\Tools;
 
 /**
  * @property int  mvo_facebook_node
+ * @property int  mvo_facebook_number_of_elements
  * @property bool fullsize
  */
 class ContentEventList extends ContentElement
 {
-    /**
-     * Template
-     *
-     * @var string
-     */
-    protected $strTemplate = 'ce_mvo_facebook_event_list';
+	/**
+	 * Template
+	 *
+	 * @var string
+	 */
+	protected $strTemplate = 'ce_mvo_facebook_event_list';
 
-    /**
-     * Parse the template
-     *
-     * @return string Parsed element
-     */
-    public function generate(): string
-    {
-        if (TL_MODE === 'BE') {
-            $objTemplate        = new BackendTemplate('be_wildcard');
-            $objTemplate->title = 'Facebook Events';
-            return $objTemplate->parse();
-        }
+	/**
+	 * Parse the template
+	 *
+	 * @return string Parsed element
+	 */
+	public function generate(): string
+	{
+		if (TL_MODE === 'BE') {
+			self::loadLanguageFile('elements');
 
-        return parent::generate();
-    }
+			$objTemplate = new BackendTemplate('be_wildcard');
 
-    /**
-     * Compile the content element
-     *
-     * @return void
-     */
-    protected function compile(): void
-    {
-        $this->Template = new FrontendTemplate($this->strTemplate);
-        $this->Template->setData($this->arrData);
+			$objTemplate->title    = 'Facebook Events';
+			$objTemplate->wildcard = sprintf(
+				$GLOBALS['TL_LANG']['MSC']['mvo_facebook_eventListDisplay'],
+				($this->mvo_facebook_number_of_elements
+				 > 0) ? $this->mvo_facebook_number_of_elements : $GLOBALS['TL_LANG']['MSC']['mvo_facebook_allAvailable']
+			);
 
-        // get events
-        $objEvents = FacebookEventModel::findBy(
-            ['pid = ? AND visible = ?'],
-            [$this->mvo_facebook_node, true],
-            ['order' => 'startTime']
-        );
+			return $objTemplate->parse();
+		}
 
-        $arrEvents = [];
-        if (null !== $objEvents) {
-            $i     = 0;
-            $total = $objEvents->count();
+		return parent::generate();
+	}
 
-            /** @var FacebookEventModel $event */
-            foreach ($objEvents as $event) {
-                // base data
-                $arrEvent = [
-                    'eventId'      => $event->eventId,
-                    'name'         => Tools::formatText($event->name),
-                    'description'  => Tools::formatText($event->description),
-                    'locationName' => Tools::formatText($event->locationName),
-                    'time'         => $event->startTime,
-                    'datetime'     => date(Config::get('datimFormat'), (int) $event->startTime),
-                    'href'         => sprintf('https://facebook.com/%s', $event->eventId),
-                ];
+	/**
+	 * Compile the content element
+	 *
+	 * @return void
+	 */
+	protected function compile(): void
+	{
+		$doctrine = self::getContainer()->get('doctrine');
 
-                // css enumeration
-                $arrEvent['class'] = ((1 === $i % 2) ? ' even' : ' odd') .
-                                     ((0 === $i) ? ' first' : '') .
-                                     (($total - 1 === $i) ? ' last' : '');
-                $i++;
+		// retrieve events
+		$events = $doctrine
+			->getRepository(FacebookEvent::class)
+			->findVisible(
+				(int) $this->mvo_facebook_node,
+				(int) $this->mvo_facebook_number_of_elements
+			);
 
-                // image
-                if (null !== $event->image
-                    && null !== ($objFile = FilesModel::findByUuid($event->image))
-                ) {
-                    $objImageTemplate = new FrontendTemplate('image');
+		// compile events
+		$compiledEvents = [];
+		foreach ($events as $event) {
+			$compiledEvents[] = $this->compileEvent($event);
+		}
 
-                    $arrMeta = deserialize($objFile->meta, true);
-                    $strAlt  = (\array_key_exists('caption', $arrMeta)
-                                && \is_array($arrMeta['caption'])
-                                && \array_key_exists('caption', $arrMeta['caption']))
-                               && '' !== $arrMeta['caption']['caption']
-                        ? $arrMeta['caption']['caption'] : 'Facebook Post Image';
+		$this->Template = new FrontendTemplate($this->strTemplate);
+		$this->Template->setData($this->arrData);
 
-                    static::addImageToTemplate(
-                        $objImageTemplate,
-                        [
-                            'singleSRC' => $objFile->path,
-                            'alt'       => $strAlt,
-                            'size'      => deserialize($this->size),
-                            'fullsize'  => $this->fullsize
-                        ]
-                    );
-                    $arrEvent['image']    = $objImageTemplate->parse();
-                    $arrEvent['hasImage'] = true;
-                } else {
-                    $arrEvent['hasImage'] = false;
-                }
+		$this->Template->events    = $compiledEvents;
+		$this->Template->hasEvents = 0 !== \count($compiledEvents);
 
-                $arrEvents[] = $arrEvent;
-            }
-        }
+		if (!$this->Template->hasEvents) {
+			self::loadLanguageFile('elements');
+			$this->Template->empty = $GLOBALS['TL_LANG']['MSC']['mvo_facebook_emptyEventList'];
+		}
+	}
 
-        $this->Template->events    = $arrEvents;
-        $this->Template->hasEvents = 0 !== \count($arrEvents);
+	/**
+	 * @param FacebookEvent $event
+	 *
+	 * @return array
+	 */
+	private function compileEvent(FacebookEvent $event): array
+	{
+		// base data
+		$compiledEvent = [
+			'id'           => $event->getId(),
+			'eventId'      => $event->getEventId(),
+			'lastChanged'  => $event->getLastChanged(),
+			'name'         => Tools::formatText($event->getName()),
+			'description'  => Tools::formatText($event->getDescription()),
+			'locationName' => Tools::formatText($event->getLocationName()),
+			'ticketUri'    => Tools::formatText($event->getTicketUri()),
+			'time'         => $event->getStartTime(),
+			'datetime'     => date(Config::get('datimFormat'), (int) $event->getStartTime()),
+			'href'         => sprintf('https://facebook.com/%s', $event->getEventId()),
+		];
 
-        if (!$this->Template->hasEvents) {
-            self::loadLanguageFile('templates');
-            $this->Template->empty = $GLOBALS['TL_LANG']['MSC']['mvo_facebook_emptyEventList'];
-        }
-    }
+		// image
+		if (null !== ($image = $event->getImage())
+			&& null !== ($file = $image->getFile())) {
+
+			$metaData = StringUtil::deserialize($file->meta, true);
+
+			$imageTemplate = new FrontendTemplate('image');
+			self::addImageToTemplate(
+				$imageTemplate,
+				[
+					'singleSRC' => $file->path,
+					'alt'       => $metaData['caption']['caption'] ?? 'Facebook Event Image',
+					'size'      => StringUtil::deserialize($this->size),
+					'fullsize'  => $this->fullsize
+				]
+			);
+			$compiledEvent['image']    = $imageTemplate->parse();
+			$compiledEvent['hasImage'] = true;
+		} else {
+			$compiledEvent['hasImage'] = false;
+		}
+
+		return $compiledEvent;
+	}
 }

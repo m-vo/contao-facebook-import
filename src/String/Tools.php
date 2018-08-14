@@ -16,64 +16,67 @@ namespace Mvo\ContaoFacebookImport\String;
 
 class Tools
 {
-    /**
-     * @param string $str
-     * @param int    $maxWords
-     *
-     * @return mixed
-     */
-    public static function formatText(string $str, int $maxWords = 0)
-    {
-        $str = utf8_decode($str);
-        $str = self::replaceUrls($str);
-        if ($maxWords > 0) {
-            $str = self::shortenText($str, $maxWords);
-        }
-        return self::formatWhitespaces($str);
-    }
+	/**
+	 * @param string $str
+	 *
+	 * @return mixed
+	 */
+	public static function formatText(string $str)
+	{
+		$str = utf8_decode($str);
+		$str = self::replaceUrls($str);
+		return self::formatWhitespaces($str);
+	}
 
-    /**
-     * @param string $str
-     *
-     * @return mixed
-     */
-    private static function replaceUrls(string $str)
-    {
-        // surround urls with <a> tags
-        return \preg_replace("#http://([\S]+?)#Uis", '<a rel="nofollow" href="http://\\1">\\1</a>', $str);
-    }
+	/**
+	 * @param string $str
+	 *
+	 * @return mixed
+	 */
+	private static function replaceUrls(string $str)
+	{
+		// surround urls with <a> tags
+		return preg_replace(
+			'#(https?\://)?[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?#',
+			'<a rel="nofollow noreferrer" href="$1">$1</a>',
+			$str
+		);
+	}
 
-    /**
-     * @param string $str
-     *
-     * @return mixed
-     */
-    private static function formatWhitespaces(string $str)
-    {
-        return \nl2br_html5(str_replace('  ', '&nbsp;&nbsp;', $str));
-    }
+	/**
+	 * @param string $str
+	 *
+	 * @return mixed
+	 */
+	private static function formatWhitespaces(string $str)
+	{
+		return nl2br_html5(str_replace('  ', '&nbsp;&nbsp;', $str));
+	}
 
-    /**
-     * @param string $str
-     * @param int    $maxWords
-     *
-     * @return mixed
-     */
-    private static function shortenText(string $str, int $maxWords)
-    {
-        $words            = explode(' ', $str);
-        $initialWordCount = \count($words);
+	/**
+	 * @param string $str
+	 * @param int    $maxWords
+	 *
+	 * @param int    $wordsOffset
+	 *
+	 * @return mixed
+	 */
+	public static function shortenText(string $str, int $maxWords, int $wordsOffset)
+	{
+		$words            = explode(' ', $str);
+		$initialWordCount = \count($words);
 
-        // slice it
-        $words = \array_slice($words, 0, $maxWords);
-        if (0 === \count($words)) {
-            return '';
-        }
+		// slice it
+		$words = \array_slice($words, $wordsOffset, $maxWords);
 
-        // remove last , . -
-        $words[\count($words) - 1] = \str_replace([',', '.', '-'], '', $words[\count($words) - 1]);
-        $str                       = implode($words, ' ');
+		if (0 === \count($words)) {
+			return '';
+		}
 
-        return ($initialWordCount > \count($words)) ? sprintf('%s&hellip;', $str) : $str;
-    }
+		// remove some characters at the end: , . -
+		$words[\count($words) - 1] = str_replace([',', '.', '-'], '', $words[\count($words) - 1]);
+
+		$str = rtrim(implode($words, ' '));
+		return ($initialWordCount > \count($words)) ? sprintf('%s&hellip;', $str) : $str;
+	}
 }

@@ -19,14 +19,17 @@
   ],
   "require": {
     "php": ">=7.1",
+    "ext-PDO": "*",
+    "ext-json": "*",
     "contao/core-bundle": "^4.4",
     "facebook/graph-sdk": "^5.6",
     "guzzlehttp/guzzle": "~6.0",
-    "codefog/contao-haste": "^4.17"
+    "codefog/contao-haste": "^4.17",
+    "symfony/stopwatch": "^3.0|^4.0",
+    "doctrine/orm": "^2.6"
   },
   "require-dev": {
-    "contao/manager-plugin": "^2.0",
-    "contao/calendar-bundle": "^4.4"
+    "contao/manager-plugin": "^2.0"
   },
   "autoload": {
     "psr-4": {

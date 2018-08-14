@@ -5,7 +5,7 @@
 
 <?php if($this->hasPosts): ?>
 <?php foreach ($this->posts as $post): ?>
-    <article class="facebook-post<?php echo $post['class']; ?>">
+    <article class="facebook-post">
         <div class="facebook-post-image">
             <?php if($post['hasImage']): ?><?php echo $post['image']; ?>
             <?php else: ?>
@@ -17,8 +17,8 @@
             <?php echo $this->parseDate('d', $post['time']) ?>
             <b><?php echo $this->parseDate('M', $post['time']) ?></b>
         </time>
-        <h2><a href="<?php echo $post['href']; ?>"><?php echo $post['headline']; ?></a></h2>
-        <p class="facebook-post-message"><?php echo $post['mediumMessage']; ?></p>
+        <h2><a href="<?php echo $post['href']; ?>"><?php echo explode('<br>', $post['getExcerpt'](5))[0]; ?></a></h2>
+        <p class="facebook-post-message"><?php echo $post['getExcerpt'](50); ?></p>
 
         <p class="facebook-post-link"><a href="<?php echo $post['href']; ?>">read more&hellip;</a></p>
     </article>

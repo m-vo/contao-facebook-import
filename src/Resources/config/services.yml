@@ -2,54 +2,85 @@ services:
   _instanceof:
     Contao\CoreBundle\Framework\FrameworkAwareInterface:
       calls:
-        - ["setFramework", ["@contao.framework"]]
+      - ["setFramework", ["@contao.framework"]]
 
     Symfony\Component\DependencyInjection\ContainerAwareInterface:
       calls:
-        - ["setContainer", ["@service_container"]]
+      - ["setContainer", ["@service_container"]]
 
-  mvo_contao_facebook.opengraph_parser_factory:
-    class: 'Mvo\ContaoFacebookImport\Facebook\OpenGraphParserFactory'
+
+  # GraphAPI
+  mvo_contao_facebook.graph_api.reader_factory:
+    class: Mvo\ContaoFacebookImport\GraphApi\GraphApiReaderFactory
     arguments:
+    - '@doctrine'
     - '@logger'
 
-  mvo_contao_facebook.image_scraper:
-    class: 'Mvo\ContaoFacebookImport\Facebook\ImageScraper'
+  mvo_contao_facebook.graph_api.access_token_generator:
+    class: Mvo\ContaoFacebookImport\GraphApi\AccessTokenGenerator
+
+
+  # image scraping
+  mvo_contao_facebook.image.scraper:
+    class: Mvo\ContaoFacebookImport\Image\Scraper
     arguments:
+    - '@contao.image.image_factory'
+
+  mvo_contao_facebook.image.scraper_agent:
+    class: Mvo\ContaoFacebookImport\Image\ScraperAgent
+    arguments:
+    - '@doctrine'
+    - '@mvo_contao_facebook.image.scraper'
+    - '@mvo_contao_facebook.graph_api.reader_factory'
     - '@logger'
 
-  mvo_contao_facebook.access_token_generator:
-    class: 'Mvo\ContaoFacebookImport\Facebook\AccessTokenGenerator'
 
-  mvo_contao_facebook.listener.import_posts:
-    class: 'Mvo\ContaoFacebookImport\EventListener\ImportFacebookPostsListener'
+  # synchronization
+  mvo_contao_facebook.synchronization.scheduler:
+    class: Mvo\ContaoFacebookImport\Synchronization\Scheduler
     arguments:
-    - '@mvo_contao_facebook.opengraph_parser_factory'
-    - '@mvo_contao_facebook.image_scraper'
+    - '@doctrine'
+    - '@mvo_contao_facebook.image.scraper_agent'
+    - '@mvo_contao_facebook.synchronization.post_synchronizer'
+    - '@mvo_contao_facebook.synchronization.event_synchronizer'
+    - '@logger'
 
-  mvo_contao_facebook.listener.import_events:
-    class: 'Mvo\ContaoFacebookImport\EventListener\ImportFacebookEventsListener'
+  mvo_contao_facebook.synchronization.post_synchronizer:
+    class: Mvo\ContaoFacebookImport\Synchronization\PostSynchronizer
     arguments:
-    - '@mvo_contao_facebook.opengraph_parser_factory'
-    - '@mvo_contao_facebook.image_scraper'
+    - '@doctrine'
+    - '@mvo_contao_facebook.graph_api.reader_factory'
 
-  mvo_contao_facebook.listener.datacontainer.facebook:
-    class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\Facebook'
+  mvo_contao_facebook.synchronization.event_synchronizer:
+    class: Mvo\ContaoFacebookImport\Synchronization\EventSynchronizer
     arguments:
-    - '@mvo_contao_facebook.listener.import_posts'
-    - '@mvo_contao_facebook.listener.import_events'
-    - '@mvo_contao_facebook.access_token_generator'
-    - '@security.token_storage'
+    - '@doctrine'
+    - '@mvo_contao_facebook.graph_api.reader_factory'
+
+  mvo_contao_facebook.listener.contao_cron_listener:
+    class: Mvo\ContaoFacebookImport\EventListener\ContaoCronListener
+    arguments:
+    - '@mvo_contao_facebook.synchronization.scheduler'
+
+
+  # data container
+  mvo_contao_facebook.datacontainer.facebook_node:
+    class: Mvo\ContaoFacebookImport\DataContainer\FacebookNode
+    arguments:
+    - '@doctrine'
+    - '@mvo_contao_facebook.synchronization.scheduler'
+    - '@mvo_contao_facebook.graph_api.access_token_generator'
+
+  mvo_contao_facebook.datacontainer.facebook_element:
+    class: Mvo\ContaoFacebookImport\DataContainer\FacebookElement
+    arguments:
+    - '@doctrine'
+
+
+  # migrations
+  mvo_contao_facebook.listener.database_update:
+    class: Mvo\ContaoFacebookImport\EventListener\DatabaseUpdateListener
+    arguments:
     - '@database_connection'
-    - '@logger'
-
-  mvo_contao_facebook.listener.datacontainer.facebook_post:
-    class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookPost'
-
-  mvo_contao_facebook.listener.datacontainer.facebook_event:
-    class: 'Mvo\ContaoFacebookImport\EventListener\DataContainer\FacebookEvent'
-
-  mvo_contao_facebook.listener.insert_tags.facebook_post:
-      class: 'Mvo\ContaoFacebookImport\EventListener\InsertTags\FacebookEventListener'
-      tags:
-          - { name: contao.hook, hook: replaceInsertTags }
+    tags:
+    - { name: 'contao.hook', hook: 'sqlCompileCommands', method: 'onCompileSqlCommands'}
