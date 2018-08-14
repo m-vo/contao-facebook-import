@@ -108,6 +108,10 @@ If you enable auto synchronization, you're good to go. To manually import
 posts and events, see what got imported or hide certain elements head to the
 respective posts / events child views of your Facebook node.
 
+Images are being imported separately from the textual contents in the background.
+Their import happens in chunks and is prioritized over updating the textual
+content. You'll see images appearing in the elements as soon they have been scraped.
+
 
 **Frontend**
 
