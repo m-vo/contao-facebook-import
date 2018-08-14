@@ -15,7 +15,7 @@ Contao Open Source CMS. The following things are available:
 
 #### Version 3 ####
 This is version 3 of the bundle - to see a list of changes and information on
-how to migrate from older versions please refer to the [changelog][CHANGELOG.MD].
+how to migrate from older versions please refer to the [changelog](CHANGELOG.MD).
 
     
 Setup

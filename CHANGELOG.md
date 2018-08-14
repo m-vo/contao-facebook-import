@@ -32,7 +32,7 @@ lots of overall improvements and bug fixes.
  - Default value for imported posts is now 100 (was 15)
  - There is no setting for the minimum cache time anymore - the API
    limits are now controlled by the number of requests. There are
-   config parameters (see [docs][README.md]) available if you need
+   config parameters (see [docs](README.md) available if you need
    to fine tune this.
 
 **Template changes**
