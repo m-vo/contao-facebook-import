@@ -109,9 +109,16 @@ class FacebookElement
 			->getRepository(FacebookPostEntity::class)
 			->find($row['id']);
 
-		$type = sprintf('<span class="mvo_facebook_post_type">[&thinsp;%s&thinsp;]</span>', $element->getType());
-		$text = \in_array($element->getType(), ['link', 'video'])
-			? $element->getLink() : nl2br(utf8_decode($element->getMessage()));
+		$type = sprintf('<span class="mvo_facebook_post-type">[&thinsp;%s&thinsp;]</span>', $element->getType());
+		$text = nl2br(utf8_decode($element->getMessage()));
+		if (\in_array($element->getType(), ['link', 'video'])) {
+			$text = sprintf(
+				'%s%s<span class="mvo_facebook_post-link">[&thinsp;%s&thinsp;]</span>',
+				$text,
+				'' !== $text ? '<br><br>' : '',
+				$element->getLink()
+			);
+		}
 
 		return sprintf(
 			'<div class="mvo_facebook_element">%s%s<div class="mvo_facebook_element-content">%s</div>',

@@ -11,9 +11,19 @@
     margin: 10px;
 }
 
-.mvo_facebook_element-image img, .mvo_facebook_element-image-placeholder {
-    border: 1px solid #ddd;
+.mvo_facebook_post-type {
+    display: block;
     flex-shrink: 0;
+
+    width: 60px;
+    font-size: 0.9em;
+    color: #999;
+    white-space: nowrap;
+}
+
+.mvo_facebook_element-image img, .mvo_facebook_element-image-placeholder {
+    flex-shrink: 0;
+    border: 1px solid #ddd;
 }
 
 .mvo_facebook_element-image-placeholder {
@@ -45,9 +55,6 @@
     font-size: 1.1em;
 }
 
-.mvo_facebook_post_type {
-    display: block;
-    font-size: 0.9em;
+.mvo_facebook_post-link {
     color: #999;
-    white-space: nowrap;
 }
