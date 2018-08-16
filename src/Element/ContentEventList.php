@@ -111,7 +111,7 @@ class ContentEventList extends ContentElement
 			'name'         => Tools::formatText($event->getName()),
 			'description'  => Tools::formatText($event->getDescription()),
 			'locationName' => Tools::formatText($event->getLocationName()),
-			'ticketUri'    => Tools::formatText($event->getTicketUri()),
+			'ticketUri'    => $event->getTicketUri(),
 			'time'         => $event->getStartTime(),
 			'datetime'     => date(Config::get('datimFormat'), (int) $event->getStartTime()),
 			'href'         => sprintf('https://facebook.com/%s', $event->getEventId()),

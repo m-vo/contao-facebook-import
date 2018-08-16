@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v3.0.1
+------
+- fixed the regex to replace plain urls with links when outputting
+
 v3.0.0
 ------
 Version 3 is a rewrite of most of the synchronization logic and features
