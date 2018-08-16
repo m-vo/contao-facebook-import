@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Mvo\ContaoFacebookImport\Entity;
 
 use Contao\File;
-use Contao\FilesModel;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Mvo\ContaoFacebookImport\Image\ScrapableItemInterface;
@@ -140,12 +139,17 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
 		return $this->issuer;
 	}
 
-	/**
-	 * @return FilesModel|null
+	/** @noinspection ReturnTypeCanBeDeclaredInspection
+	 * Can't set \Contao\FilesModel as long as Contao\FilesModel extends from
+	 * \Model (global namespace) which doesn't exist at cache creation time and
+	 * would break.
 	 */
-	public function getFile(): ?FilesModel
+	/**
+	 * @return \Contao\FilesModel|null
+	 */
+	public function getFile()
 	{
-		return FilesModel::findByUuid($this->uuid);
+		return \Contao\FilesModel::findByUuid($this->uuid);
 	}
 
 	/**
@@ -175,7 +179,7 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
 		}
 
 		// if not, remove file from filesystem as well
-		if (null !== $file = FilesModel::findByUuid($this->uuid)) {
+		if (null !== $file = \Contao\FilesModel::findByUuid($this->uuid)) {
 			try {
 				(new File($file->path))->delete();
 			} catch (\Exception $e) {

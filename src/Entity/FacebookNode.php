@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\Entity;
 
-use Contao\FilesModel;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -92,13 +91,17 @@ class FacebookNode extends DcaDefault
 		return $this->numberOfPosts;
 	}
 
-
-	/**
-	 * @return FilesModel|null
+	/** @noinspection ReturnTypeCanBeDeclaredInspection
+	 * Can't set \Contao\FilesModel as long as Contao\FilesModel extends from
+	 * \Model (global namespace) which doesn't exist at cache creation time and
+	 * would break.
 	 */
-	public function getUploadDirectory(): ?FilesModel
+	/**
+	 * @return \Contao\FilesModel|null
+	 */
+	public function getUploadDirectory()
 	{
-		return FilesModel::findByUuid($this->uploadDirectory);
+		return \Contao\FilesModel::findByUuid($this->uploadDirectory);
 	}
 
 	/**

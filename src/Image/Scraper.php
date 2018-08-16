@@ -18,7 +18,6 @@ use Contao\Config;
 use Contao\CoreBundle\Image\ImageFactory;
 use Contao\Dbafs;
 use Contao\FilesModel;
-use Contao\Image\Image;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;

@@ -125,7 +125,6 @@ class ScraperAgent
 		}
 
 		// get destination path
-		/** @var FilesModel $uploadDirectory */
 		$uploadDirectory = $node->getUploadDirectory();
 		if (null === $uploadDirectory) {
 			throw new \RuntimeException('No upload directory specified. Aborting.', $node->getId());
