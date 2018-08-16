@@ -117,6 +117,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_post'] =
 				'fb_post_id'   => [],
 				'type'         => [],
 				'post_time'    => [],
+				'link'         => [],
 				'last_changed' => [],
 			]
 	];

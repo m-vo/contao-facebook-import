@@ -46,6 +46,14 @@ class FacebookPost extends FacebookElement
 	/**
 	 * @var string
 	 *
+	 * @ORM\Column(type="string", options={"default": ""})
+	 */
+	protected $link;
+
+
+	/**
+	 * @var string
+	 *
 	 * @ORM\Column(type="string", length=16, options={"default": ""})
 	 */
 	protected $type;
@@ -83,12 +91,12 @@ class FacebookPost extends FacebookElement
 	public function updateFromGraphNode(GraphNode $graphNode): void
 	{
 		$message = $graphNode->getField('message', null) ??
-				   $graphNode->getField('caption', null) ??
-				   $graphNode->getField('link', '');
+				   $graphNode->getField('caption', '');
 
 		$this->postTime = $this->extractTimeFromGraphNode($graphNode, 'created_time');
 		$this->message  = utf8_encode($message);
-		$this->type     = $graphNode->getField('type', null);
+		$this->link     = $graphNode->getField('link', '');
+		$this->type     = $graphNode->getField('type', '');
 
 		$this->updateImage(ScrapingInformation::fromPostNode($graphNode));
 
@@ -117,6 +125,14 @@ class FacebookPost extends FacebookElement
 	public function getPostTime(): int
 	{
 		return $this->postTime;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLink(): string
+	{
+		return $this->link;
 	}
 
 }

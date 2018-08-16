@@ -115,6 +115,7 @@ class ContentPostList extends ContentElement
 			'lastChanged' => $post->getLastChanged(),
 			'type'        => $post->getType(),
 			'message'     => Tools::formatText($post->getMessage()),
+			'link'        => $post->getLink(),
 			'time'        => $post->getPostTime(),
 			'datetime'    => date(Config::get('datimFormat'), $post->getPostTime()),
 			'href'        => sprintf('https://facebook.com/%s', $post->getPostId())
