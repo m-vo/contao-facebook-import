@@ -135,9 +135,9 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
 		}
 
 		$token = $this->facebookAccessTokenGenerator->generateNeverExpiringAccessToken(
-			$dc->activeRecord->fbAppId,
-			$dc->activeRecord->fbAppSecret,
-			$dc->activeRecord->fbAccessToken
+			$dc->activeRecord->fb_app_id ?? '',
+			$dc->activeRecord->fb_app_secret ?? '',
+			$dc->activeRecord->fb_access_token ?? ''
 		);
 
 		if (!$token) {
