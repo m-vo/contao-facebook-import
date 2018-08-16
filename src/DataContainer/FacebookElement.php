@@ -108,8 +108,11 @@ class FacebookElement
 			->getRepository(FacebookPostEntity::class)
 			->find($row['id']);
 
+		$type = sprintf('<span class="mvo_facebook_post_type">[&thinsp;%s&thinsp;]</span>', $element->getType());
+
 		return sprintf(
-			'<div class="mvo_facebook_element">%s<div class="mvo_facebook_element-content">%s</div>',
+			'<div class="mvo_facebook_element">%s%s<div class="mvo_facebook_element-content">%s</div>',
+			$type,
 			$this->getLabelImage($element->getImage()),
 			nl2br(utf8_decode($element->getMessage()))
 		);
