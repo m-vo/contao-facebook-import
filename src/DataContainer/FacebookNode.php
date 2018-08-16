@@ -61,6 +61,23 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
 
 
 	/**
+	 * @param DataContainer $dc
+	 */
+	public function onDelete(DataContainer $dc): void
+	{
+		/** @var FacebookNodeEntity $element */
+		$element = $this->doctrine
+			->getRepository(FacebookNodeEntity::class)
+			->find($dc->id);
+
+		if (null !== $element) {
+			$manager = $this->doctrine->getManager();
+			$manager->remove($element);
+			$manager->flush();
+		}
+	}
+
+	/**
 	 * Force import of posts.
 	 *
 	 * @param DataContainer $dc

@@ -17,14 +17,20 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 		// Config
 		'config'      =>
 			[
-				'dataContainer'    => 'Table',
-				'ctable'           => ['tl_mvo_facebook_event', 'tl_mvo_facebook_post'],
-				'switchToEdit'     => true,
-				'enableVersioning' => true,
+				'dataContainer'     => 'Table',
+				'ctable'            => ['tl_mvo_facebook_event', 'tl_mvo_facebook_post'],
+				'switchToEdit'      => true,
+				'enableVersioning'  => true,
 				'onsubmit_callback' => [
 					[
 						'mvo_contao_facebook.datacontainer.facebook_node',
 						'onGenerateAccessToken'
+					]
+				],
+				'ondelete_callback' => [
+					[
+						'mvo_contao_facebook.datacontainer.facebook_node',
+						'onDelete'
 					]
 				]
 			],
@@ -121,13 +127,13 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 		// Fields
 		'fields'      =>
 			[
-				'id'                 =>
+				'id'                   =>
 					[
 					],
-				'tstamp'             =>
+				'tstamp'               =>
 					[
 					],
-				'description'        =>
+				'description'          =>
 					[
 						'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['description'],
 						'exclude'   => true,
@@ -150,10 +156,10 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 					],
 				'fb_access_token'      =>
 					[
-						'label'         => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fb_access_token'],
-						'exclude'       => true,
-						'inputType'     => 'text',
-						'eval'          => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+						'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['fb_access_token'],
+						'exclude'   => true,
+						'inputType' => 'text',
+						'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
 					],
 				'convert_access_token' =>
 					[
@@ -190,7 +196,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 							'tl_class'  => 'w50'
 						],
 					],
-				'import_enabled'      =>
+				'import_enabled'       =>
 					[
 						'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['import_enabled'],
 						'exclude'   => true,
@@ -198,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 						'inputType' => 'checkbox',
 						'eval'      => ['isBoolean' => true],
 					],
-				'upload_directory'    =>
+				'upload_directory'     =>
 					[
 						'label'     => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['upload_directory'],
 						'exclude'   => true,
