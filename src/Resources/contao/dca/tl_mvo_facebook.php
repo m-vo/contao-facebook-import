@@ -70,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 								'label'                => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['toggle'],
 								'attributes'           => 'onclick="Backend.getScrollOffset();"',
 								'haste_ajax_operation' => [
-									'field'   => 'importEnabled',
+									'field'   => 'import_enabled',
 									'options' => [
 										[
 											'value' => false,
