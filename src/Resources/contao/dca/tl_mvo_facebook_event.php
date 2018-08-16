@@ -25,7 +25,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_event'] =
 				'closed'            => true,
 				'ondelete_callback' => [
 					[
-						'mvo_contao_facebook.listener.datacontainer.facebook_element',
+						'mvo_contao_facebook.datacontainer.facebook_element',
 						'onDeleteEvent'
 					]
 				],
