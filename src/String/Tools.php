@@ -37,8 +37,8 @@ class Tools
 	{
 		// surround urls with <a> tags
 		return preg_replace(
-			'#(https?\://)?[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?#',
-			'<a rel="nofollow noreferrer" href="$1">$1</a>',
+			'#https?://\S+#i',
+			'<a rel="nofollow noreferrer" href="$0">$0</a>',
 			$str
 		);
 	}
