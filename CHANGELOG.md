@@ -20,12 +20,14 @@ lots of overall improvements and bug fixes.
  - Content Management
     - A post's *object type* is now stored as well and can be accessed from
       within the template (e.g. *link* / *status* / *photo*).
+    - Same goes for the link attribute (that for instance contains the
+      target url for *link* or *video* posts).
     - Posts can now be filtered by object type.
     - The number of shown events can now be limited.
     - Similarly the ticket url is now available for events.
  - User Interface
-    - Improved rendering in the backend (now includes preview images and
-      more content)
+    - Improved rendering in the backend (now includes preview images,
+      post types and more content)
     - Allow removing multiple posts/events at once (to be re-synced).
 
 **Changed behaviour**
