@@ -3,6 +3,12 @@ Changelog
 
 v3.0.1
 ------
+- fixed regex to replace plain urls with links in the frontend
+- removed unnecessary formatting of ticket urls
+
+
+v3.0.1
+------
 - fixed the regex to replace plain urls with links when outputting
 
 v3.0.0
