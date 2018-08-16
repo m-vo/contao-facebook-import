@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\EventListener;
 
+use Contao\Controller;
 use Doctrine\DBAL\Connection;
 use Mvo\ContaoFacebookImport\Database\Update;
 use Symfony\Component\Finder\Finder;
@@ -58,6 +59,9 @@ class DatabaseUpdateListener
 
 			if ($update instanceof Update && $update->shouldBeRun()) {
 				$update->run();
+
+				// reload so that the install tool hash is fresh
+				Controller::reload();
 			}
 		}
 
