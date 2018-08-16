@@ -60,9 +60,8 @@ calendars) with a different approach. But it may take some time&hellip;
 
 How to migrate from version 2?
 ------------------------------
- 1. Drop the tables `tl_mvo_facebook_posts` and
- `tl_mvo_facebook_events` or delete all elements in there via the
- backend<sup>**)</sup>
+ 1. Make sure there is nothing in `tl_mvo_facebook_posts` and
+ `tl_mvo_facebook_events` that you want to keep<sup>**)</sup>
  2. Delete existing scraped images if there are any<sup>**)</sup>
 
 <sup>**)</sup> Data in these tables is temporary anyways and will get
