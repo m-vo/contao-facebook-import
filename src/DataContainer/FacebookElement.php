@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Mvo\ContaoFacebookImport\DataContainer;
 
 use Contao\Config;
+use Contao\Controller;
 use Contao\DataContainer;
 use Contao\Frontend;
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -129,6 +130,15 @@ class FacebookElement
 	{
 		if (null === $image) {
 			return '';
+		}
+
+		if (ScrapableItemInterface::STATE_WAITING === $image->getScrapingState()) {
+			Controller::loadLanguageFile('elements');
+
+			return sprintf(
+				'<div class="mvo_facebook_element-image-placeholder"><p>%s</p></div>',
+				$GLOBALS['TL_LANG']['MSC']['mvo_facebook_imagesWaiting']
+			);
 		}
 
 		if (ScrapableItemInterface::STATE_SUCCESS === $image->getScrapingState()

@@ -18,3 +18,5 @@ $GLOBALS['TL_LANG']['MSC']['mvo_facebook_emptyEventList'] = 'Derzeit sind keine 
 $GLOBALS['TL_LANG']['MSC']['mvo_facebook_postListDisplay'] = '%s Posts | Objekt-Typen: %s';
 $GLOBALS['TL_LANG']['MSC']['mvo_facebook_eventListDisplay'] = '%s Veranstaltungen';
 $GLOBALS['TL_LANG']['MSC']['mvo_facebook_allAvailable'] = 'alle verfügbaren';
+
+$GLOBALS['TL_LANG']['MSC']['mvo_facebook_imagesWaiting'] = 'Bild in Download-Warteschlange …';

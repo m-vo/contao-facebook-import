@@ -37,4 +37,3 @@ $GLOBALS['TL_LANG']['tl_mvo_facebook']['number_of_posts'] = ['Post-Anzahl','maxi
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['media_legend'] = 'Medien';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['upload_directory'] = ['Upload-Ordner', 'Ort, an dem die gescrapten Bilddaten ablegt werden'];
-
