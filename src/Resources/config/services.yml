@@ -61,6 +61,7 @@ services:
     class: Mvo\ContaoFacebookImport\EventListener\ContaoCronListener
     arguments:
     - '@mvo_contao_facebook.synchronization.scheduler'
+    public: true
 
 
   # data container
@@ -70,12 +71,13 @@ services:
     - '@doctrine'
     - '@mvo_contao_facebook.synchronization.scheduler'
     - '@mvo_contao_facebook.graph_api.access_token_generator'
+    public: true
 
   mvo_contao_facebook.datacontainer.facebook_element:
     class: Mvo\ContaoFacebookImport\DataContainer\FacebookElement
     arguments:
     - '@doctrine'
-
+    public: true
 
   # migrations
   mvo_contao_facebook.listener.database_update:
