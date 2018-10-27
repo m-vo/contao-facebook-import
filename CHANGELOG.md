@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v3.0.3
+------
+- fix: request quota was not accounted
+- fix: allow request quota log to be nullable (#9)
+- small fix in english language file
+
 v3.0.2
 ------
 - fix: make services public that are used in Contao callbacks
