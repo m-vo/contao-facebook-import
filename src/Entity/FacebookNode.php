@@ -65,7 +65,7 @@ class FacebookNode extends DcaDefault
 	/**
 	 * @var array
 	 *
-	 * @ORM\Column(name="request_quota_log", type="simple_array")
+	 * @ORM\Column(name="request_quota_log", type="simple_array", nullable=true)
 	 */
 	protected $requestQuotaLog = [];
 
@@ -109,6 +109,9 @@ class FacebookNode extends DcaDefault
 	 */
 	public function addRequest(): void
 	{
+		if(null === $this->requestQuotaLog) {
+			$this->requestQuotaLog = [];
+		}
 		$this->requestQuotaLog[] = time();
 	}
 
@@ -120,6 +123,10 @@ class FacebookNode extends DcaDefault
 	 */
 	public function hasRequestQuotaAvailable(int $requestWindowLength, int $allowedRequestCount): bool
 	{
+		if(null === $this->requestQuotaLog) {
+			return $allowedRequestCount > 0;
+		}
+
 		$threshold = time() - $requestWindowLength;
 
 		// tally elements in window
@@ -139,6 +146,10 @@ class FacebookNode extends DcaDefault
 	 */
 	public function purgeQuotaLog(int $requestWindowLength): void
 	{
+		if(null === $this->requestQuotaLog) {
+			return;
+		}
+
 		$threshold = time() - $requestWindowLength;
 
 		// remove elements
