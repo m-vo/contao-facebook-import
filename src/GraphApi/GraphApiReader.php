@@ -173,7 +173,7 @@ class GraphApiReader
 		array $params = []
 	): FacebookResponse {
 		// check request quota
-		if (null === $this->trackRequestQuotaCallback) {
+		if (null !== $this->trackRequestQuotaCallback) {
 			($this->trackRequestQuotaCallback)();
 		}
 
