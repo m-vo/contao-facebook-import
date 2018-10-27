@@ -32,7 +32,7 @@ $GLOBALS['TL_LANG']['tl_mvo_facebook']['convert_access_token'] = ['Convert Faceb
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['error_converting_token'] = 'The specified Access Token could not be converted to a never expiring one.';
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['import_legend'] = 'Import';
-$GLOBALS['TL_LANG']['tl_mvo_facebook']['importEnabled'] = ['Enable automatic synchronization of posts and events'];
+$GLOBALS['TL_LANG']['tl_mvo_facebook']['import_enabled'] = ['Enable automatic synchronization of posts and events'];
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['number_of_posts'] = ['Number of posts','maximal number of posts to be imported'];
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['media_legend'] = 'Media';
