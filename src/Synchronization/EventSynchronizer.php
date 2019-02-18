@@ -71,6 +71,9 @@ class EventSynchronizer
 			],
 			['since' => strtotime('today midnight')]
 		);
+        if (null === $graphNodes) {
+            return [0, 0, 0];
+        }
 
 		// load existing events
 		$events = $this->manager

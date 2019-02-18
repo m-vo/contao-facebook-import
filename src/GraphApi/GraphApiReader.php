@@ -104,10 +104,10 @@ class GraphApiReader
 	 * @param array  $fieldNames field names to query
 	 * @param array  $params     add custom params if needed
 	 *
-	 * @return \Facebook\GraphNodes\GraphNode[]
+	 * @return \Facebook\GraphNodes\GraphNode[]|null
 	 * @throws RequestQuotaExceededException
 	 */
-	public function getPageNodes(string $entity, array $fieldNames, array $params = []): array
+    public function getPageNodes(string $entity, array $fieldNames, array $params = []): ?array
 	{
 		$requiredElements = $params['limit'] ?? 0;
 		$limitThreshold   = 100;

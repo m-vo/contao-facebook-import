@@ -73,6 +73,9 @@ class PostSynchronizer
 			],
 			['limit' => $node->getSynchronizationScope()]
 		);
+        if (null === $graphNodes) {
+            return [0, 0, 0];
+        }
 
 		// load existing posts
 		$posts = $this->manager
