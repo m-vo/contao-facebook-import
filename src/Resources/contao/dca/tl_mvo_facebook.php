@@ -203,6 +203,11 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 						'default'   => false,
 						'inputType' => 'checkbox',
 						'eval'      => ['isBoolean' => true],
+                        'save_callback' => [
+                            function ($value) {
+                                return $value === '1';
+                            }
+                        ]
 					],
 				'upload_directory'     =>
 					[
