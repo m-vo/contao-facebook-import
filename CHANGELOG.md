@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v3.0.4
+------
+- fix: enforce boolean output in DCAs for strict SQL modes (#12)
+- improvement: allow null to be returned in getPageNodes()
+  \+ harden synchronizer logic
+- improvement: use `version_compare` to compare bundle versions
+
 v3.0.3
 ------
 - fix: request quota was not accounted
