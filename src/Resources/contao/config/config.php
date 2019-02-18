@@ -39,7 +39,11 @@ $coreVersion = explode(
 	'.',
 	\Contao\System::getContainer()->getParameter('kernel.packages')['contao/core-bundle']
 );
-if ($coreVersion[1] < 5) {
+if (0 > version_compare(
+        \Contao\System::getContainer()->getParameter('kernel.packages')['contao/core-bundle'],
+        '4.5.0'
+    ))
+{
 	// contao/core-bundle < 4.5.0 doesn't support hooks as tagged services
 	$GLOBALS['TL_HOOKS']['sqlCompileCommands'][] =
 		['mvo_contao_facebook.listener.database_update', 'onCompileSqlCommands'];
