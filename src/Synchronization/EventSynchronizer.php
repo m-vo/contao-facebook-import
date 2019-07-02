@@ -48,7 +48,7 @@ class EventSynchronizer
      *
      * @throws \Mvo\ContaoFacebookImport\GraphApi\RequestQuotaExceededException
      *
-     * @return array<int,int,int>
+     * @return array array<int,int,int>
      */
     public function run(FacebookNode $node): array
     {

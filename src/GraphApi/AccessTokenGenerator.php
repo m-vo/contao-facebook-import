@@ -54,14 +54,14 @@ class AccessTokenGenerator
     }
 
     /**
-     * @param $url
-     * @param $property
+     * @param string $url
+     * @param string $property
      *
      * @throws \RuntimeException
      *
      * @return string
      */
-    private function getProperty($url, $property): string
+    private function getProperty(string $url, string $property): string
     {
         $client = new Client();
         $response = $client->get($url);

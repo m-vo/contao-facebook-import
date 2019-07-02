@@ -22,12 +22,6 @@ use Contao\StringUtil;
 use Mvo\ContaoFacebookImport\Entity\FacebookPost;
 use Mvo\ContaoFacebookImport\String\Tools;
 
-/**
- * @property int  mvo_facebook_node
- * @property int  mvo_facebook_number_of_elements
- * @property int  mvo_facebook_allowed_post_types
- * @property bool fullsize
- */
 class ContentPostList extends ContentElement
 {
     /**

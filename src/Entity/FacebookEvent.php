@@ -150,7 +150,7 @@ class FacebookEvent extends FacebookElement
      */
     private function extractLocationNameFromGraphNode(GraphNode $graphNode): string
     {
-        /** @var GraphNode $place */
+        /** @var GraphNode|null $place */
         $place = $graphNode->getField('place', null);
 
         return (null !== $place) ? $place->getField('name', '') : '';

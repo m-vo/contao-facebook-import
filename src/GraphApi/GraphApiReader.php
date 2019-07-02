@@ -83,7 +83,7 @@ class GraphApiReader
      *
      * @throws RequestQuotaExceededException
      *
-     * @return array|null
+     * @return GraphNode|null
      */
     public function getSingleNode(string $objectId, array $fieldNames, array $params = []): ?GraphNode
     {

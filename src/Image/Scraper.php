@@ -183,9 +183,9 @@ class Scraper implements ContainerAwareInterface
     /**
      * Download a file.
      *
-     * @param string                     $sourceUri
-     * @param string                     $destinationPath
-     * @param GuzzleException|\Exception $error
+     * @param string                $sourceUri
+     * @param string                $destinationPath
+     * @param GuzzleException| null $error
      *
      * @return bool
      */

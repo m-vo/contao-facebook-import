@@ -121,7 +121,7 @@ class ScrapingInformation
     public static function fromEventNode(GraphNode $graphNode): ?self
     {
         // only accept nodes with cover information
-        /** @var GraphCoverPhoto $cover */
+        /** @var GraphCoverPhoto|null $cover */
         $cover = $graphNode->getField('cover', null);
         if (null === $cover) {
             return null;

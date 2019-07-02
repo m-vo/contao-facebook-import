@@ -138,6 +138,6 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
     {
         $this->framework->initialize();
 
-        Controller::redirect(Controller::addToUrl(null, true, ['key']));
+        Controller::redirect(Controller::addToUrl('', true, ['key']));
     }
 }

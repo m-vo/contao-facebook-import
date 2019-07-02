@@ -37,7 +37,7 @@ abstract class FacebookElement extends DcaDefault
     protected $visible = true;
 
     /**
-     * @var FacebookImage
+     * @var FacebookImage|null
      *
      * @ORM\OneToOne(
      *     targetEntity="Mvo\ContaoFacebookImport\Entity\FacebookImage",
@@ -124,7 +124,7 @@ abstract class FacebookElement extends DcaDefault
      */
     protected function extractTimeFromGraphNode(GraphNode $graphNode, string $field): int
     {
-        /** @var \DateTime $date */
+        /** @var \DateTime|null $date */
         $date = $graphNode->getField($field, null);
 
         return (null !== $date) ? $date->getTimestamp() : 0;

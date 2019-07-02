@@ -22,11 +22,6 @@ use Contao\StringUtil;
 use Mvo\ContaoFacebookImport\Entity\FacebookEvent;
 use Mvo\ContaoFacebookImport\String\Tools;
 
-/**
- * @property int  mvo_facebook_node
- * @property int  mvo_facebook_number_of_elements
- * @property bool fullsize
- */
 class ContentEventList extends ContentElement
 {
     /**

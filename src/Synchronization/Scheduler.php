@@ -198,9 +198,9 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
     }
 
     /**
-     * @param $nodes
+     * @param FacebookNode[] $nodes
      */
-    private function synchronizePostsAndEvents($nodes): void
+    private function synchronizePostsAndEvents(array $nodes): void
     {
         $maxExecutionTime = $this->container->getParameter('mvo_contao_facebook_import.max_execution_time');
 

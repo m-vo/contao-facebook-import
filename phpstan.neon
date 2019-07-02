@@ -1,14 +1,20 @@
 parameters:
-  paths:
-    - %currentWorkingDirectory%/src
+  doctrine:
+    repositoryClass: Mvo\ContaoFacebookImport\Entity\FacebookNodeRepository
+
+  ignoreErrors:
+    - '#Constant TL_MODE not found.#'
+    - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\).#'
 
   excludes_analyse:
     - %currentWorkingDirectory%/src/Resources/*
 
-  ignoreErrors:
-    - '#Constant TL_MODE not found.#'
-
   universalObjectCratesClasses:
     - Contao\ContentElement
+    - Contao\Template
 
-  level: 1
+ # default run config
+  paths:
+    - %currentWorkingDirectory%/src
+
+  level: 5
