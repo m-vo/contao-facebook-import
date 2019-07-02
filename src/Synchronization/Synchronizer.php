@@ -74,7 +74,7 @@ class Synchronizer
             if (!\array_key_exists($id, $localItemsDictionary)) {
                 $create[$id] = $remoteItem;
             } else {
-                if (null === $isUpdateRequired && $isUpdateRequired($localItemsDictionary[$id], $remoteItem)) {
+                if (null !== $isUpdateRequired && $isUpdateRequired($localItemsDictionary[$id], $remoteItem)) {
                     $update[$id] = [$localItemsDictionary[$id], $remoteItem];
                 }
                 unset($localItemsDictionary[$id]);
