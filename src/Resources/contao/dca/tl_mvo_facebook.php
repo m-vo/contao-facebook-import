@@ -78,14 +78,14 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
 								'haste_ajax_operation' => [
 									'field'   => 'import_enabled',
 									'options' => [
-										[
-											'value' => false,
-											'icon'  => 'invisible.svg'
-										],
-										[
-											'value' => true,
-											'icon'  => 'visible.svg'
-										]
+                                        [
+                                            'value' => '0',
+                                            'icon'  => 'invisible.svg'
+                                        ],
+                                        [
+                                            'value' => '1',
+                                            'icon'  => 'visible.svg'
+                                        ]
 									]
 								]
 							],

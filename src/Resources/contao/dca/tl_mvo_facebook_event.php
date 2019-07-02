@@ -81,11 +81,11 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_event'] =
 									'field'   => 'visible',
 									'options' => [
 										[
-											'value' => false,
+											'value' => '0',
 											'icon'  => 'invisible.svg'
 										],
 										[
-											'value' => true,
+											'value' => '1',
 											'icon'  => 'visible.svg'
 										]
 									]
