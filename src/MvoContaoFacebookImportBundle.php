@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *

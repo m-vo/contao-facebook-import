@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -18,7 +18,6 @@ $GLOBALS['TL_LANG']['tl_mvo_facebook']['events'][1] = 'Synchronisierte Veranstal
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['posts'][1] = 'Synchronisierte Posts anzeigen';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['toggle'][1] = 'Auto-Synchronisierung aktivieren/deaktivieren';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['delete'][1] = 'Facebook Knoten löschen';
-
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['basic_legend'] = 'Allgemeines';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['description'] = ['Bezeichner'];
@@ -33,7 +32,7 @@ $GLOBALS['TL_LANG']['tl_mvo_facebook']['error_converting_token'] = 'Das angegebe
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['import_legend'] = 'Import';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['import_enabled'] = ['Automatische Synchronisierung von Posts und Veranstaltungen aktivieren'];
-$GLOBALS['TL_LANG']['tl_mvo_facebook']['number_of_posts'] = ['Post-Anzahl','maximale Anzahl an importierten Posts'];
+$GLOBALS['TL_LANG']['tl_mvo_facebook']['number_of_posts'] = ['Post-Anzahl', 'maximale Anzahl an importierten Posts'];
 
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['media_legend'] = 'Medien';
 $GLOBALS['TL_LANG']['tl_mvo_facebook']['upload_directory'] = ['Upload-Ordner', 'Ort, an dem die gescrapten Bilddaten ablegt werden'];

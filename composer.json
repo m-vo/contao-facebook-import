@@ -29,7 +29,8 @@
     "doctrine/orm": "^2.6"
   },
   "require-dev": {
-    "contao/manager-plugin": "^2.0"
+    "contao/manager-plugin": "^2.0",
+    "friendsofphp/php-cs-fixer": "^2.15"
   },
   "autoload": {
     "psr-4": {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -28,50 +28,52 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Plugin implements BundlePluginInterface, DependentPluginInterface, ConfigPluginInterface, RoutingPluginInterface
 {
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getBundles(ParserInterface $parser)
-	{
-		return [
-			BundleConfig::create(MvoContaoFacebookImportBundle::class)
-				->setLoadAfter(
-					[
-						ContaoCoreBundle::class,
-						'haste'
-					]
-				),
-		];
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getBundles(ParserInterface $parser)
+    {
+        return [
+            BundleConfig::create(MvoContaoFacebookImportBundle::class)
+                ->setLoadAfter(
+                    [
+                        ContaoCoreBundle::class,
+                        'haste',
+                    ]
+                ),
+        ];
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getPackageDependencies()
-	{
-		return [
-			'facebook/graph-sdk',
-			'guzzlehttp/guzzle',
-		];
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getPackageDependencies()
+    {
+        return [
+            'facebook/graph-sdk',
+            'guzzlehttp/guzzle',
+        ];
+    }
 
-	/**
-	 * {@inheritdoc}
-	 * @throws \Exception
-	 */
-	public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
-	{
-		$loader->load(__DIR__ . '/../Resources/config/config.yml');
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \Exception
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
+    {
+        $loader->load(__DIR__.'/../Resources/config/config.yml');
+    }
 
-	/**
-	 * @inheritdoc
-	 * @throws \Exception
-	 */
-	public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
-	{
-		return $resolver
-			->resolve(__DIR__ . '/../Resources/config/routing.yml')
-			->load(__DIR__ . '/../Resources/config/routing.yml');
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \Exception
+     */
+    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
+    {
+        return $resolver
+            ->resolve(__DIR__.'/../Resources/config/routing.yml')
+            ->load(__DIR__.'/../Resources/config/routing.yml');
+    }
 }

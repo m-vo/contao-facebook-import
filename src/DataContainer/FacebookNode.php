@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -21,127 +21,123 @@ use Contao\DataContainer;
 use Contao\Input;
 use Contao\Message;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Mvo\ContaoFacebookImport\Entity\FacebookNode as FacebookNodeEntity;
 use Mvo\ContaoFacebookImport\GraphApi\AccessTokenGenerator;
 use Mvo\ContaoFacebookImport\Synchronization\Scheduler;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use \Mvo\ContaoFacebookImport\Entity\FacebookNode as FacebookNodeEntity;
 
 class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
 {
-	use FrameworkAwareTrait;
-	use ContainerAwareTrait;
+    use FrameworkAwareTrait;
+    use ContainerAwareTrait;
 
-	/** @var Registry */
-	private $doctrine;
+    /** @var Registry */
+    private $doctrine;
 
-	/** @var Scheduler */
-	private $scheduler;
+    /** @var Scheduler */
+    private $scheduler;
 
-	/** @var AccessTokenGenerator */
-	private $facebookAccessTokenGenerator;
+    /** @var AccessTokenGenerator */
+    private $facebookAccessTokenGenerator;
 
+    /**
+     * FacebookNode constructor.
+     *
+     * @param Registry             $doctrine
+     * @param Scheduler            $scheduler
+     * @param AccessTokenGenerator $facebookAccessTokenGenerator
+     */
+    public function __construct(
+        Registry $doctrine,
+        Scheduler $scheduler,
+        AccessTokenGenerator $facebookAccessTokenGenerator
+    ) {
+        $this->doctrine = $doctrine;
+        $this->scheduler = $scheduler;
+        $this->facebookAccessTokenGenerator = $facebookAccessTokenGenerator;
+    }
 
-	/**
-	 * FacebookNode constructor.
-	 *
-	 * @param Registry             $doctrine
-	 * @param Scheduler            $scheduler
-	 * @param AccessTokenGenerator $facebookAccessTokenGenerator
-	 */
-	public function __construct(
-		Registry $doctrine,
-		Scheduler $scheduler,
-		AccessTokenGenerator $facebookAccessTokenGenerator
-	) {
-		$this->doctrine                     = $doctrine;
-		$this->scheduler                    = $scheduler;
-		$this->facebookAccessTokenGenerator = $facebookAccessTokenGenerator;
-	}
+    /**
+     * @param DataContainer $dc
+     */
+    public function onDelete(DataContainer $dc): void
+    {
+        /** @var FacebookNodeEntity $element */
+        $element = $this->doctrine
+            ->getRepository(FacebookNodeEntity::class)
+            ->find($dc->id);
 
+        if (null !== $element) {
+            $manager = $this->doctrine->getManager();
+            $manager->remove($element);
+            $manager->flush();
+        }
+    }
 
-	/**
-	 * @param DataContainer $dc
-	 */
-	public function onDelete(DataContainer $dc): void
-	{
-		/** @var FacebookNodeEntity $element */
-		$element = $this->doctrine
-			->getRepository(FacebookNodeEntity::class)
-			->find($dc->id);
+    /**
+     * Force import of posts.
+     *
+     * @param DataContainer $dc
+     */
+    public function onSynchronizePosts(DataContainer $dc): void
+    {
+        $node = $this->doctrine
+            ->getRepository(FacebookNodeEntity::class)
+            ->find((int) $dc->id);
 
-		if (null !== $element) {
-			$manager = $this->doctrine->getManager();
-			$manager->remove($element);
-			$manager->flush();
-		}
-	}
+        if (null !== $node) {
+            $this->scheduler->synchronizePosts($node);
+        }
 
-	/**
-	 * Force import of posts.
-	 *
-	 * @param DataContainer $dc
-	 */
-	public function onSynchronizePosts(DataContainer $dc): void
-	{
-		$node = $this->doctrine
-			->getRepository(FacebookNodeEntity::class)
-			->find((int) $dc->id);
+        $this->redirectBack();
+    }
 
-		if (null !== $node) {
-			$this->scheduler->synchronizePosts($node);
-		}
+    /**
+     * Force import of events.
+     *
+     * @param DataContainer $dc
+     */
+    public function onSynchronizeEvents(DataContainer $dc): void
+    {
+        $node = $this->doctrine
+            ->getRepository(FacebookNodeEntity::class)
+            ->find((int) $dc->id);
 
-		$this->redirectBack();
-	}
+        if (null !== $node) {
+            $this->scheduler->synchronizeEvents($node);
+        }
 
-	/**
-	 * Force import of events.
-	 *
-	 * @param DataContainer $dc
-	 */
-	public function onSynchronizeEvents(DataContainer $dc): void
-	{
-		$node = $this->doctrine
-			->getRepository(FacebookNodeEntity::class)
-			->find((int) $dc->id);
+        $this->redirectBack();
+    }
 
-		if (null !== $node) {
-			$this->scheduler->synchronizeEvents($node);
-		}
+    /**
+     * @param DataContainer $dc
+     */
+    public function onGenerateAccessToken(DataContainer $dc): void
+    {
+        if (!Input::post('convert_access_token')) {
+            return;
+        }
 
-		$this->redirectBack();
-	}
+        $token = $this->facebookAccessTokenGenerator->generateNeverExpiringAccessToken(
+            $dc->activeRecord->fb_app_id ?? '',
+            $dc->activeRecord->fb_app_secret ?? '',
+            $dc->activeRecord->fb_access_token ?? ''
+        );
 
-	/**
-	 * Redirect to current listing after action.
-	 */
-	private function redirectBack(): void
-	{
-		$this->framework->initialize();
+        if (!$token) {
+            Message::addError($GLOBALS['TL_LANG']['tl_mvo_facebook']['error_converting_token']);
+        }
+    }
 
-		Controller::redirect(Controller::addToUrl(null, true, ['key']));
-	}
+    /**
+     * Redirect to current listing after action.
+     */
+    private function redirectBack(): void
+    {
+        $this->framework->initialize();
 
-	/**
-	 * @param DataContainer $dc
-	 *
-	 * @return void
-	 */
-	public function onGenerateAccessToken(DataContainer $dc): void
-	{
-		if (!Input::post('convert_access_token')) {
-			return;
-		}
-
-		$token = $this->facebookAccessTokenGenerator->generateNeverExpiringAccessToken(
-			$dc->activeRecord->fb_app_id ?? '',
-			$dc->activeRecord->fb_app_secret ?? '',
-			$dc->activeRecord->fb_access_token ?? ''
-		);
-
-		if (!$token) {
-			Message::addError($GLOBALS['TL_LANG']['tl_mvo_facebook']['error_converting_token']);
-		}
-	}
+        Controller::redirect(Controller::addToUrl(null, true, ['key']));
+    }
 }

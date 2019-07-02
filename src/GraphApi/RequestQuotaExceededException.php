@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -18,21 +18,21 @@ use Mvo\ContaoFacebookImport\Entity\FacebookNode;
 
 class RequestQuotaExceededException extends \Exception
 {
-	/** @var FacebookNode */
-	private $facebookNode;
+    /** @var FacebookNode */
+    private $facebookNode;
 
-	public function __construct(FacebookNode $node)
-	{
-		$this->facebookNode = $node;
+    public function __construct(FacebookNode $node)
+    {
+        $this->facebookNode = $node;
 
-		parent::__construct(sprintf('Quota exceeded for Facebook Node ID%s.', $node->getId()));
-	}
+        parent::__construct(sprintf('Quota exceeded for Facebook Node ID%s.', $node->getId()));
+    }
 
-	/**
-	 * @return FacebookNode
-	 */
-	public function getFacebookNode(): FacebookNode
-	{
-		return $this->facebookNode;
-	}
+    /**
+     * @return FacebookNode
+     */
+    public function getFacebookNode(): FacebookNode
+    {
+        return $this->facebookNode;
+    }
 }

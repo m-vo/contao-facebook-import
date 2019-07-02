@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -29,212 +29,212 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
 {
-	use ContainerAwareTrait;
+    use ContainerAwareTrait;
 
-	use FrameworkAwareTrait;
+    use FrameworkAwareTrait;
 
-	/** @var Registry */
-	private $doctrine;
+    /** @var Registry */
+    private $doctrine;
 
-	/** @var ScraperAgent */
-	private $imageScraperAgent;
+    /** @var ScraperAgent */
+    private $imageScraperAgent;
 
-	/** @var PostSynchronizer */
-	private $postSynchronizer;
+    /** @var PostSynchronizer */
+    private $postSynchronizer;
 
-	/** @var EventSynchronizer */
-	private $eventSynchronizer;
+    /** @var EventSynchronizer */
+    private $eventSynchronizer;
 
-	/** @var LoggerInterface */
-	private $logger;
+    /** @var LoggerInterface */
+    private $logger;
 
+    /**
+     * SynchronizationRequestListener constructor.
+     *
+     * @param Registry          $doctrine
+     * @param ScraperAgent      $imageScraperAgent
+     * @param PostSynchronizer  $postSynchronizer
+     * @param EventSynchronizer $eventSynchronizer
+     * @param LoggerInterface   $logger
+     */
+    public function __construct(
+        Registry $doctrine,
+        ScraperAgent $imageScraperAgent,
+        PostSynchronizer $postSynchronizer,
+        EventSynchronizer $eventSynchronizer,
+        LoggerInterface $logger
+    ) {
+        $this->doctrine = $doctrine;
+        $this->imageScraperAgent = $imageScraperAgent;
+        $this->postSynchronizer = $postSynchronizer;
+        $this->eventSynchronizer = $eventSynchronizer;
+        $this->logger = $logger;
+    }
 
-	/**
-	 * SynchronizationRequestListener constructor.
-	 *
-	 * @param Registry          $doctrine
-	 * @param ScraperAgent      $imageScraperAgent
-	 * @param PostSynchronizer  $postSynchronizer
-	 * @param EventSynchronizer $eventSynchronizer
-	 * @param LoggerInterface   $logger
-	 */
-	public function __construct(
-		Registry $doctrine,
-		ScraperAgent $imageScraperAgent,
-		PostSynchronizer $postSynchronizer,
-		EventSynchronizer $eventSynchronizer,
-		LoggerInterface $logger
-	) {
-		$this->doctrine          = $doctrine;
-		$this->imageScraperAgent = $imageScraperAgent;
-		$this->postSynchronizer  = $postSynchronizer;
-		$this->eventSynchronizer = $eventSynchronizer;
-		$this->logger            = $logger;
-	}
+    /**
+     * Execute all tasks.
+     *
+     * @param int|null $nodeId
+     */
+    public function run(?int $nodeId = null): void
+    {
+        set_time_limit(0);
+        $this->framework->initialize();
 
+        $nodes = $this->doctrine
+            ->getRepository(FacebookNode::class)
+            ->findEnabled($nodeId);
 
-	/**
-	 * Execute all tasks.
-	 *
-	 * @param int|null $nodeId
-	 */
-	public function run(?int $nodeId = null): void
-	{
-		set_time_limit(0);
-		$this->framework->initialize();
+        // priority 1: scrape images
+        if (!$this->scrapeImages()) {
+            // priority 2: synchronize posts and events
+            $this->synchronizePostsAndEvents($nodes);
+        }
 
-		$nodes = $this->doctrine
-			->getRepository(FacebookNode::class)
-			->findEnabled($nodeId);
+        // purge quota logs
+        $windowLength = $this->container->getParameter('mvo_contao_facebook_import.request_window_per_node');
 
-		// priority 1: scrape images
-		if (!$this->scrapeImages()) {
-			// priority 2: synchronize posts and events
-			$this->synchronizePostsAndEvents($nodes);
-		}
+        foreach ($nodes as $node) {
+            $node->purgeQuotaLog($windowLength);
+        }
+        $this->doctrine->getManager()->flush();
+    }
 
-		// purge quota logs
-		$windowLength = $this->container->getParameter('mvo_contao_facebook_import.request_window_per_node');
+    /**
+     * @param FacebookNode $node
+     */
+    public function synchronizePosts(FacebookNode $node): void
+    {
+        try {
+            [$numCreated, $numUpdated, $numDeleted] = $this->postSynchronizer->run($node);
+        } catch (RequestQuotaExceededException $e) {
+            $this->log(
+                sprintf(
+                    'Facebook Event Synchronizer (Node ID%s): Request quota exceeded.',
+                    $node->getId()
+                )
+            );
 
-		foreach ($nodes as $node) {
-			$node->purgeQuotaLog($windowLength);
-		}
-		$this->doctrine->getManager()->flush();
-	}
+            return;
+        }
 
-	/**
-	 * @return bool
-	 */
-	private function scrapeImages(): bool
-	{
-		$maxExecutionTime = $this->container->getParameter('mvo_contao_facebook_import.max_execution_time');
+        if (0 === $numCreated + $numUpdated + $numDeleted) {
+            return;
+        }
 
-		$elements = $this->doctrine
-			->getRepository(FacebookImage::class)
-			->findByWaitingToBeScraped();
+        $this->log(
+            sprintf(
+                'Facebook Post Synchronizer (Node ID%s): %d created / %d updated / %d deleted.',
+                $node->getId(),
+                $numCreated,
+                $numUpdated,
+                $numDeleted
+            )
+        );
+    }
 
-		$numTotal = \count($elements);
-		if (0 === $numTotal) {
-			return false;
-		}
+    /**
+     * @param FacebookNode $node
+     */
+    public function synchronizeEvents(FacebookNode $node): void
+    {
+        try {
+            [$numCreated, $numUpdated, $numDeleted] = $this->eventSynchronizer->run($node);
+        } catch (RequestQuotaExceededException $e) {
+            $this->log(
+                sprintf(
+                    'Facebook Event Synchronizer (Node ID%s): Request quota exceeded.',
+                    $node->getId()
+                )
+            );
 
-		shuffle($elements);
+            return;
+        }
 
-		$numScraped = $this->imageScraperAgent->execute($elements, $maxExecutionTime);
+        if (0 === $numCreated + $numUpdated + $numDeleted) {
+            return;
+        }
 
-		$this->log(
-			sprintf(
-				'Facebook Image Scraper: %d/%d images have been processed in this run.',
-				$numScraped,
-				$numTotal
-			)
-		);
+        $this->log(
+            sprintf(
+                'Facebook Event Synchronizer (Node ID%s): %d created / %d updated / %d deleted.',
+                $node->getId(),
+                $numCreated,
+                $numUpdated,
+                $numDeleted
+            )
+        );
+    }
 
-		return true;
-	}
+    /**
+     * @return bool
+     */
+    private function scrapeImages(): bool
+    {
+        $maxExecutionTime = $this->container->getParameter('mvo_contao_facebook_import.max_execution_time');
 
-	/**
-	 * @param $nodes
-	 */
-	private function synchronizePostsAndEvents($nodes): void
-	{
-		$maxExecutionTime = $this->container->getParameter('mvo_contao_facebook_import.max_execution_time');
+        $elements = $this->doctrine
+            ->getRepository(FacebookImage::class)
+            ->findByWaitingToBeScraped();
 
-		$tasks = [
-			function ($node) {
-				$this->synchronizePosts($node);
-				return true;
-			},
-			function ($node) {
-				$this->synchronizeEvents($node);
-				return true;
-			}
-		];
+        $numTotal = \count($elements);
+        if (0 === $numTotal) {
+            return false;
+        }
 
-		shuffle($nodes);
-		shuffle($tasks);
+        shuffle($elements);
 
-		$taskRunner = new TaskRunner($maxExecutionTime);
+        $numScraped = $this->imageScraperAgent->execute($elements, $maxExecutionTime);
 
-		$taskRunner
-			->executeTimed($nodes, $tasks[0])
-			->executeTimed($nodes, $tasks[1]);
-	}
+        $this->log(
+            sprintf(
+                'Facebook Image Scraper: %d/%d images have been processed in this run.',
+                $numScraped,
+                $numTotal
+            )
+        );
 
-	/**
-	 * @param FacebookNode $node
-	 */
-	public function synchronizePosts(FacebookNode $node): void
-	{
-		try {
-			[$numCreated, $numUpdated, $numDeleted] = $this->postSynchronizer->run($node);
-		} catch (RequestQuotaExceededException $e) {
-			$this->log(
-				sprintf(
-					'Facebook Event Synchronizer (Node ID%s): Request quota exceeded.',
-					$node->getId()
-				)
-			);
+        return true;
+    }
 
-			return;
-		}
+    /**
+     * @param $nodes
+     */
+    private function synchronizePostsAndEvents($nodes): void
+    {
+        $maxExecutionTime = $this->container->getParameter('mvo_contao_facebook_import.max_execution_time');
 
-		if (0 === $numCreated + $numUpdated + $numDeleted) {
-			return;
-		}
+        $tasks = [
+            function ($node) {
+                $this->synchronizePosts($node);
 
-		$this->log(
-			sprintf(
-				'Facebook Post Synchronizer (Node ID%s): %d created / %d updated / %d deleted.',
-				$node->getId(),
-				$numCreated,
-				$numUpdated,
-				$numDeleted
-			)
-		);
-	}
+                return true;
+            },
+            function ($node) {
+                $this->synchronizeEvents($node);
 
-	/**
-	 * @param FacebookNode $node
-	 */
-	public function synchronizeEvents(FacebookNode $node): void
-	{
-		try {
-			[$numCreated, $numUpdated, $numDeleted] = $this->eventSynchronizer->run($node);
-		} catch (RequestQuotaExceededException $e) {
-			$this->log(
-				sprintf(
-					'Facebook Event Synchronizer (Node ID%s): Request quota exceeded.',
-					$node->getId()
-				)
-			);
+                return true;
+            },
+        ];
 
-			return;
-		}
+        shuffle($nodes);
+        shuffle($tasks);
 
-		if (0 === $numCreated + $numUpdated + $numDeleted) {
-			return;
-		}
+        $taskRunner = new TaskRunner($maxExecutionTime);
 
-		$this->log(
-			sprintf(
-				'Facebook Event Synchronizer (Node ID%s): %d created / %d updated / %d deleted.',
-				$node->getId(),
-				$numCreated,
-				$numUpdated,
-				$numDeleted
-			)
-		);
-	}
+        $taskRunner
+            ->executeTimed($nodes, $tasks[0])
+            ->executeTimed($nodes, $tasks[1]);
+    }
 
-	/**
-	 * @param string $message
-	 */
-	private function log(string $message)
-	{
-		$this->logger->info(
-			$message,
-			['contao' => new ContaoContext(__METHOD__, ContaoContext::CRON)]
-		);
-	}
+    /**
+     * @param string $message
+     */
+    private function log(string $message)
+    {
+        $this->logger->info(
+            $message,
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::CRON)]
+        );
+    }
 }

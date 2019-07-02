@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -18,27 +18,23 @@ use Doctrine\DBAL\Connection;
 
 abstract class Update
 {
-	/** @var Connection */
-	protected $connection;
+    /** @var Connection */
+    protected $connection;
 
-	/**
-	 * @return bool
-	 */
-	abstract public function shouldBeRun(): bool;
+    /**
+     * Update constructor.
+     *
+     * @param Connection $connection
+     */
+    public function __construct(Connection $connection)
+    {
+        $this->connection = $connection;
+    }
 
-	/**
-	 * @return void
-	 */
-	abstract public function run(): void;
+    /**
+     * @return bool
+     */
+    abstract public function shouldBeRun(): bool;
 
-
-	/**
-	 * Update constructor.
-	 *
-	 * @param Connection $connection
-	 */
-	public function __construct(Connection $connection)
-	{
-		$this->connection = $connection;
-	}
+    abstract public function run(): void;
 }

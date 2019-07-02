@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -28,202 +28,207 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class Scraper implements ContainerAwareInterface
 {
-	use ContainerAwareTrait;
+    use ContainerAwareTrait;
 
-	/** @var ImageFactory */
-	private $imageFactory;
+    /** @var ImageFactory */
+    private $imageFactory;
 
-	/**
-	 * Scraper constructor.
-	 *
-	 * @param ImageFactory $imageFactory
-	 */
-	public function __construct(ImageFactory $imageFactory)
-	{
-		$this->imageFactory = $imageFactory;
-	}
+    /**
+     * Scraper constructor.
+     *
+     * @param ImageFactory $imageFactory
+     */
+    public function __construct(ImageFactory $imageFactory)
+    {
+        $this->imageFactory = $imageFactory;
+    }
 
-	/**
-	 * @param ScrapingInformation               $info
-	 * @param string                            $destinationDirectory
-	 * @param GraphApiReader                    $reader
-	 * @param GuzzleException|\Exception|string $error
-	 *
-	 * @return FilesModel|null
-	 * @throws RequestQuotaExceededException
-	 */
-	public function scrape(
-		ScrapingInformation $info,
-		string $destinationDirectory,
-		GraphApiReader $reader,
-		&$error = null
-	): ?FilesModel {
+    /**
+     * @param ScrapingInformation               $info
+     * @param string                            $destinationDirectory
+     * @param GraphApiReader                    $reader
+     * @param GuzzleException|\Exception|string $error
+     *
+     * @throws RequestQuotaExceededException
+     *
+     * @return FilesModel|null
+     */
+    public function scrape(
+        ScrapingInformation $info,
+        string $destinationDirectory,
+        GraphApiReader $reader,
+        &$error = null
+    ): ?FilesModel {
+        // get source uri
+        $sourceUri = $this->getSourceUri($info, $reader);
 
-		// get source uri
-		$sourceUri = $this->getSourceUri($info, $reader);
+        if (null === $sourceUri) {
+            $error = new \InvalidArgumentException('Insufficient scraping information provided.');
 
-		if (null === $sourceUri) {
-			$error = new \InvalidArgumentException('Insufficient scraping information provided.');
-			return null;
-		}
+            return null;
+        }
 
-		// issue file transfer
-		$destinationPath = sprintf('%s/%s.jpg', $destinationDirectory, $info->identifier);
+        // issue file transfer
+        $destinationPath = sprintf('%s/%s.jpg', $destinationDirectory, $info->identifier);
 
-		$absoluteDestinationPath = sprintf(
-			'%s/%s',
-			$this->container->getParameter('kernel.project_dir'),
-			$destinationPath
-		);
-		if (!$this->downloadFile($sourceUri, $absoluteDestinationPath, $error)) {
-			return null;
-		}
+        $absoluteDestinationPath = sprintf(
+            '%s/%s',
+            $this->container->getParameter('kernel.project_dir'),
+            $destinationPath
+        );
+        if (!$this->downloadFile($sourceUri, $absoluteDestinationPath, $error)) {
+            return null;
+        }
 
-		// make sure facebook didn't deliver a single pixel image (in any dimension)
-		try {
-			$imageSize = $this->imageFactory->create($destinationPath)->getDimensions()->getSize();
-			if (1 === $imageSize->getHeight() || 1 === $imageSize->getWidth()) {
-				$this->deleteFileIfExisting($destinationPath);
+        // make sure facebook didn't deliver a single pixel image (in any dimension)
+        try {
+            $imageSize = $this->imageFactory->create($destinationPath)->getDimensions()->getSize();
+            if (1 === $imageSize->getHeight() || 1 === $imageSize->getWidth()) {
+                $this->deleteFileIfExisting($destinationPath);
 
-				$error = 'Ignoring single pixel image.';
-				return null;
-			}
-		} catch (\Exception $e) {
-			$error = $e;
-			return null;
-		}
+                $error = 'Ignoring single pixel image.';
 
-		// add to dbafs
-		try {
-			$file = Dbafs::addResource($destinationPath);
+                return null;
+            }
+        } catch (\Exception $e) {
+            $error = $e;
 
-		} catch (\Exception $e) {
-			$this->deleteFileIfExisting($destinationPath);
+            return null;
+        }
 
-			$error = $e;
-			return null;
-		}
+        // add to dbafs
+        try {
+            $file = Dbafs::addResource($destinationPath);
+        } catch (\Exception $e) {
+            $this->deleteFileIfExisting($destinationPath);
 
-		// add meta data
-		$file->meta = serialize(['caption' => $info->metaData]);
-		$file->save();
+            $error = $e;
 
-		return $file;
-	}
+            return null;
+        }
 
+        // add meta data
+        $file->meta = serialize(['caption' => $info->metaData]);
+        $file->save();
 
-	/**
-	 * @param ScrapingInformation $info
-	 * @param GraphApiReader      $reader
-	 *
-	 * @return null|string
-	 * @throws RequestQuotaExceededException
-	 */
-	private function getSourceUri(ScrapingInformation $info, GraphApiReader $reader): ?string
-	{
-		if (ScrapingInformation::TYPE_URL === $info->type) {
-			return $info->fallbackUrl;
-		}
+        return $file;
+    }
 
-		if (ScrapingInformation::TYPE_RESCRAPE_AS_EVENT === $info->type) {
-			// we need to query the graph again to get the image set information
-			$node = $reader->getSingleNode($info->objectId, ['id', 'name', 'cover']);
-			if (null === $node) {
-				return $info->fallbackUrl;
-			}
-			return $this->getSourceUri(ScrapingInformation::fromEventNode($node), $reader);
-		}
+    /**
+     * @param ScrapingInformation $info
+     * @param GraphApiReader      $reader
+     *
+     * @throws RequestQuotaExceededException
+     *
+     * @return string|null
+     */
+    private function getSourceUri(ScrapingInformation $info, GraphApiReader $reader): ?string
+    {
+        if (ScrapingInformation::TYPE_URL === $info->type) {
+            return $info->fallbackUrl;
+        }
 
-		if (ScrapingInformation::TYPE_IMAGE_SET === $info->type) {
-			$object = $reader->getSingleNode($info->objectId, ['images']);
-			if (null === $object) {
-				return $info->fallbackUrl;
-			}
-			$imageSet = $object->getField('images', null);
-			if (null === $imageSet) {
-				return $info->fallbackUrl;
-			}
+        if (ScrapingInformation::TYPE_RESCRAPE_AS_EVENT === $info->type) {
+            // we need to query the graph again to get the image set information
+            $node = $reader->getSingleNode($info->objectId, ['id', 'name', 'cover']);
+            if (null === $node) {
+                return $info->fallbackUrl;
+            }
 
-			return $this->getBiggestPossibleImageSource($imageSet) ?? $info->fallbackUrl;
-		}
+            return $this->getSourceUri(ScrapingInformation::fromEventNode($node), $reader);
+        }
 
-		throw new \InvalidArgumentException('Illegal scraping information provided.');
-	}
+        if (ScrapingInformation::TYPE_IMAGE_SET === $info->type) {
+            $object = $reader->getSingleNode($info->objectId, ['images']);
+            if (null === $object) {
+                return $info->fallbackUrl;
+            }
+            $imageSet = $object->getField('images', null);
+            if (null === $imageSet) {
+                return $info->fallbackUrl;
+            }
 
-	/**
-	 * @param iterable $imageSet
-	 *
-	 * @return string|null
-	 */
-	private function getBiggestPossibleImageSource(iterable $imageSet): ?string
-	{
-		$widthLimit  = Config::get('gdMaxImgWidth');
-		$heightLimit = Config::get('gdMaxImgHeight');
+            return $this->getBiggestPossibleImageSource($imageSet) ?? $info->fallbackUrl;
+        }
 
-		$maxHeight = 0;
-		$source    = null;
+        throw new \InvalidArgumentException('Illegal scraping information provided.');
+    }
 
-		foreach ($imageSet as $item) {
-			$height = $item['height'] ?? 0;
-			$width  = $item['width'] ?? 0;
+    /**
+     * @param iterable $imageSet
+     *
+     * @return string|null
+     */
+    private function getBiggestPossibleImageSource(iterable $imageSet): ?string
+    {
+        $widthLimit = Config::get('gdMaxImgWidth');
+        $heightLimit = Config::get('gdMaxImgHeight');
 
-			if ($height > $maxHeight && $height <= $heightLimit && $width <= $widthLimit && isset($item['source'])) {
-				$maxHeight = $height;
-				$source    = $item['source'];
-			}
-		}
+        $maxHeight = 0;
+        $source = null;
 
-		return $source;
-	}
+        foreach ($imageSet as $item) {
+            $height = $item['height'] ?? 0;
+            $width = $item['width'] ?? 0;
 
-	/**
-	 * Download a file.
-	 *
-	 * @param string                     $sourceUri
-	 * @param string                     $destinationPath
-	 * @param GuzzleException|\Exception $error
-	 *
-	 * @return bool
-	 */
-	private function downloadFile(string $sourceUri, string $destinationPath, GuzzleException &$error = null): bool
-	{
-		$client = new Client(
-			[
-				'defaults' => [
-					'headers' => ['User-Agent' => 'Contao Web Scraper']
-				]
-			]
-		);
+            if ($height > $maxHeight && $height <= $heightLimit && $width <= $widthLimit && isset($item['source'])) {
+                $maxHeight = $height;
+                $source = $item['source'];
+            }
+        }
 
-		$this->deleteFileIfExisting($destinationPath);
+        return $source;
+    }
 
-		try {
-			// synchronous download
-			$client->send(
-				new Request('get', $sourceUri),
-				[
-					'sink' => $destinationPath
-				]
-			);
-		} catch (GuzzleException $e) {
-			$this->deleteFileIfExisting($destinationPath);
+    /**
+     * Download a file.
+     *
+     * @param string                     $sourceUri
+     * @param string                     $destinationPath
+     * @param GuzzleException|\Exception $error
+     *
+     * @return bool
+     */
+    private function downloadFile(string $sourceUri, string $destinationPath, GuzzleException &$error = null): bool
+    {
+        $client = new Client(
+            [
+                'defaults' => [
+                    'headers' => ['User-Agent' => 'Contao Web Scraper'],
+                ],
+            ]
+        );
 
-			$error = $e;
-			return false;
-		}
+        $this->deleteFileIfExisting($destinationPath);
 
-		return true;
-	}
+        try {
+            // synchronous download
+            $client->send(
+                new Request('get', $sourceUri),
+                [
+                    'sink' => $destinationPath,
+                ]
+            );
+        } catch (GuzzleException $e) {
+            $this->deleteFileIfExisting($destinationPath);
 
-	/**
-	 * Make sure a file does not exist at the given path.
-	 *
-	 * @param string $fullPath
-	 */
-	private function deleteFileIfExisting(string $fullPath): void
-	{
-		if (file_exists($fullPath)) {
-			unlink($fullPath);
-		}
-	}
+            $error = $e;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Make sure a file does not exist at the given path.
+     *
+     * @param string $fullPath
+     */
+    private function deleteFileIfExisting(string $fullPath): void
+    {
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
+        }
+    }
 }

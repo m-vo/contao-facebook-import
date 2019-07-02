@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -25,88 +25,88 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class GraphApiReaderFactory implements ContainerAwareInterface
 {
-	use ContainerAwareTrait;
+    use ContainerAwareTrait;
 
-	/** @var ObjectManager */
-	private $manager;
+    /** @var ObjectManager */
+    private $manager;
 
-	/** @var LoggerInterface */
-	private $logger;
+    /** @var LoggerInterface */
+    private $logger;
 
-	/** @var GraphApiReader[] */
-	private static $readers = array();
+    /** @var GraphApiReader[] */
+    private static $readers = [];
 
-	/**
-	 * GraphApiReaderFactory constructor.
-	 *
-	 * @param Registry        $doctrine
-	 * @param LoggerInterface $logger
-	 */
-	public function __construct(Registry $doctrine, LoggerInterface $logger)
-	{
-		$this->manager = $doctrine->getManager();
-		$this->logger  = $logger;
-	}
+    /**
+     * GraphApiReaderFactory constructor.
+     *
+     * @param Registry        $doctrine
+     * @param LoggerInterface $logger
+     */
+    public function __construct(Registry $doctrine, LoggerInterface $logger)
+    {
+        $this->manager = $doctrine->getManager();
+        $this->logger = $logger;
+    }
 
-	/**
-	 * @param FacebookNode $node
-	 *
-	 * @return GraphApiReader|null
-	 */
-	public function getTrackedReader(FacebookNode $node): ?GraphApiReader
-	{
-		if (array_key_exists($node->getId(), self::$readers)) {
-			return self::$readers[$node->getId()];
-		}
+    /**
+     * @param FacebookNode $node
+     *
+     * @return GraphApiReader|null
+     */
+    public function getTrackedReader(FacebookNode $node): ?GraphApiReader
+    {
+        if (\array_key_exists($node->getId(), self::$readers)) {
+            return self::$readers[$node->getId()];
+        }
 
-		try {
+        try {
+            [$appId, $appSecret, $accessToken, $pageName] = array_values($node->getFacebookApiCredentials());
+            $reader = new GraphApiReader(
+                $appId,
+                $appSecret,
+                $accessToken,
+                $pageName,
+                $this->logger,
+                function () use ($node) {
+                    $this->trackRequest($node);
+                }
+            );
 
-			[$appId, $appSecret, $accessToken, $pageName] = array_values($node->getFacebookApiCredentials());
-			$reader = new GraphApiReader(
-				$appId,
-				$appSecret,
-				$accessToken,
-				$pageName,
-				$this->logger,
-				function () use ($node) {
-					$this->trackRequest($node);
-				}
-			);
+            self::$readers[$node->getId()] = $reader;
 
-			self::$readers[$node->getId()] = $reader;
+            return $reader;
+        } catch (FacebookSDKException $e) {
+            $this->logger->error(
+                sprintf(
+                    'Facebook SDK: An error occurred trying to instantiate a GraphAPI reader for app id %s.',
+                    $appId ?? '(unknown)'
+                ),
+                ['exception' => $e, 'contao' => new ContaoContext(__METHOD__, ContaoContext::ERROR)]
+            );
 
-			return $reader;
+            return null;
+        }
+    }
 
-		} catch (FacebookSDKException $e) {
-			$this->logger->error(
-				sprintf(
-					'Facebook SDK: An error occurred trying to instantiate a GraphAPI reader for app id %s.',
-					$appId ?? '(unknown)'
-				),
-				['exception' => $e, 'contao' => new ContaoContext(__METHOD__, ContaoContext::ERROR)]
-			);
-			return null;
-		}
-	}
+    /**
+     * @param FacebookNode $node
+     *
+     * @throws RequestQuotaExceededException
+     *
+     * @return bool
+     */
+    private function trackRequest(FacebookNode $node): bool
+    {
+        if (!$node->hasRequestQuotaAvailable(
+            $this->container->getParameter('mvo_contao_facebook_import.request_window_per_node'),
+            $this->container->getParameter('mvo_contao_facebook_import.request_limit_per_node')
+        )) {
+            throw new RequestQuotaExceededException($node);
+        }
 
-	/**
-	 * @param FacebookNode $node
-	 *
-	 * @return bool
-	 * @throws RequestQuotaExceededException
-	 */
-	private function trackRequest(FacebookNode $node): bool
-	{
-		if (!$node->hasRequestQuotaAvailable(
-			$this->container->getParameter('mvo_contao_facebook_import.request_window_per_node'),
-			$this->container->getParameter('mvo_contao_facebook_import.request_limit_per_node')
-		)) {
-			throw new RequestQuotaExceededException($node);
-		}
+        $node->addRequest();
+        $this->manager->persist($node);
 
-		$node->addRequest();
-		$this->manager->persist($node);
-
-		return true;
-	}
+        return true;
+    }
 }

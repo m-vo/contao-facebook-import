@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -22,35 +22,34 @@ use Doctrine\ORM\Mapping as ORM;
  */
 abstract class DcaDefault
 {
-	/**
-	 * @ORM\Column(type="integer", options={"unsigned": true})
-	 * @ORM\Id
-	 * @ORM\GeneratedValue(strategy="AUTO")
-	 */
-	protected $id;
+    /**
+     * @ORM\Column(type="integer", options={"unsigned": true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
 
-	/**
-	 * @ORM\Column(name="tstamp", type="integer", options={"unsigned": true, "default": 0})
-	 */
-	protected $timestamp;
+    /**
+     * @ORM\Column(name="tstamp", type="integer", options={"unsigned": true, "default": 0})
+     */
+    protected $timestamp;
 
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getId(): int
-	{
-		return $this->id;
-	}
-
-	/**
-	 * Update the entry's timestamp.
-	 *
-	 * @ORM\PrePersist()
-	 * @ORM\PreUpdate()
-	 */
-	public function touch(): void
-	{
-		$this->timestamp = time();
-	}
+    /**
+     * Update the entry's timestamp.
+     *
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function touch(): void
+    {
+        $this->timestamp = time();
+    }
 }

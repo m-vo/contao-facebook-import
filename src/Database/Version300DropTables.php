@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2017-2018, Moritz Vondano
+ * @copyright  Copyright (c), Moritz Vondano
  * @license    MIT
  * @link       https://github.com/m-vo/contao-facebook-import
  *
@@ -16,33 +16,34 @@ namespace Mvo\ContaoFacebookImport\Database;
 
 class Version300DropTables extends Update
 {
-	/**
-	 * {@inheritdoc}
-	 */
-	public function shouldBeRun(): bool
-	{
-		$schemaManager = $this->connection->getSchemaManager();
+    /**
+     * {@inheritdoc}
+     */
+    public function shouldBeRun(): bool
+    {
+        $schemaManager = $this->connection->getSchemaManager();
 
-		if (!$schemaManager->tablesExist(['tl_mvo_facebook_post'])) {
-			return false;
-		}
+        if (!$schemaManager->tablesExist(['tl_mvo_facebook_post'])) {
+            return false;
+        }
 
-		$columns = $schemaManager->listTableColumns('tl_mvo_facebook_post');
+        $columns = $schemaManager->listTableColumns('tl_mvo_facebook_post');
 
-		return !isset($columns['fb_post_id']);
-	}
+        return !isset($columns['fb_post_id']);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 * @throws \Doctrine\DBAL\DBALException
-	 */
-	public function run(): void
-	{
-		$this->connection->executeQuery(
-			'DROP TABLE IF EXISTS tl_mvo_facebook_post'
-		);
-		$this->connection->executeQuery(
-			'DROP TABLE IF EXISTS tl_mvo_facebook_event'
-		);
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function run(): void
+    {
+        $this->connection->executeQuery(
+            'DROP TABLE IF EXISTS tl_mvo_facebook_post'
+        );
+        $this->connection->executeQuery(
+            'DROP TABLE IF EXISTS tl_mvo_facebook_event'
+        );
+    }
 }
