@@ -26,6 +26,9 @@ use Psr\Log\LoggerInterface;
 class GraphApiReader
 {
 	/** @var string */
+	public const GRAPH_API_VERSION = 'v3.3';
+
+	/** @var string */
 	private $pageName;
 
 	/** @var Facebook */
@@ -66,7 +69,6 @@ class GraphApiReader
 			[
 				'app_id'                => $appId,
 				'app_secret'            => $appSecret,
-				'default_graph_version' => 'v3.1',
 			]
 		);
 		$this->accessToken = new AccessToken($accessToken);
@@ -185,7 +187,9 @@ class GraphApiReader
 			$this->accessToken->getValue(),
 			'GET',
 			$query,
-			$params
+			$params,
+			null,
+			self::GRAPH_API_VERSION
 		);
 
 		return $this->facebook->getClient()->sendRequest($request);
