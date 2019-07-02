@@ -90,17 +90,37 @@ class FacebookPost extends FacebookElement
 	 */
 	public function updateFromGraphNode(GraphNode $graphNode): void
 	{
-		$message = $graphNode->getField('message', null) ??
-				   $graphNode->getField('caption', '');
+		$attachments = $graphNode->getField('attachments', [])[0] ?? [];
+		$message = $graphNode->getField('message') ?? $attachments['title'] ?? '';
 
 		$this->postTime = $this->extractTimeFromGraphNode($graphNode, 'created_time');
-		$this->message  = utf8_encode($message);
-		$this->link     = $graphNode->getField('link', '');
-		$this->type     = $graphNode->getField('type', '');
+		$this->message = utf8_encode($message);
+		// Note: According to https://developers.facebook.com/docs/graph-api/changelog/version3.3
+		//       the old `link` field should have become `attachments{url_unshimmed}`. The API
+		//       however currently does not return any links under this endpoint, so we're using
+		//       `url` as a fallback.
+		$this->link = $attachments['url_unshimmed'] ?? self::unshimUrl($attachments['url'] ?? '') ?? '';
+		$this->type = $attachments['media_type'] ?? 'status';
 
 		$this->updateImage(ScrapingInformation::fromPostNode($graphNode));
 
 		parent::updateFromGraphNode($graphNode);
+	}
+
+	/**
+	 * Try to unshim a Facebook URL that follows a certain pattern.
+	 *
+	 * @param string $url
+	 * @return string
+	 */
+	private static function unshimUrl(string $url): string
+	{
+		$matches = [];
+		if (1 !== preg_match('%https?://l\.facebook\.com/l.php\?u=(.*)&h=.*$%', $url, $matches)) {
+			return $url;
+		}
+
+		return urldecode($matches[1]);
 	}
 
 	/**

@@ -62,14 +62,11 @@ class PostSynchronizer
 			[
 				'id',
 				'created_time',
-				'type',
-				'caption',
-				'link',
 				'message',
 				'picture',
 				'full_picture',
-				'object_id',
-				'updated_time'
+				'updated_time',
+				'attachments{target{id}, media_type, title, url_unshimmed, url}'
 			],
 			['limit' => $node->getSynchronizationScope()]
 		);

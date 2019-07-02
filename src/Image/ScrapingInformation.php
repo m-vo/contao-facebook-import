@@ -74,14 +74,16 @@ class ScrapingInformation
 		$objectId = null;
 		$type     = self::TYPE_URL;
 
-		switch ($graphNode->getField('type')) {
+        $attachments = $graphNode->getField('attachments', [])[0] ?? [];
+
+        switch ($attachments['media_type'] ?? '') {
 			case 'photo':
-				$objectId = $graphNode->getField('object_id', null);
+				$objectId = $attachments['target']['id'] ?? null;
 				$type     = self::TYPE_IMAGE_SET;
 				break;
 
 			case 'event':
-				$objectId = $graphNode->getField('object_id', null);
+                $objectId = $attachments['target']['id'] ?? null;
 				$type     = self::TYPE_RESCRAPE_AS_EVENT;
 				break;
 
