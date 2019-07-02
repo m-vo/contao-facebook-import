@@ -57,4 +57,5 @@
 
 .mvo_facebook_post-link {
     color: #999;
+    word-break: break-word;
 }
