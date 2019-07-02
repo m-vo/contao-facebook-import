@@ -44,6 +44,7 @@ services:
     - '@mvo_contao_facebook.synchronization.post_synchronizer'
     - '@mvo_contao_facebook.synchronization.event_synchronizer'
     - '@logger'
+    public: true
 
   mvo_contao_facebook.synchronization.post_synchronizer:
     class: Mvo\ContaoFacebookImport\Synchronization\PostSynchronizer
