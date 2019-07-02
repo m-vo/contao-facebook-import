@@ -16,10 +16,10 @@ namespace Mvo\ContaoFacebookImport\Synchronization;
 
 class Synchronizer
 {
-    /** @var \callable */
+    /** @var callable */
     private $getRemoteIdentifier;
 
-    /** @var \callable */
+    /** @var callable */
     private $getIdentifier;
 
     /**
@@ -37,13 +37,13 @@ class Synchronizer
     }
 
     /**
-     * @param iterable<L>   $localItems       list of existing local items (= target)
-     * @param iterable<R>   $remoteItems      list of remote items (= source)
+     * @param iterable      $localItems       iterable<L> list of existing local items (= target)
+     * @param iterable      $remoteItems      iterable<R> list of remote items (= source)
      * @param callable|null $isUpdateRequired Optional function to determine if an update is required. Gets called with
      *                                        a local and remote item and expects a boolean return value.
      *
-     * @return array<array<R>,array<array<L,R>>,array<L>> Resulting lists for items to be created (= only R) / updated
-     *                                                    (= on both sides) / deleted (= only L)
+     * @return array array<array<R>,array<array<L,R>>,array<L>> Resulting lists for items to be created (= only R) / updated
+     *               (= on both sides) / deleted (= only L)
      */
     public function synchronize(iterable $localItems, iterable $remoteItems, callable $isUpdateRequired = null): array
     {

@@ -126,7 +126,7 @@ class TaskRunner
     /**
      * @return mixed
      */
-    public function getLastProcessedPayload(): mixed
+    public function getLastProcessedPayload()
     {
         return $this->lastProcessedPayload;
     }

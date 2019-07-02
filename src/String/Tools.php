@@ -78,6 +78,6 @@ class Tools
      */
     private static function formatWhitespaces(string $str)
     {
-        return nl2br_html5(str_replace('  ', '&nbsp;&nbsp;', $str));
+        return nl2br(str_replace('  ', '&nbsp;&nbsp;', $str), false);
     }
 }

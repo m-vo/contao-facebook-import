@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\Image;
 
+use Contao\StringUtil;
 use Facebook\GraphNodes\GraphCoverPhoto;
 use Facebook\GraphNodes\GraphNode;
 
@@ -176,7 +177,7 @@ class ScrapingInformation
      */
     public static function deserialize(string $string): ?self
     {
-        $data = deserialize($string);
+        $data = StringUtil::deserialize($string);
         if (null === $data) {
             return null;
         }

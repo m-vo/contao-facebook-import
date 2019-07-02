@@ -30,7 +30,11 @@
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",
-    "friendsofphp/php-cs-fixer": "^2.15"
+    "friendsofphp/php-cs-fixer": "^2.15",
+    "phpstan/phpstan": "^0.11.8",
+    "phpstan/extension-installer": "^1.0.1",
+    "phpstan/phpstan-symfony": "^0.11.6",
+    "phpstan/phpstan-doctrine": "^0.11.5"
   },
   "autoload": {
     "psr-4": {

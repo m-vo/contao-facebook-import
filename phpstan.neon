@@ -1,0 +1,14 @@
+parameters:
+  paths:
+    - %currentWorkingDirectory%/src
+
+  excludes_analyse:
+    - %currentWorkingDirectory%/src/Resources/*
+
+  ignoreErrors:
+    - '#Constant TL_MODE not found.#'
+
+  universalObjectCratesClasses:
+    - Contao\ContentElement
+
+  level: 1
