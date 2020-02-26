@@ -18,6 +18,7 @@ use Contao\Config;
 use Contao\CoreBundle\Image\ImageFactory;
 use Contao\Dbafs;
 use Contao\FilesModel;
+use Contao\System;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
@@ -82,7 +83,17 @@ class Scraper implements ContainerAwareInterface
 
         // make sure facebook didn't deliver a single pixel image (in any dimension)
         try {
-            $imageSize = $this->imageFactory->create($destinationPath)->getDimensions()->getSize();
+            // see issue #20
+            $fileFactoryImagePath = $absoluteDestinationPath;
+            if (0 > version_compare(
+                    System::getContainer()->getParameter('kernel.packages')['contao/core-bundle'],
+                    '4.8.0'
+                )) {
+                // contao/core-bundle < 4.8.0 ImageFactory::create expects relative file path
+                $fileFactoryImagePath = $destinationPath;
+            }
+
+            $imageSize = $this->imageFactory->create($fileFactoryImagePath)->getDimensions()->getSize();
             if (1 === $imageSize->getHeight() || 1 === $imageSize->getWidth()) {
                 $this->deleteFileIfExisting($destinationPath);
 
