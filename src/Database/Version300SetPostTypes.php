@@ -45,7 +45,7 @@ class Version300SetPostTypes extends Update
 
         $this->connection->executeQuery(
             "UPDATE tl_content SET mvo_facebook_allowed_post_types = ?  WHERE type='mvo_facebook_post_list'",
-            [serialize(['status', 'photo', 'event'])]
+            [serialize(['status', 'photo', 'event', 'album'])]
         );
     }
 }

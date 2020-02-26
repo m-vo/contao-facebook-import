@@ -78,6 +78,7 @@ class ScrapingInformation
 
         switch ($attachments['media_type'] ?? '') {
             case 'photo':
+            case 'album':
                 $objectId = $attachments['target']['id'] ?? null;
                 $type = self::TYPE_IMAGE_SET;
                 break;
