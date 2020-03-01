@@ -82,9 +82,9 @@ class Scraper implements ContainerAwareInterface
 
         // make sure facebook didn't deliver a single pixel image (in any dimension)
         try {
-            $imageSize = $this->imageFactory->create($destinationPath)->getDimensions()->getSize();
+            $imageSize = $this->imageFactory->create($absoluteDestinationPath)->getDimensions()->getSize();
             if (1 === $imageSize->getHeight() || 1 === $imageSize->getWidth()) {
-                $this->deleteFileIfExisting($destinationPath);
+                $this->deleteFileIfExisting($absoluteDestinationPath);
 
                 $error = 'Ignoring single pixel image.';
 
@@ -100,7 +100,7 @@ class Scraper implements ContainerAwareInterface
         try {
             $file = Dbafs::addResource($destinationPath);
         } catch (\Exception $e) {
-            $this->deleteFileIfExisting($destinationPath);
+            $this->deleteFileIfExisting($absoluteDestinationPath);
 
             $error = $e;
 
