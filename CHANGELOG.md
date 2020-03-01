@@ -1,6 +1,19 @@
 Changelog
 =========
 
+v3.1.1
+------
+- fix image factory path [#20] (@rabauss)
+- add missing album type, [#17] (@rabauss)
+
+v3.1.0
+------
+- raise graph API version [#15]
+- prevent service inlining
+- improve backend rendering
+- fix synchronizer bug that prevented updates
+- raise phpstam level
+
 v3.0.4
 ------
 - fix: enforce boolean output in DCAs for strict SQL modes (#12)
