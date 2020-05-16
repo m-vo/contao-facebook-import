@@ -139,11 +139,28 @@ class Scraper implements ContainerAwareInterface
         }
 
         if (ScrapingInformation::TYPE_IMAGE_SET === $info->type) {
-            $object = $reader->getSingleNode($info->objectId, ['images']);
-            if (null === $object) {
-                return $info->fallbackUrl;
+            if ($info->objectId === $info->identifier) {
+                $object = $reader->getSingleNode($info->identifier, ['images']);
+
+                if (null === $object) {
+                    return $info->fallbackUrl;
+                }
+
+                $imageSet = $object->getField('images', null);
+            } else {
+                $object = $reader->getSingleNode($info->identifier, ['attachments{subattachments}']);
+                if (null === $object) {
+                    return $info->fallbackUrl;
+                }
+
+                $attachments = $object->getField('attachments', null);
+                if (null === $attachments) {
+                    return $info->fallbackUrl;
+                }
+
+                $imageSet = $attachments->asArray()[0]['subattachments'][0]['media'] ?? null;
             }
-            $imageSet = $object->getField('images', null);
+
             if (null === $imageSet) {
                 return $info->fallbackUrl;
             }
