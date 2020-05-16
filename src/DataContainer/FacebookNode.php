@@ -43,10 +43,6 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
 
     /**
      * FacebookNode constructor.
-     *
-     * @param Registry             $doctrine
-     * @param Scheduler            $scheduler
-     * @param AccessTokenGenerator $facebookAccessTokenGenerator
      */
     public function __construct(
         Registry $doctrine,
@@ -58,9 +54,6 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
         $this->facebookAccessTokenGenerator = $facebookAccessTokenGenerator;
     }
 
-    /**
-     * @param DataContainer $dc
-     */
     public function onDelete(DataContainer $dc): void
     {
         /** @var FacebookNodeEntity $element */
@@ -77,8 +70,6 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
 
     /**
      * Force import of posts.
-     *
-     * @param DataContainer $dc
      */
     public function onSynchronizePosts(DataContainer $dc): void
     {
@@ -95,8 +86,6 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
 
     /**
      * Force import of events.
-     *
-     * @param DataContainer $dc
      */
     public function onSynchronizeEvents(DataContainer $dc): void
     {
@@ -111,9 +100,6 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
         $this->redirectBack();
     }
 
-    /**
-     * @param DataContainer $dc
-     */
     public function onGenerateAccessToken(DataContainer $dc): void
     {
         if (!Input::post('convert_access_token')) {

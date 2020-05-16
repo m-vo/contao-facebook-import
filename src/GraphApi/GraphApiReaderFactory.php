@@ -38,9 +38,6 @@ class GraphApiReaderFactory implements ContainerAwareInterface
 
     /**
      * GraphApiReaderFactory constructor.
-     *
-     * @param Registry        $doctrine
-     * @param LoggerInterface $logger
      */
     public function __construct(Registry $doctrine, LoggerInterface $logger)
     {
@@ -48,11 +45,6 @@ class GraphApiReaderFactory implements ContainerAwareInterface
         $this->logger = $logger;
     }
 
-    /**
-     * @param FacebookNode $node
-     *
-     * @return GraphApiReader|null
-     */
     public function getTrackedReader(FacebookNode $node): ?GraphApiReader
     {
         if (\array_key_exists($node->getId(), self::$readers)) {
@@ -89,11 +81,7 @@ class GraphApiReaderFactory implements ContainerAwareInterface
     }
 
     /**
-     * @param FacebookNode $node
-     *
      * @throws RequestQuotaExceededException
-     *
-     * @return bool
      */
     private function trackRequest(FacebookNode $node): bool
     {

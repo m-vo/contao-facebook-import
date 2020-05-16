@@ -50,12 +50,6 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
 
     /**
      * SynchronizationRequestListener constructor.
-     *
-     * @param Registry          $doctrine
-     * @param ScraperAgent      $imageScraperAgent
-     * @param PostSynchronizer  $postSynchronizer
-     * @param EventSynchronizer $eventSynchronizer
-     * @param LoggerInterface   $logger
      */
     public function __construct(
         Registry $doctrine,
@@ -73,8 +67,6 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
 
     /**
      * Execute all tasks.
-     *
-     * @param int|null $nodeId
      */
     public function run(?int $nodeId = null): void
     {
@@ -100,9 +92,6 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
         $this->doctrine->getManager()->flush();
     }
 
-    /**
-     * @param FacebookNode $node
-     */
     public function synchronizePosts(FacebookNode $node): void
     {
         try {
@@ -133,9 +122,6 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
         );
     }
 
-    /**
-     * @param FacebookNode $node
-     */
     public function synchronizeEvents(FacebookNode $node): void
     {
         try {
@@ -166,9 +152,6 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
         );
     }
 
-    /**
-     * @return bool
-     */
     private function scrapeImages(): bool
     {
         $maxExecutionTime = $this->container->getParameter('mvo_contao_facebook_import.max_execution_time');
@@ -227,9 +210,6 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
             ->executeTimed($nodes, $tasks[1]);
     }
 
-    /**
-     * @param string $message
-     */
     private function log(string $message)
     {
         $this->logger->info(

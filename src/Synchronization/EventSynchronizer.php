@@ -31,9 +31,6 @@ class EventSynchronizer
 
     /**
      * EventSynchronizer constructor.
-     *
-     * @param Registry              $doctrine
-     * @param GraphApiReaderFactory $openGraphParserFactory
      */
     public function __construct(Registry $doctrine, GraphApiReaderFactory $openGraphParserFactory)
     {
@@ -43,8 +40,6 @@ class EventSynchronizer
 
     /**
      * Synchronize Facebook events.
-     *
-     * @param FacebookNode $node
      *
      * @throws \Mvo\ContaoFacebookImport\GraphApi\RequestQuotaExceededException
      *

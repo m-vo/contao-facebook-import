@@ -93,11 +93,6 @@ class ContentPostList extends ContentElement
         }
     }
 
-    /**
-     * @param FacebookPost $post
-     *
-     * @return array
-     */
     private function compilePost(FacebookPost $post): array
     {
         // base data

@@ -23,17 +23,12 @@ abstract class Update
 
     /**
      * Update constructor.
-     *
-     * @param Connection $connection
      */
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
     }
 
-    /**
-     * @return bool
-     */
     abstract public function shouldBeRun(): bool;
 
     abstract public function run(): void;

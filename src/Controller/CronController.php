@@ -26,10 +26,6 @@ class CronController extends Controller
 {
     /**
      * @Route("/_sync_fb_nodes", name="sync_fb_nodes")
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function synchronisationAction(Request $request): Response
     {

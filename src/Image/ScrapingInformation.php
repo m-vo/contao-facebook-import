@@ -41,12 +41,6 @@ class ScrapingInformation
 
     /**
      * ScrapingInformation constructor.
-     *
-     * @param string      $identifier
-     * @param string|null $fallbackUrl
-     * @param int         $type
-     * @param string|null $objectId
-     * @param array       $metaData
      */
     public function __construct(string $identifier, ?string $fallbackUrl, int $type, ?string $objectId, array $metaData)
     {
@@ -58,8 +52,6 @@ class ScrapingInformation
     }
 
     /**
-     * @param GraphNode $graphNode
-     *
      * @return ScrapingInformation|null
      */
     public static function fromPostNode(GraphNode $graphNode): ?self
@@ -115,8 +107,6 @@ class ScrapingInformation
     }
 
     /**
-     * @param GraphNode $graphNode
-     *
      * @return ScrapingInformation|null
      */
     public static function fromEventNode(GraphNode $graphNode): ?self
@@ -172,8 +162,6 @@ class ScrapingInformation
     }
 
     /**
-     * @param string $string
-     *
      * @return ScrapingInformation
      */
     public static function deserialize(string $string): ?self

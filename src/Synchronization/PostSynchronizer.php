@@ -31,9 +31,6 @@ class PostSynchronizer
 
     /**
      * PostSynchronizer constructor.
-     *
-     * @param Registry              $doctrine
-     * @param GraphApiReaderFactory $openGraphParserFactory
      */
     public function __construct(Registry $doctrine, GraphApiReaderFactory $openGraphParserFactory)
     {
@@ -43,8 +40,6 @@ class PostSynchronizer
 
     /**
      * Synchronize Facebook posts.
-     *
-     * @param FacebookNode $node
      *
      * @throws \Mvo\ContaoFacebookImport\GraphApi\RequestQuotaExceededException
      *

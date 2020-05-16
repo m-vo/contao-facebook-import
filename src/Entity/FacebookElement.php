@@ -58,17 +58,12 @@ abstract class FacebookElement extends DcaDefault
 
     /**
      * Get the associated facebook node for this entity.
-     *
-     * @return FacebookNode
      */
     public function getFacebookNode(): FacebookNode
     {
         return $this->facebookNode;
     }
 
-    /**
-     * @return FacebookImage|null
-     */
     public function getImage(): ?FacebookImage
     {
         return $this->image;
@@ -76,19 +71,12 @@ abstract class FacebookElement extends DcaDefault
 
     /**
      * Returns true if this entity is older than a given graph node and should be updated.
-     *
-     * @param GraphNode $graphNode
-     *
-     * @return bool
      */
     public function shouldBeUpdated(GraphNode $graphNode): bool
     {
         return $this->extractTimeFromGraphNode($graphNode, 'updated_time') !== $this->lastChanged;
     }
 
-    /**
-     * @param GraphNode $graphNode
-     */
     public function updateFromGraphNode(GraphNode $graphNode): void
     {
         $this->lastChanged = $this->extractTimeFromGraphNode($graphNode, 'updated_time');
@@ -108,20 +96,11 @@ abstract class FacebookElement extends DcaDefault
         $this->image->updateScrapingInformation($scrapingInformation);
     }
 
-    /**
-     * @return int
-     */
     public function getLastChanged(): int
     {
         return $this->lastChanged;
     }
 
-    /**
-     * @param GraphNode $graphNode
-     * @param string    $field
-     *
-     * @return int
-     */
     protected function extractTimeFromGraphNode(GraphNode $graphNode, string $field): int
     {
         /** @var \DateTime|null $date */

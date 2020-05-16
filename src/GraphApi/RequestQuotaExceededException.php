@@ -28,9 +28,6 @@ class RequestQuotaExceededException extends \Exception
         parent::__construct(sprintf('Quota exceeded for Facebook Node ID%s.', $node->getId()));
     }
 
-    /**
-     * @return FacebookNode
-     */
     public function getFacebookNode(): FacebookNode
     {
         return $this->facebookNode;

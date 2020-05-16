@@ -39,11 +39,6 @@ class ScraperAgent
 
     /**
      * ScraperAgent constructor.
-     *
-     * @param Registry              $doctrine
-     * @param Scraper               $scraper
-     * @param GraphApiReaderFactory $openGraphParserFactory
-     * @param LoggerInterface       $logger
      */
     public function __construct(
         Registry $doctrine,
@@ -106,11 +101,7 @@ class ScraperAgent
     }
 
     /**
-     * @param FacebookImage $image
-     *
      * @throws RequestQuotaExceededException
-     *
-     * @return bool
      */
     private function scrape(FacebookImage $image): bool
     {
@@ -187,11 +178,6 @@ class ScraperAgent
         return true;
     }
 
-    /**
-     * @param FacebookImage $image
-     * @param string        $message
-     * @param string        $errorLevel
-     */
     private function logError(FacebookImage $image, string $message, string $errorLevel): void
     {
         $message = sprintf(

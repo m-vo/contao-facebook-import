@@ -89,11 +89,6 @@ class ContentEventList extends ContentElement
         }
     }
 
-    /**
-     * @param FacebookEvent $event
-     *
-     * @return array
-     */
     private function compileEvent(FacebookEvent $event): array
     {
         // base data

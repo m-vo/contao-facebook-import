@@ -27,8 +27,6 @@ class DatabaseUpdateListener
 
     /**
      * DatabaseUpdateListener constructor.
-     *
-     * @param Connection $connection
      */
     public function __construct(Connection $connection)
     {
@@ -37,10 +35,6 @@ class DatabaseUpdateListener
 
     /**
      * Run all database updates.
-     *
-     * @param array $commands
-     *
-     * @return array
      */
     public function onCompileSqlCommands(array $commands): array
     {

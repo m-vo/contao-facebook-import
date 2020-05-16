@@ -32,17 +32,12 @@ class FacebookElement
 
     /**
      * FacebookPost constructor.
-     *
-     * @param Registry $doctrine
      */
     public function __construct(Registry $doctrine)
     {
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param DataContainer $dc
-     */
     public function onDeleteEvent(DataContainer $dc): void
     {
         /** @var FacebookEventEntity $element */
@@ -57,9 +52,6 @@ class FacebookElement
         }
     }
 
-    /**
-     * @param DataContainer $dc
-     */
     public function onDeletePost(DataContainer $dc): void
     {
         /** @var FacebookPostEntity $element */
@@ -74,11 +66,6 @@ class FacebookElement
         }
     }
 
-    /**
-     * @param array $row
-     *
-     * @return string
-     */
     public function onGenerateEventLabel(array $row): string
     {
         /** @var FacebookEventEntity $element */
@@ -95,11 +82,6 @@ class FacebookElement
         );
     }
 
-    /**
-     * @param array $row
-     *
-     * @return string
-     */
     public function onGeneratePostLabel(array $row): string
     {
         /** @var FacebookPostEntity $element */
@@ -126,11 +108,6 @@ class FacebookElement
         );
     }
 
-    /**
-     * @param FacebookImage|null $image
-     *
-     * @return string
-     */
     private function getLabelImage(?FacebookImage $image): string
     {
         if (null === $image) {

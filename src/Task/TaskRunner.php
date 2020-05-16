@@ -46,10 +46,6 @@ class TaskRunner
     }
 
     /**
-     * @param iterable $payloadList
-     * @param callable $executionCallback
-     * @param array    $params
-     *
      * @return TaskRunner
      */
     public function executeTimed(iterable $payloadList, callable $executionCallback, array $params = []): self
@@ -115,9 +111,6 @@ class TaskRunner
         }
     }
 
-    /**
-     * @return int
-     */
     public function getNumProcessedPayloads(): int
     {
         return $this->processingCount;

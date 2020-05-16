@@ -61,10 +61,6 @@ class FacebookPost extends FacebookElement
 
     /**
      * FacebookPost constructor.
-     *
-     * @param string       $postId
-     * @param FacebookNode $node
-     * @param GraphNode    $graphNode
      */
     public function __construct(string $postId, FacebookNode $node, GraphNode $graphNode)
     {
@@ -74,17 +70,11 @@ class FacebookPost extends FacebookElement
         $this->updateFromGraphNode($graphNode);
     }
 
-    /**
-     * @return string
-     */
     public function getPostId(): string
     {
         return $this->postId;
     }
 
-    /**
-     * @param GraphNode $graphNode
-     */
     public function updateFromGraphNode(GraphNode $graphNode): void
     {
         $attachments = $graphNode->getField('attachments', [])[0] ?? [];
@@ -104,33 +94,21 @@ class FacebookPost extends FacebookElement
         parent::updateFromGraphNode($graphNode);
     }
 
-    /**
-     * @return string
-     */
     public function getMessage(): string
     {
         return $this->message;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return int
-     */
     public function getPostTime(): int
     {
         return $this->postTime;
     }
 
-    /**
-     * @return string
-     */
     public function getLink(): string
     {
         return $this->link;
@@ -138,10 +116,6 @@ class FacebookPost extends FacebookElement
 
     /**
      * Try to unshim a Facebook URL that follows a certain pattern.
-     *
-     * @param string $url
-     *
-     * @return string
      */
     private static function unshimUrl(string $url): string
     {

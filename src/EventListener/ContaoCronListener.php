@@ -27,8 +27,6 @@ class ContaoCronListener implements ContainerAwareInterface
 
     /**
      * SynchronizationRequestListener constructor.
-     *
-     * @param Scheduler $scheduler
      */
     public function __construct(Scheduler $scheduler)
     {

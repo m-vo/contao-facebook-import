@@ -23,8 +23,6 @@ interface ScrapableItemInterface
 
     /**
      * Get the stored scraping information.
-     *
-     * @return ScrapingInformation|null
      */
     public function getScrapingInformation(): ?ScrapingInformation;
 

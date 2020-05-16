@@ -66,10 +66,6 @@ class FacebookEvent extends FacebookElement
 
     /**
      * FacebookEvent constructor.
-     *
-     * @param string       $eventId
-     * @param FacebookNode $node
-     * @param GraphNode    $graphNode
      */
     public function __construct(string $eventId, FacebookNode $node, GraphNode $graphNode)
     {
@@ -79,17 +75,11 @@ class FacebookEvent extends FacebookElement
         $this->updateFromGraphNode($graphNode);
     }
 
-    /**
-     * @return string
-     */
     public function getEventId(): string
     {
         return $this->eventId;
     }
 
-    /**
-     * @param GraphNode $graphNode
-     */
     public function updateFromGraphNode(GraphNode $graphNode): void
     {
         $this->name = utf8_encode($graphNode->getField('name', ''));
@@ -103,51 +93,31 @@ class FacebookEvent extends FacebookElement
         parent::updateFromGraphNode($graphNode);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return int
-     */
     public function getStartTime(): int
     {
         return $this->startTime;
     }
 
-    /**
-     * @return string
-     */
     public function getLocationName(): string
     {
         return $this->locationName;
     }
 
-    /**
-     * @return string
-     */
     public function getTicketUri(): string
     {
         return $this->ticketUri;
     }
 
-    /**
-     * @param GraphNode $graphNode
-     *
-     * @return string
-     */
     private function extractLocationNameFromGraphNode(GraphNode $graphNode): string
     {
         /** @var GraphNode|null $place */

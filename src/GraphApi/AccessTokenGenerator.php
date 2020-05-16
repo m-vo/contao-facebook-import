@@ -18,13 +18,6 @@ use GuzzleHttp\Client;
 
 class AccessTokenGenerator
 {
-    /**
-     * @param string $appId
-     * @param string $appSecret
-     * @param string $userToken
-     *
-     * @return string|null
-     */
     public function generateNeverExpiringAccessToken(string $appId, string $appSecret, string $userToken): ?string
     {
         try {
@@ -54,12 +47,7 @@ class AccessTokenGenerator
     }
 
     /**
-     * @param string $url
-     * @param string $property
-     *
      * @throws \RuntimeException
-     *
-     * @return string
      */
     private function getProperty(string $url, string $property): string
     {

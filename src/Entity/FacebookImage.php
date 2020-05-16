@@ -52,8 +52,6 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
 
     /**
      * FacebookImage constructor.
-     *
-     * @param FacebookNode $issuer
      */
     public function __construct(FacebookNode $issuer)
     {
@@ -62,8 +60,6 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
 
     /**
      * Get the stored scraping information.
-     *
-     * @return ScrapingInformation|null
      */
     public function getScrapingInformation(): ?ScrapingInformation
     {
@@ -107,10 +103,6 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
 
     /**
      * Return true if the given scraping information matches with the stored one.
-     *
-     * @param ScrapingInformation|null $scrapingInformation
-     *
-     * @return bool
      */
     public function matchScrapingInformation(?ScrapingInformation $scrapingInformation): bool
     {
@@ -121,9 +113,6 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
         return ScrapingInformation::serialize($scrapingInformation) === $this->scrapingInformation;
     }
 
-    /**
-     * @param ScrapingInformation $scrapingInformation
-     */
     public function updateScrapingInformation(ScrapingInformation $scrapingInformation): void
     {
         if (ScrapingInformation::serialize($scrapingInformation) !== $this->scrapingInformation) {
@@ -131,9 +120,6 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
         }
     }
 
-    /**
-     * @return FacebookNode
-     */
     public function getIssuerNode(): FacebookNode
     {
         return $this->issuer;
@@ -153,9 +139,6 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
         return \Contao\FilesModel::findByUuid($this->uuid);
     }
 
-    /**
-     * @return int
-     */
     public function getScrapingState(): int
     {
         return $this->scrapingState;
@@ -163,8 +146,6 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
 
     /**
      * @ORM\PreRemove()
-     *
-     * @param LifecycleEventArgs $args
      */
     public function removeLinkedResourceFromFilesystem(LifecycleEventArgs $args): void
     {

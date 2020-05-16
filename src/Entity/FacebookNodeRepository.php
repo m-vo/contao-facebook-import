@@ -17,8 +17,6 @@ use Doctrine\ORM\EntityRepository;
 class FacebookNodeRepository extends EntityRepository
 {
     /**
-     * @param int|null $nodeId
-     *
      * @return FacebookNode[]
      */
     public function findEnabled(?int $nodeId = null): array

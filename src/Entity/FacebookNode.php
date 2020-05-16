@@ -69,9 +69,6 @@ class FacebookNode extends DcaDefault
      */
     protected $requestQuotaLog = [];
 
-    /**
-     * @return array
-     */
     public function getFacebookApiCredentials(): array
     {
         return [
@@ -82,9 +79,6 @@ class FacebookNode extends DcaDefault
         ];
     }
 
-    /**
-     * @return int
-     */
     public function getSynchronizationScope(): int
     {
         return $this->numberOfPosts;
@@ -117,9 +111,6 @@ class FacebookNode extends DcaDefault
 
     /**
      * @param int $requestWindowLength in seconds
-     * @param int $allowedRequestCount
-     *
-     * @return bool
      */
     public function hasRequestQuotaAvailable(int $requestWindowLength, int $allowedRequestCount): bool
     {

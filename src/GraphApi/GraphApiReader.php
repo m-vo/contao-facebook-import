@@ -46,13 +46,6 @@ class GraphApiReader
     /**
      * GraphApiReader constructor.
      *
-     * @param string          $appId
-     * @param string          $appSecret
-     * @param string          $accessToken
-     * @param string          $pageName
-     * @param LoggerInterface $logger
-     * @param callable        $trackRequestQuotaCallback
-     *
      * @throws FacebookSDKException
      */
     public function __construct(
@@ -77,13 +70,7 @@ class GraphApiReader
     }
 
     /**
-     * @param string $objectId
-     * @param array  $fieldNames
-     * @param array  $params
-     *
      * @throws RequestQuotaExceededException
-     *
-     * @return GraphNode|null
      */
     public function getSingleNode(string $objectId, array $fieldNames, array $params = []): ?GraphNode
     {
@@ -161,14 +148,8 @@ class GraphApiReader
     /** @noinspection PhpDocRedundantThrowsInspection because callback throws */
 
     /**
-     * @param string $endpoint
-     * @param array  $fieldNames
-     * @param array  $params
-     *
      * @throws \Facebook\Exceptions\FacebookSDKException
      * @throws RequestQuotaExceededException
-     *
-     * @return \Facebook\FacebookResponse
      */
     private function performRequest(
         string $endpoint,

@@ -17,8 +17,6 @@ namespace Mvo\ContaoFacebookImport\String;
 class Tools
 {
     /**
-     * @param string $str
-     *
      * @return mixed
      */
     public static function formatText(string $str)
@@ -30,10 +28,6 @@ class Tools
     }
 
     /**
-     * @param string $str
-     * @param int    $maxWords
-     * @param int    $wordsOffset
-     *
      * @return mixed
      */
     public static function shortenText(string $str, int $maxWords, int $wordsOffset)
@@ -57,8 +51,6 @@ class Tools
     }
 
     /**
-     * @param string $str
-     *
      * @return mixed
      */
     private static function replaceUrls(string $str)
@@ -72,8 +64,6 @@ class Tools
     }
 
     /**
-     * @param string $str
-     *
      * @return mixed
      */
     private static function formatWhitespaces(string $str)
