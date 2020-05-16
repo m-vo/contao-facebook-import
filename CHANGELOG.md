@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v3.2.0
+------
+- migrate to graph API version 7.0 [#26]
+- fix some scraper issues
+- improve logging
+
 v3.1.1
 ------
 - fix image factory path [#20] (@rabauss)
