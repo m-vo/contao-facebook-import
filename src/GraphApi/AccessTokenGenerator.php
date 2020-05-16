@@ -32,20 +32,20 @@ class AccessTokenGenerator
 
             // get long-lived token
             $longLivedToken = $this->getProperty(
-                'https://graph.facebook.com/v2.9/oauth/access_token?grant_type=fb_exchange_token&'.
+                'https://graph.facebook.com/v7.0/oauth/access_token?grant_type=fb_exchange_token&'.
                 "client_id={$appId}&client_secret={$appSecret}&fb_exchange_token={$userToken}",
                 'access_token'
             );
 
             // get user id
             $userId = $this->getProperty(
-                "https://graph.facebook.com/v2.9/me?access_token={$longLivedToken}",
+                "https://graph.facebook.com/v7.0/me?access_token={$longLivedToken}",
                 'id'
             );
 
             // get final token
             return $this->getProperty(
-                "https://graph.facebook.com/v2.9/{$userId}?fields=access_token&access_token={$longLivedToken}",
+                "https://graph.facebook.com/v7.0/{$userId}?fields=access_token&access_token={$longLivedToken}",
                 'access_token'
             );
         } catch (\Exception $e) {

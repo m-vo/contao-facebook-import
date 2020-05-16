@@ -59,7 +59,7 @@ class PostSynchronizer
 
         // query facebook for current posts
         $graphNodes = $reader->getPageNodes(
-            'posts',
+            'published_posts',
             [
                 'id',
                 'created_time',
