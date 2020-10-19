@@ -101,6 +101,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_post'] =
                         'eval' => ['isBoolean' => true],
                     ],
                 'fb_post_id' => [],
+                'parent_id' => [],
                 'type' => [],
                 'post_time' => [],
                 'link' => [],
