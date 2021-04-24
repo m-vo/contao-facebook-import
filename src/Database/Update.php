@@ -18,7 +18,9 @@ use Doctrine\DBAL\Connection;
 
 abstract class Update
 {
-    /** @var Connection */
+    /**
+     * @var Connection
+     */
     protected $connection;
 
     /**

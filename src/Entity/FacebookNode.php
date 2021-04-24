@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\Entity;
 
+use Contao\FilesModel;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -91,11 +92,11 @@ class FacebookNode extends DcaDefault
      */
 
     /**
-     * @return \Contao\FilesModel|null
+     * @return FilesModel|null
      */
     public function getUploadDirectory()
     {
-        return \Contao\FilesModel::findByUuid($this->uploadDirectory);
+        return FilesModel::findByUuid($this->uploadDirectory);
     }
 
     /**
@@ -122,6 +123,7 @@ class FacebookNode extends DcaDefault
 
         // tally elements in window
         $requestCount = 0;
+
         for ($i = \count($this->requestQuotaLog) - 1; $i >= 0; --$i) {
             if ($this->requestQuotaLog[$i] < $threshold) {
                 break;

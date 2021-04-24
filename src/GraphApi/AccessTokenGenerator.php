@@ -54,7 +54,8 @@ class AccessTokenGenerator
         $client = new Client();
         $response = $client->get($url);
 
-        if (200 === $response->getStatusCode()
+        if (
+            200 === $response->getStatusCode()
             && null !== ($body = $response->getBody())
             && ($contents = $body->getContents())
             && ($properties = json_decode($contents))

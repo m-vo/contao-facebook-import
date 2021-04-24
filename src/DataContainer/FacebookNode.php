@@ -32,23 +32,26 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
     use ContainerAwareTrait;
     use FrameworkAwareTrait;
 
-    /** @var Registry */
+    /**
+     * @var Registry
+     */
     private $doctrine;
 
-    /** @var Scheduler */
+    /**
+     * @var Scheduler
+     */
     private $scheduler;
 
-    /** @var AccessTokenGenerator */
+    /**
+     * @var AccessTokenGenerator
+     */
     private $facebookAccessTokenGenerator;
 
     /**
      * FacebookNode constructor.
      */
-    public function __construct(
-        Registry $doctrine,
-        Scheduler $scheduler,
-        AccessTokenGenerator $facebookAccessTokenGenerator
-    ) {
+    public function __construct(Registry $doctrine, Scheduler $scheduler, AccessTokenGenerator $facebookAccessTokenGenerator)
+    {
         $this->doctrine = $doctrine;
         $this->scheduler = $scheduler;
         $this->facebookAccessTokenGenerator = $facebookAccessTokenGenerator;
@@ -59,7 +62,8 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
         /** @var FacebookNodeEntity $element */
         $element = $this->doctrine
             ->getRepository(FacebookNodeEntity::class)
-            ->find($dc->id);
+            ->find($dc->id)
+        ;
 
         if (null !== $element) {
             $manager = $this->doctrine->getManager();
@@ -75,7 +79,8 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
     {
         $node = $this->doctrine
             ->getRepository(FacebookNodeEntity::class)
-            ->find((int) $dc->id);
+            ->find((int) $dc->id)
+        ;
 
         if (null !== $node) {
             $this->scheduler->synchronizePosts($node);
@@ -91,7 +96,8 @@ class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
     {
         $node = $this->doctrine
             ->getRepository(FacebookNodeEntity::class)
-            ->find((int) $dc->id);
+            ->find((int) $dc->id)
+        ;
 
         if (null !== $node) {
             $this->scheduler->synchronizeEvents($node);

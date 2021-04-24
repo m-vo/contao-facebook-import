@@ -45,7 +45,8 @@ class Configuration implements ConfigurationInterface
                     ->values(['internal', 'route'])
                     ->defaultValue('internal')
                 ->end()
-            ->end();
+            ->end()
+        ;
 
         return $treeBuilder;
     }

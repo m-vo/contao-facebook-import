@@ -18,7 +18,9 @@ use Mvo\ContaoFacebookImport\Entity\FacebookNode;
 
 class RequestQuotaExceededException extends \Exception
 {
-    /** @var FacebookNode */
+    /**
+     * @var FacebookNode
+     */
     private $facebookNode;
 
     public function __construct(FacebookNode $node)

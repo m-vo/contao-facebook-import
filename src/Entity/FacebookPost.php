@@ -24,7 +24,9 @@ use Mvo\ContaoFacebookImport\Image\ScrapingInformation;
  */
 class FacebookPost extends FacebookElement
 {
-    /** @var array List of known types */
+    /**
+     * @var array List of known types
+     */
     public const types = ['status', 'link', 'photo', 'video', 'event', 'album'];
     /**
      * @ORM\Column(name="fb_post_id", type="string", options={"default": ""})
@@ -120,6 +122,7 @@ class FacebookPost extends FacebookElement
     private static function unshimUrl(string $url): string
     {
         $matches = [];
+
         if (1 !== preg_match('%https?://l\.facebook\.com/l.php\?u=(.*)&h=.*$%', $url, $matches)) {
             return $url;
         }

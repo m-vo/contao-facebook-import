@@ -106,6 +106,6 @@ abstract class FacebookElement extends DcaDefault
         /** @var \DateTime|null $date */
         $date = $graphNode->getField($field, null);
 
-        return (null !== $date) ? $date->getTimestamp() : 0;
+        return null !== $date ? $date->getTimestamp() : 0;
     }
 }

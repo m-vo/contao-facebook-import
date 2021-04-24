@@ -20,13 +20,18 @@ use Facebook\GraphNodes\GraphNode;
 use Mvo\ContaoFacebookImport\Entity\FacebookNode;
 use Mvo\ContaoFacebookImport\Entity\FacebookPost;
 use Mvo\ContaoFacebookImport\GraphApi\GraphApiReaderFactory;
+use Mvo\ContaoFacebookImport\GraphApi\RequestQuotaExceededException;
 
 class PostSynchronizer
 {
-    /** @var ObjectManager */
+    /**
+     * @var ObjectManager
+     */
     private $manager;
 
-    /** @var GraphApiReaderFactory */
+    /**
+     * @var GraphApiReaderFactory
+     */
     private $graphApiReaderFactory;
 
     /**
@@ -41,13 +46,14 @@ class PostSynchronizer
     /**
      * Synchronize Facebook posts.
      *
-     * @throws \Mvo\ContaoFacebookImport\GraphApi\RequestQuotaExceededException
+     * @throws RequestQuotaExceededException
      *
      * @return array array<int,int,int>
      */
     public function run(FacebookNode $node): array
     {
         $reader = $this->graphApiReaderFactory->getTrackedReader($node);
+
         if (null === $reader) {
             return [0, 0, 0];
         }
@@ -66,6 +72,7 @@ class PostSynchronizer
             ],
             ['limit' => $node->getSynchronizationScope()]
         );
+
         if (null === $graphNodes) {
             return [0, 0, 0];
         }
@@ -73,14 +80,15 @@ class PostSynchronizer
         // load existing posts
         $posts = $this->manager
             ->getRepository(FacebookPost::class)
-            ->findByFacebookNode($node);
+            ->findByFacebookNode($node)
+        ;
 
         // synchronize
         $postSynchronizer = new Synchronizer(
-            function (FacebookPost $localItem) {
+            static function (FacebookPost $localItem) {
                 return $localItem->getPostId();
             },
-            function (GraphNode $remoteItem) {
+            static function (GraphNode $remoteItem) {
                 return $remoteItem->getField('id', null);
             }
         );
@@ -89,7 +97,7 @@ class PostSynchronizer
             $postSynchronizer->synchronize(
                 $posts,
                 $graphNodes,
-                function (FacebookPost $post, GraphNode $graphNode) {
+                static function (FacebookPost $post, GraphNode $graphNode) {
                     return $post->shouldBeUpdated($graphNode);
                 }
             );

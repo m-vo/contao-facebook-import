@@ -60,7 +60,7 @@ class Plugin implements BundlePluginInterface, DependentPluginInterface, ConfigP
      *
      * @throws \Exception
      */
-    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig): void
     {
         $loader->load(__DIR__.'/../Resources/config/config.yml');
     }

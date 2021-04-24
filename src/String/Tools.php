@@ -47,7 +47,7 @@ class Tools
 
         $str = rtrim(implode(' ', $words));
 
-        return ($initialWordCount > \count($words)) ? sprintf('%s&hellip;', $str) : $str;
+        return $initialWordCount > \count($words) ? sprintf('%s&hellip;', $str) : $str;
     }
 
     /**

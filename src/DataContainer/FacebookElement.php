@@ -27,7 +27,9 @@ use Mvo\ContaoFacebookImport\Image\ScrapableItemInterface;
 
 class FacebookElement
 {
-    /** @var Registry */
+    /**
+     * @var Registry
+     */
     private $doctrine;
 
     /**
@@ -43,7 +45,8 @@ class FacebookElement
         /** @var FacebookEventEntity $element */
         $element = $this->doctrine
             ->getRepository(FacebookEventEntity::class)
-            ->find($dc->id);
+            ->find($dc->id)
+        ;
 
         if (null !== $element) {
             $manager = $this->doctrine->getManager();
@@ -57,7 +60,8 @@ class FacebookElement
         /** @var FacebookPostEntity $element */
         $element = $this->doctrine
             ->getRepository(FacebookPostEntity::class)
-            ->find($dc->id);
+            ->find($dc->id)
+        ;
 
         if (null !== $element) {
             $manager = $this->doctrine->getManager();
@@ -71,7 +75,8 @@ class FacebookElement
         /** @var FacebookEventEntity $element */
         $element = $this->doctrine
             ->getRepository(FacebookEventEntity::class)
-            ->find($row['id']);
+            ->find($row['id'])
+        ;
 
         return sprintf(
             '<div class="mvo_facebook_element">%s<div class="mvo_facebook_element-content"><h2>%s</h2><h3>%s</h3>%s</div>',
@@ -87,10 +92,12 @@ class FacebookElement
         /** @var FacebookPostEntity $element */
         $element = $this->doctrine
             ->getRepository(FacebookPostEntity::class)
-            ->find($row['id']);
+            ->find($row['id'])
+        ;
 
         $type = sprintf('<span class="mvo_facebook_post-type">[&thinsp;%s&thinsp;]</span>', $element->getType());
         $text = nl2br(utf8_decode($element->getMessage()));
+
         if (\in_array($element->getType(), ['link', 'video'], true)) {
             $text = sprintf(
                 '%s%s<span class="mvo_facebook_post-link">[&thinsp;%s&thinsp;]</span>',
@@ -123,8 +130,10 @@ class FacebookElement
             );
         }
 
-        if (ScrapableItemInterface::STATE_SUCCESS === $image->getScrapingState()
-            && null !== $file = $image->getFile()) {
+        if (
+            ScrapableItemInterface::STATE_SUCCESS === $image->getScrapingState()
+            && null !== $file = $image->getFile()
+        ) {
             $template = new FrontendTemplate('image');
 
             Frontend::addImageToTemplate(

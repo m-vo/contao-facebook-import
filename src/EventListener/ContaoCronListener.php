@@ -22,7 +22,9 @@ class ContaoCronListener implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    /** @var Scheduler */
+    /**
+     * @var Scheduler
+     */
     private $scheduler;
 
     /**

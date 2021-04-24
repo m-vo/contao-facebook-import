@@ -1,28 +1,28 @@
-<div class="<?php echo $this->class ?>"<?php echo $this->cssID ?><?php if ($this->style): ?> style="<?php echo $this->style ?>"<?php endif ?>>
+<div class="<?= $this->class ?>"<?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif ?>>
 	<?php if ($this->headline): ?>
-		<<?php echo $this->hl ?>><?php echo $this->headline ?></<?php echo $this->hl ?>>
+		<<?= $this->hl ?>><?= $this->headline ?></<?= $this->hl ?>>
 	<?php endif ?>
 
-<?php if($this->hasEvents): ?>
+<?php if ($this->hasEvents): ?>
 <?php foreach ($this->events as $event): ?>
     <article class="facebook-event">
-        <time class="facebook-event-date" datetime="<?php echo $event['datetime']; ?>">
-            <b><?php echo $this->parseDate('jS \of F y (l)', $event['time']); ?></b> @ <?php echo $this->parseDate('h:i A', $event['time']); ?>
+        <time class="facebook-event-date" datetime="<?= $event['datetime']; ?>">
+            <b><?= $this->parseDate('jS \of F y (l)', $event['time']); ?></b> @ <?= $this->parseDate('h:i A', $event['time']); ?>
         </time>
-        <h2><a href="<?php echo $event['href']; ?>"><?php echo $event['name']; ?></a></h2>
+        <h2><a href="<?= $event['href']; ?>"><?= $event['name']; ?></a></h2>
         <div>
-            <?php if($event['hasImage']): ?>
+            <?php if ($event['hasImage']): ?>
                 <div class="facebook-event-image">
-                    <?php echo $event['image']; ?>
+                    <?= $event['image']; ?>
                 </div>
             <?php endif ?>
-            <p class="facebook-event-description"><?php echo $event['description']; ?></p>
+            <p class="facebook-event-description"><?= $event['description']; ?></p>
         </div>
-        <a class="facebook-event-link" href="<?php echo $event['href']; ?>">Event on Facebook</a>
+        <a class="facebook-event-link" href="<?= $event['href']; ?>">Event on Facebook</a>
     </article>
 <?php endforeach; ?>
 <?php else:?>
-<p class="no-events"><?php echo $this->empty; ?></p>
-<?php endif;?>
+<p class="no-events"><?= $this->empty; ?></p>
+<?php endif; ?>
 
 </div>

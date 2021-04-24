@@ -24,19 +24,29 @@ class ScrapingInformation
     public const TYPE_IMAGE_SET = 1;
     public const TYPE_RESCRAPE_AS_EVENT = 2;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $identifier;
 
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     public $fallbackUrl;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     public $type;
 
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     public $objectId;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     public $metaData;
 
     /**
@@ -58,6 +68,7 @@ class ScrapingInformation
     {
         // only accept nodes with picture information
         $url = $graphNode->getField('full_picture', null);
+
         if (null === $url) {
             return null;
         }
@@ -74,18 +85,22 @@ class ScrapingInformation
                 $objectId = $attachments['target']['id'] ?? null;
                 $type = self::TYPE_IMAGE_SET;
                 break;
+
             case 'event':
                 $objectId = $attachments['target']['id'] ?? null;
                 $type = self::TYPE_RESCRAPE_AS_EVENT;
                 break;
+
             case 'link':
                 break;
+
             default:
                 return null;
         }
 
         // unique identifier
         $identifier = $graphNode->getField('object_id', null) ?? $graphNode->getField('id', null);
+
         if (null === $identifier) {
             return null;
         }
@@ -114,12 +129,14 @@ class ScrapingInformation
         // only accept nodes with cover information
         /** @var GraphCoverPhoto|null $cover */
         $cover = $graphNode->getField('cover', null);
+
         if (null === $cover) {
             return null;
         }
 
         // get image set id
         $objectId = $cover->getField('id', null);
+
         if (null === $objectId) {
             return null;
         }
@@ -167,6 +184,7 @@ class ScrapingInformation
     public static function deserialize(string $string): ?self
     {
         $data = StringUtil::deserialize($string);
+
         if (null === $data) {
             return null;
         }

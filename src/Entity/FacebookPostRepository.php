@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * Contao Facebook Import Bundle for Contao Open Source CMS
  *
@@ -17,7 +19,7 @@ use Doctrine\ORM\EntityRepository;
 class FacebookPostRepository extends EntityRepository
 {
     /**
-     * @return FacebookElement[]
+     * @return array<FacebookElement>
      */
     public function findByFacebookNode(FacebookNode $node): array
     {

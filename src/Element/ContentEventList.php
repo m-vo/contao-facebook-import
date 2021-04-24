@@ -46,8 +46,8 @@ class ContentEventList extends ContentElement
             $objTemplate->title = 'Facebook Events';
             $objTemplate->wildcard = sprintf(
                 $GLOBALS['TL_LANG']['MSC']['mvo_facebook_eventListDisplay'],
-                ($this->mvo_facebook_number_of_elements
-                 > 0) ? $this->mvo_facebook_number_of_elements : $GLOBALS['TL_LANG']['MSC']['mvo_facebook_allAvailable']
+                $this->mvo_facebook_number_of_elements
+                 > 0 ? $this->mvo_facebook_number_of_elements : $GLOBALS['TL_LANG']['MSC']['mvo_facebook_allAvailable']
             );
 
             return $objTemplate->parse();
@@ -69,10 +69,12 @@ class ContentEventList extends ContentElement
             ->findVisible(
                 (int) $this->mvo_facebook_node,
                 (int) $this->mvo_facebook_number_of_elements
-            );
+            )
+        ;
 
         // compile events
         $compiledEvents = [];
+
         foreach ($events as $event) {
             $compiledEvents[] = $this->compileEvent($event);
         }
@@ -106,8 +108,10 @@ class ContentEventList extends ContentElement
         ];
 
         // image
-        if (null !== ($image = $event->getImage())
-            && null !== ($file = $image->getFile())) {
+        if (
+            null !== ($image = $event->getImage())
+            && null !== ($file = $image->getFile())
+        ) {
             $metaData = StringUtil::deserialize($file->meta, true);
 
             $imageTemplate = new FrontendTemplate('image');

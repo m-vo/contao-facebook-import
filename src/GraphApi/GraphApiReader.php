@@ -25,22 +25,34 @@ use Psr\Log\LoggerInterface;
 
 class GraphApiReader
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const GRAPH_API_VERSION = 'v7.0';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $pageName;
 
-    /** @var Facebook */
+    /**
+     * @var Facebook
+     */
     private $facebook;
 
-    /** @var AccessToken */
+    /**
+     * @var AccessToken
+     */
     private $accessToken;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
-    /** @var callable */
+    /**
+     * @var callable
+     */
     private $trackRequestQuotaCallback;
 
     /**
@@ -48,14 +60,8 @@ class GraphApiReader
      *
      * @throws FacebookSDKException
      */
-    public function __construct(
-        string $appId,
-        string $appSecret,
-        string $accessToken,
-        string $pageName,
-        LoggerInterface $logger,
-        callable $trackRequestQuotaCallback
-    ) {
+    public function __construct(string $appId, string $appSecret, string $accessToken, string $pageName, LoggerInterface $logger, callable $trackRequestQuotaCallback)
+    {
         $this->pageName = $pageName;
         $this->facebook = new Facebook(
             [
@@ -94,7 +100,7 @@ class GraphApiReader
      *
      * @throws RequestQuotaExceededException
      *
-     * @return \Facebook\GraphNodes\GraphNode[]|null
+     * @return array<GraphNode>|null
      */
     public function getPageNodes(string $entity, array $fieldNames, array $params = []): ?array
     {
@@ -115,6 +121,7 @@ class GraphApiReader
             do {
                 // query graph and add nodes
                 $edge = $this->performRequest($endpoint, $fieldNames, $params)->getGraphEdge();
+
                 foreach ($edge as $node) {
                     $nodes[] = $node;
                 }
@@ -122,6 +129,7 @@ class GraphApiReader
                 // try to find more nodes by following pagination
                 $numElements = \count($nodes);
                 $params['after'] = $edge->getNextCursor();
+
                 if (0 !== $requiredElements) {
                     $params['limit'] = min($requiredElements - $numElements, $limitThreshold);
                 }
@@ -148,14 +156,11 @@ class GraphApiReader
     /** @noinspection PhpDocRedundantThrowsInspection because callback throws */
 
     /**
-     * @throws \Facebook\Exceptions\FacebookSDKException
+     * @throws FacebookSDKException
      * @throws RequestQuotaExceededException
      */
-    private function performRequest(
-        string $endpoint,
-        array $fieldNames,
-        array $params = []
-    ): FacebookResponse {
+    private function performRequest(string $endpoint, array $fieldNames, array $params = []): FacebookResponse
+    {
         // check request quota
         if (null !== $this->trackRequestQuotaCallback) {
             ($this->trackRequestQuotaCallback)();

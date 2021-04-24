@@ -31,12 +31,13 @@ class MvoContaoFacebookImportExtension extends Extension
      * @throws \InvalidArgumentException When provided tag is not defined in this extension
      * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
         $config = (new Processor())->processConfiguration(new Configuration(), $configs);
+
         foreach (array_keys($config) as $key) {
             $container->setParameter($this->getAlias().'.'.$key, $config[$key]);
         }
