@@ -25,13 +25,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('mvo_contao_facebook_import');
-
-        // Keep compatibility with symfony/config < 4.2
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            $rootNode = $treeBuilder->root('mvo_contao_facebook_import');
-        }
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
