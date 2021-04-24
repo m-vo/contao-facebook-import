@@ -24,10 +24,6 @@ $GLOBALS['BE_MOD']['mvo_facebook_integration'] = [
     ],
 ];
 
-if ('BE' === TL_MODE) {
-    $GLOBALS['TL_CSS'][] = 'bundles/mvocontaofacebookimport/css/backend.css';
-}
-
 // content elements
 $GLOBALS['TL_CTE']['mvo_facebook']['mvo_facebook_post_list'] = ContentPostList::class;
 $GLOBALS['TL_CTE']['mvo_facebook']['mvo_facebook_event_list'] = ContentEventList::class;
