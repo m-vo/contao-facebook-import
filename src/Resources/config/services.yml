@@ -62,8 +62,8 @@ services:
     class: Mvo\ContaoFacebookImport\EventListener\ContaoCronListener
     arguments:
     - '@mvo_contao_facebook.synchronization.scheduler'
-    public: true
-
+    tags:
+    - { name: 'contao.cronjob', interval: 'minutely'}
 
   # data container
   mvo_contao_facebook.datacontainer.facebook_node:

@@ -27,6 +27,3 @@ $GLOBALS['BE_MOD']['mvo_facebook_integration'] = [
 // content elements
 $GLOBALS['TL_CTE']['mvo_facebook']['mvo_facebook_post_list'] = ContentPostList::class;
 $GLOBALS['TL_CTE']['mvo_facebook']['mvo_facebook_event_list'] = ContentEventList::class;
-
-// background synchronization
-$GLOBALS['TL_CRON']['minutely'][] = ['mvo_contao_facebook.listener.contao_cron_listener', 'onExecuteByContaoCron'];

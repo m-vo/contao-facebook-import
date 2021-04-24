@@ -36,7 +36,7 @@ class ContaoCronListener implements ContainerAwareInterface
     /**
      * Entry point for background execution by the Contao cron.
      */
-    public function onExecuteByContaoCron(): void
+    public function __invoke(): void
     {
         if ('internal' !== $this->container->getParameter('mvo_contao_facebook_import.trigger_type')) {
             return;
