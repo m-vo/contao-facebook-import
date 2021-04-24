@@ -1,0 +1,3 @@
+mvo_contao_facebook_import:
+  resource: ../src/Controller
+  type: annotation

@@ -33,8 +33,8 @@ class MvoContaoFacebookImportExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
+        $loader->load('services.yaml');
 
         $config = (new Processor())->processConfiguration(new Configuration(), $configs);
         foreach (array_keys($config) as $key) {
