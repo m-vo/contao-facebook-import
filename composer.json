@@ -39,7 +39,6 @@
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",
-    "friendsofphp/php-cs-fixer": "^2.15",
     "nickdnk/graph-sdk": "^6.0",
     "phpstan/extension-installer": "^1.0.1",
     "phpstan/phpstan": "^0.12",
@@ -55,7 +54,10 @@
     "contao-manager-plugin": "Mvo\\ContaoFacebookImport\\ContaoManager\\Plugin"
   },
   "scripts": {
-    "cs": "vendor/bin/php-cs-fixer fix"
+    "ecs": [
+      "@php tools/ecs/vendor/bin/ecs check src/ --fix --ansi",
+      "@php tools/ecs/vendor/bin/ecs check src/ --config ecs_template.php --fix --ansi"
+    ]
   },
   "config": {
     "sort-packages": true
