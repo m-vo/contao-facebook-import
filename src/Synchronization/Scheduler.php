@@ -30,7 +30,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
 {
     use ContainerAwareTrait;
-
     use FrameworkAwareTrait;
 
     /** @var Registry */

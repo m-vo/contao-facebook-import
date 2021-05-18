@@ -24,8 +24,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('mvo_contao_facebook_import');
+        $treeBuilder = new TreeBuilder('mvo_contao_facebook_import');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

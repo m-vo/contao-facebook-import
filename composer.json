@@ -21,20 +21,30 @@
     "php": ">=7.1",
     "ext-PDO": "*",
     "ext-json": "*",
-    "contao/core-bundle": "^4.4",
+    "codefog/contao-haste": "^4.17",
+    "contao/core-bundle": "^4.9",
+    "doctrine/dbal": "^2.10",
+    "doctrine/doctrine-bundle": "^1.8 || ^2.0",
+    "doctrine/orm": "^2.6",
     "facebook/graph-sdk": "^5.7",
     "guzzlehttp/guzzle": "~6.0",
-    "codefog/contao-haste": "^4.17",
-    "symfony/stopwatch": "^3.0|^4.0",
-    "doctrine/orm": "^2.6"
+    "symfony/config": "^4.4 || ^5.2",
+    "symfony/dependency-injection": "^4.4 || ^5.2",
+    "symfony/finder": "^4.4 || ^5.2",
+    "symfony/framework-bundle": "^4.4 || ^5.2",
+    "symfony/http-foundation": "^4.4 || ^5.2",
+    "symfony/http-kernel": "^4.4 || ^5.2",
+    "symfony/routing": "^4.4 || ^5.2",
+    "symfony/stopwatch": "^4.4 || ^5.2"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",
+    "facebook/graph-sdk": "dev-php8 as 5.7-dev",
     "friendsofphp/php-cs-fixer": "^2.15",
-    "phpstan/phpstan": "^0.11.8",
     "phpstan/extension-installer": "^1.0.1",
-    "phpstan/phpstan-symfony": "^0.11.6",
-    "phpstan/phpstan-doctrine": "^0.11.5"
+    "phpstan/phpstan": "^0.12",
+    "phpstan/phpstan-doctrine": "^0.12",
+    "phpstan/phpstan-symfony": "^0.12"
   },
   "autoload": {
     "psr-4": {
@@ -46,5 +56,14 @@
   },
   "scripts": {
     "cs": "vendor/bin/php-cs-fixer fix"
-  }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/brainexe/php-graph-sdk.git"
+    }
+  ]
 }
