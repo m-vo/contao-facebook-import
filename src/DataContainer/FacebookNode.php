@@ -29,8 +29,8 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class FacebookNode implements FrameworkAwareInterface, ContainerAwareInterface
 {
-    use FrameworkAwareTrait;
     use ContainerAwareTrait;
+    use FrameworkAwareTrait;
 
     /** @var Registry */
     private $doctrine;
