@@ -87,3 +87,11 @@ services:
     - '@database_connection'
     tags:
     - { name: 'contao.hook', hook: 'sqlCompileCommands', method: 'onCompileSqlCommands'}
+
+  # backend assets
+  mvo_contao_facebook.listener.backend_assets:
+    class: Mvo\ContaoFacebookImport\EventListener\BackendAssetsListener
+    arguments:
+    - '@contao.routing.scope_matcher'
+    tags:
+    - { name: 'kernel.event_listener', event: 'kernel.request'}

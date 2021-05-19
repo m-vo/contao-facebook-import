@@ -12,25 +12,18 @@ declare(strict_types=1);
  * @author     Moritz Vondano
  */
 
-namespace Mvo\ContaoFacebookImport\EventSubscriber;
+namespace Mvo\ContaoFacebookImport\EventListener;
 
 use Contao\CoreBundle\Routing\ScopeMatcher;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 
-class KernelRequestSubscriber implements EventSubscriberInterface
+class BackendAssetsListener
 {
     protected $scopeMatcher;
 
     public function __construct(ScopeMatcher $scopeMatcher)
     {
         $this->scopeMatcher = $scopeMatcher;
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [KernelEvents::REQUEST => 'onKernelRequest'];
     }
 
     public function onKernelRequest(RequestEvent $e): void
