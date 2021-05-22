@@ -62,8 +62,8 @@ services:
     class: Mvo\ContaoFacebookImport\EventListener\ContaoCronListener
     arguments:
     - '@mvo_contao_facebook.synchronization.scheduler'
-    public: true
-
+    tags:
+    - { name: 'contao.cronjob', interval: 'minutely'}
 
   # data container
   mvo_contao_facebook.datacontainer.facebook_node:
@@ -87,3 +87,11 @@ services:
     - '@database_connection'
     tags:
     - { name: 'contao.hook', hook: 'sqlCompileCommands', method: 'onCompileSqlCommands'}
+
+  # backend assets
+  mvo_contao_facebook.listener.backend_assets:
+    class: Mvo\ContaoFacebookImport\EventListener\BackendAssetsListener
+    arguments:
+    - '@contao.routing.scope_matcher'
+    tags:
+    - { name: 'kernel.event_listener', event: 'kernel.request'}
