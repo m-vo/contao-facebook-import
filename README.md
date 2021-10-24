@@ -19,19 +19,10 @@ how to migrate from older versions please refer to the [changelog](CHANGELOG.md)
 
 #### PHP 8 ####
 Unfortunately, there is no official release of [facebook/graph-sdk](https://packagist.org/packages/facebook/graph-sdk) with support for PHP 8.
-At your own risk, you can add an unoffical fork to your `composer.json` in your project root:
-```json
-  "require": {
-    ...
-    "facebook/graph-sdk": "dev-php8 as 5.7-dev"
-  },
-  ...
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/brainexe/php-graph-sdk.git"
-    }
-  ]
+At your own risk, you can require the unoffical fork [nickdnk/graph-sdk](https://packagist.org/packages/nickdnk/graph-sdk) as replacement to your project:
+
+```console
+$ composer require nickdnk/graph-sdk
 ```
     
 Setup
