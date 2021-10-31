@@ -19,7 +19,7 @@ how to migrate from older versions please refer to the [changelog](CHANGELOG.md)
 
 #### PHP 8 ####
 Unfortunately, there is no official release of [facebook/graph-sdk](https://packagist.org/packages/facebook/graph-sdk) with support for PHP 8.
-At your own risk, you can require the unoffical fork [nickdnk/graph-sdk](https://packagist.org/packages/nickdnk/graph-sdk) as replacement to your project:
+You can, however, require the third-party fork [nickdnk/graph-sdk](https://packagist.org/packages/nickdnk/graph-sdk) in your application, which added support for PHP 8 and acts as a drop-in-replacement. You might want to do this *before* installing this bundle, so that the installation won't fail.
 
 ```console
 $ composer require nickdnk/graph-sdk
