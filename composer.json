@@ -23,7 +23,7 @@
     "ext-json": "*",
     "codefog/contao-haste": "^4.17",
     "contao/core-bundle": "^4.9",
-    "doctrine/dbal": "^2.10",
+    "doctrine/dbal": "^2.10 || ^3.0",
     "doctrine/doctrine-bundle": "^1.8 || ^2.0",
     "doctrine/orm": "^2.6",
     "facebook/graph-sdk": "^5.7",
