@@ -175,7 +175,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                 'import_enabled' => [
                         'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['import_enabled'],
                         'exclude' => true,
-                        'default' => false,
+                        'default' => 0,
                         'inputType' => 'checkbox',
                         'eval' => ['isBoolean' => true],
                         'save_callback' => [
@@ -183,6 +183,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                                 return '1' === $value;
                             },
                         ],
+                        'sql' => ['type' => 'boolean', 'default' => false]
                     ],
                 'upload_directory' => [
                         'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['upload_directory'],
