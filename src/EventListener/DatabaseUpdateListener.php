@@ -22,7 +22,9 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class DatabaseUpdateListener
 {
-    /** @var Connection */
+    /**
+     * @var Connection
+     */
     private $connection;
 
     /**
@@ -38,12 +40,13 @@ class DatabaseUpdateListener
      */
     public function onCompileSqlCommands(array $commands): array
     {
-        /** @var SplFileInfo[] $finder */
+        /** @var array<SplFileInfo> $finder */
         $finder = Finder::create()
             ->files()
             ->name('Version*.php')
             ->sortByName()
-            ->in(__DIR__.'/../Database');
+            ->in(__DIR__.'/../Database')
+        ;
 
         foreach ($finder as $file) {
             $class = 'Mvo\ContaoFacebookImport\Database\\'.$file->getBasename('.php');

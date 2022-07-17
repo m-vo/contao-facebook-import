@@ -18,19 +18,29 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 class TaskRunner
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     private $maxExecutionTime;
 
-    /** @var Stopwatch */
+    /**
+     * @var Stopwatch
+     */
     private $stopwatch;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $estimatedExecutionTime = 0;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $processingCount = 0;
 
-    /** @var mixed */
+    /**
+     * @var mixed
+     */
     private $lastProcessedPayload;
 
     /**
@@ -79,7 +89,7 @@ class TaskRunner
                 $success = true === $executionCallback($payload);
 
                 // profile and predict execution time
-                /* @noinspection DisconnectedForeachInstructionInspection for time measurement */
+                /** @noinspection DisconnectedForeachInstructionInspection for time measurement */
                 $timerEvent->lap();
 
                 $executionTime = $timerEvent->getDuration() - $startTime;

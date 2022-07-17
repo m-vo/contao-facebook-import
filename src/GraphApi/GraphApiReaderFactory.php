@@ -27,13 +27,19 @@ class GraphApiReaderFactory implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    /** @var ObjectManager */
+    /**
+     * @var ObjectManager
+     */
     private $manager;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
-    /** @var GraphApiReader[] */
+    /**
+     * @var array<GraphApiReader>
+     */
     private static $readers = [];
 
     /**
@@ -59,7 +65,7 @@ class GraphApiReaderFactory implements ContainerAwareInterface
                 $accessToken,
                 $pageName,
                 $this->logger,
-                function () use ($node) {
+                function () use ($node): void {
                     $this->trackRequest($node);
                 }
             );
@@ -85,10 +91,12 @@ class GraphApiReaderFactory implements ContainerAwareInterface
      */
     private function trackRequest(FacebookNode $node): bool
     {
-        if (!$node->hasRequestQuotaAvailable(
-            $this->container->getParameter('mvo_contao_facebook_import.request_window_per_node'),
-            $this->container->getParameter('mvo_contao_facebook_import.request_limit_per_node')
-        )) {
+        if (
+            !$node->hasRequestQuotaAvailable(
+                $this->container->getParameter('mvo_contao_facebook_import.request_window_per_node'),
+                $this->container->getParameter('mvo_contao_facebook_import.request_limit_per_node')
+            )
+        ) {
             throw new RequestQuotaExceededException($node);
         }
 

@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\Database;
 
+use Doctrine\DBAL\DBALException;
+
 class Version300SetPostTypes extends Update
 {
     /**
@@ -35,7 +37,7 @@ class Version300SetPostTypes extends Update
     /**
      * {@inheritdoc}
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function run(): void
     {

@@ -123,6 +123,6 @@ class FacebookEvent extends FacebookElement
         /** @var GraphNode|null $place */
         $place = $graphNode->getField('place', null);
 
-        return (null !== $place) ? $place->getField('name', '') : '';
+        return null !== $place ? $place->getField('name', '') : '';
     }
 }

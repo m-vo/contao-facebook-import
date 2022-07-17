@@ -16,10 +16,14 @@ namespace Mvo\ContaoFacebookImport\Synchronization;
 
 class Synchronizer
 {
-    /** @var callable */
+    /**
+     * @var callable
+     */
     private $getRemoteIdentifier;
 
-    /** @var callable */
+    /**
+     * @var callable
+     */
     private $getIdentifier;
 
     /**
@@ -53,8 +57,10 @@ class Synchronizer
 
         // create temporary lookup dictionary
         $localItemsDictionary = [];
+
         foreach ($localItems as $localItem) {
             $remoteIdentifier = ($this->getRemoteIdentifier)($localItem);
+
             if (null === $remoteIdentifier) {
                 // mark invalid item for deletion
                 $delete[] = $localItem;
@@ -66,6 +72,7 @@ class Synchronizer
         // match items for creation and update
         foreach ($remoteItems as $remoteItem) {
             $id = ($this->getIdentifier)($remoteItem);
+
             if (null === $id) {
                 // skip unidentifiable item
                 continue;

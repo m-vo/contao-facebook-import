@@ -1,30 +1,30 @@
-<div class="<?php echo $this->class ?>"<?php echo $this->cssID ?><?php if ($this->style): ?> style="<?php echo $this->style ?>"<?php endif ?>>
+<div class="<?= $this->class ?>"<?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif ?>>
 	<?php if ($this->headline): ?>
-		<<?php echo $this->hl ?>><?php echo $this->headline ?></<?php echo $this->hl ?>>
+		<<?= $this->hl ?>><?= $this->headline ?></<?= $this->hl ?>>
 	<?php endif ?>
 
-<?php if($this->hasPosts): ?>
+<?php if ($this->hasPosts): ?>
 <?php foreach ($this->posts as $post): ?>
     <article class="facebook-post">
         <div class="facebook-post-image">
-            <?php if($post['hasImage']): ?><?php echo $post['image']; ?>
+            <?php if ($post['hasImage']): ?><?= $post['image']; ?>
             <?php else: ?>
                 <div class="facebook-post-image-replacement"></div>
             <?php endif ?>
         </div>
         <p class="facebook-post-info">Post via Facebook</p>
-        <time class="facebook-post-date" datetime="<?php echo $post['datetime']; ?>">
-            <?php echo $this->parseDate('d', $post['time']) ?>
-            <b><?php echo $this->parseDate('M', $post['time']) ?></b>
+        <time class="facebook-post-date" datetime="<?= $post['datetime']; ?>">
+            <?= $this->parseDate('d', $post['time']) ?>
+            <b><?= $this->parseDate('M', $post['time']) ?></b>
         </time>
-        <h2><a href="<?php echo $post['href']; ?>"><?php echo explode('<br>', $post['getExcerpt'](5))[0]; ?></a></h2>
-        <p class="facebook-post-message"><?php echo $post['getExcerpt'](50); ?></p>
+        <h2><a href="<?= $post['href']; ?>"><?= explode('<br>', $post['getExcerpt'](5))[0]; ?></a></h2>
+        <p class="facebook-post-message"><?= $post['getExcerpt'](50); ?></p>
 
-        <p class="facebook-post-link"><a href="<?php echo $post['href']; ?>">read more&hellip;</a></p>
+        <p class="facebook-post-link"><a href="<?= $post['href']; ?>">read more&hellip;</a></p>
     </article>
 <?php endforeach; ?>
 <?php else:?>
-    <p class="no-posts"><?php echo $this->empty; ?></p>
-<?php endif;?>
+    <p class="no-posts"><?= $this->empty; ?></p>
+<?php endif; ?>
 
 </div>

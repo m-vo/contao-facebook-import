@@ -12,6 +12,8 @@ declare(strict_types=1);
  * @author     Moritz Vondano
  */
 
+use Mvo\ContaoFacebookImport\Entity\FacebookPost;
+
 $GLOBALS['TL_DCA']['tl_content']['palettes']['mvo_facebook_post_list'] =
     '{type_legend},type,headline;{mvo_facebook_options_legend},mvo_facebook_node,mvo_facebook_number_of_elements,mvo_facebook_allowed_post_types;{image_legend},size,fullsize;{template_legend:hide},customTpl;{expert_legend:hide},cssID;';
 
@@ -45,8 +47,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['mvo_facebook_allowed_post_types'] = 
     'label' => &$GLOBALS['TL_LANG']['tl_content']['mvo_facebook_allowed_post_types'],
     'exclude' => true,
     'inputType' => 'checkboxWizard',
-    'options' => \Mvo\ContaoFacebookImport\Entity\FacebookPost::types,
-    'default' => \Mvo\ContaoFacebookImport\Entity\FacebookPost::types,
+    'options' => FacebookPost::types,
+    'default' => FacebookPost::types,
     'eval' => ['multiple' => true, 'tl_class' => 'clr'],
     'sql' => 'text NULL',
 ];

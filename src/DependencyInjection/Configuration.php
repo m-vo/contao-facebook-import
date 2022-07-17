@@ -29,23 +29,24 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->integerNode('request_limit_per_node')
-                    ->min(0)
-                    ->defaultValue(150)
-                ->end()
-                ->integerNode('request_window_per_node')
-                    ->defaultValue(3600)
-                    ->min(0)
-                ->end()
-                ->integerNode('max_execution_time')
-                    ->min(1)
-                    ->defaultValue(16)
-                ->end()
-                ->enumNode('trigger_type')
-                    ->values(['internal', 'route'])
-                    ->defaultValue('internal')
-                ->end()
-            ->end();
+            ->integerNode('request_limit_per_node')
+            ->min(0)
+            ->defaultValue(150)
+            ->end()
+            ->integerNode('request_window_per_node')
+            ->defaultValue(3600)
+            ->min(0)
+            ->end()
+            ->integerNode('max_execution_time')
+            ->min(1)
+            ->defaultValue(16)
+            ->end()
+            ->enumNode('trigger_type')
+            ->values(['internal', 'route'])
+            ->defaultValue('internal')
+            ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }

@@ -32,31 +32,36 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
     use ContainerAwareTrait;
     use FrameworkAwareTrait;
 
-    /** @var Registry */
+    /**
+     * @var Registry
+     */
     private $doctrine;
 
-    /** @var ScraperAgent */
+    /**
+     * @var ScraperAgent
+     */
     private $imageScraperAgent;
 
-    /** @var PostSynchronizer */
+    /**
+     * @var PostSynchronizer
+     */
     private $postSynchronizer;
 
-    /** @var EventSynchronizer */
+    /**
+     * @var EventSynchronizer
+     */
     private $eventSynchronizer;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     /**
      * SynchronizationRequestListener constructor.
      */
-    public function __construct(
-        Registry $doctrine,
-        ScraperAgent $imageScraperAgent,
-        PostSynchronizer $postSynchronizer,
-        EventSynchronizer $eventSynchronizer,
-        LoggerInterface $logger
-    ) {
+    public function __construct(Registry $doctrine, ScraperAgent $imageScraperAgent, PostSynchronizer $postSynchronizer, EventSynchronizer $eventSynchronizer, LoggerInterface $logger)
+    {
         $this->doctrine = $doctrine;
         $this->imageScraperAgent = $imageScraperAgent;
         $this->postSynchronizer = $postSynchronizer;
@@ -67,14 +72,15 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
     /**
      * Execute all tasks.
      */
-    public function run(?int $nodeId = null): void
+    public function run(int $nodeId = null): void
     {
         set_time_limit(0);
         $this->framework->initialize();
 
         $nodes = $this->doctrine
             ->getRepository(FacebookNode::class)
-            ->findEnabled($nodeId);
+            ->findEnabled($nodeId)
+        ;
 
         // priority 1: scrape images
         if (!$this->scrapeImages()) {
@@ -157,9 +163,11 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
 
         $elements = $this->doctrine
             ->getRepository(FacebookImage::class)
-            ->findByWaitingToBeScraped();
+            ->findByWaitingToBeScraped()
+        ;
 
         $numTotal = \count($elements);
+
         if (0 === $numTotal) {
             return false;
         }
@@ -180,7 +188,7 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
     }
 
     /**
-     * @param FacebookNode[] $nodes
+     * @param array<FacebookNode> $nodes
      */
     private function synchronizePostsAndEvents(array $nodes): void
     {
@@ -206,10 +214,11 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
 
         $taskRunner
             ->executeTimed($nodes, $tasks[0])
-            ->executeTimed($nodes, $tasks[1]);
+            ->executeTimed($nodes, $tasks[1])
+        ;
     }
 
-    private function log(string $message)
+    private function log(string $message): void
     {
         $this->logger->info(
             $message,

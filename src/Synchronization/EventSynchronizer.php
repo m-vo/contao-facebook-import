@@ -20,13 +20,18 @@ use Facebook\GraphNodes\GraphNode;
 use Mvo\ContaoFacebookImport\Entity\FacebookEvent;
 use Mvo\ContaoFacebookImport\Entity\FacebookNode;
 use Mvo\ContaoFacebookImport\GraphApi\GraphApiReaderFactory;
+use Mvo\ContaoFacebookImport\GraphApi\RequestQuotaExceededException;
 
 class EventSynchronizer
 {
-    /** @var ObjectManager */
+    /**
+     * @var ObjectManager
+     */
     private $manager;
 
-    /** @var GraphApiReaderFactory */
+    /**
+     * @var GraphApiReaderFactory
+     */
     private $graphApiReaderFactory;
 
     /**
@@ -41,13 +46,14 @@ class EventSynchronizer
     /**
      * Synchronize Facebook events.
      *
-     * @throws \Mvo\ContaoFacebookImport\GraphApi\RequestQuotaExceededException
+     * @throws RequestQuotaExceededException
      *
      * @return array array<int,int,int>
      */
     public function run(FacebookNode $node): array
     {
         $reader = $this->graphApiReaderFactory->getTrackedReader($node);
+
         if (null === $reader) {
             return [0, 0, 0];
         }
@@ -67,6 +73,7 @@ class EventSynchronizer
             ],
             ['since' => strtotime('today midnight')]
         );
+
         if (null === $graphNodes) {
             return [0, 0, 0];
         }
@@ -74,25 +81,20 @@ class EventSynchronizer
         // load existing events
         $events = $this->manager
             ->getRepository(FacebookEvent::class)
-            ->findByFacebookNode($node);
+            ->findByFacebookNode($node)
+        ;
 
         // synchronize
         $eventSynchronizer = new Synchronizer(
-            function (FacebookEvent $localItem) {
-                return $localItem->getEventId();
-            },
-            function (GraphNode $remoteItem) {
-                return $remoteItem->getField('id', null);
-            }
+            static fn (FacebookEvent $localItem) => $localItem->getEventId(),
+            static fn (GraphNode $remoteItem) => $remoteItem->getField('id', null)
         );
 
         [$create, $update, $delete] =
             $eventSynchronizer->synchronize(
                 $events,
                 $graphNodes,
-                function (FacebookEvent $event, GraphNode $graphNode) {
-                    return $event->shouldBeUpdated($graphNode);
-                }
+                static fn (FacebookEvent $event, GraphNode $graphNode) => $event->shouldBeUpdated($graphNode)
             );
 
         // ... create items

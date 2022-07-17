@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Mvo\ContaoFacebookImport\Entity;
 
 use Contao\File;
+use Contao\FilesModel;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Mvo\ContaoFacebookImport\Image\ScrapableItemInterface;
@@ -91,7 +92,7 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
      *
      * @param ScrapingInformation|null $scrapingInformation optional scraping information to set
      */
-    public function resetScrapingState(?ScrapingInformation $scrapingInformation = null): void
+    public function resetScrapingState(ScrapingInformation $scrapingInformation = null): void
     {
         $state = null === $scrapingInformation ?
             ScrapableItemInterface::STATE_NONE : ScrapableItemInterface::STATE_WAITING;
@@ -132,11 +133,11 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
      */
 
     /**
-     * @return \Contao\FilesModel|null
+     * @return FilesModel|null
      */
     public function getFile()
     {
-        return \Contao\FilesModel::findByUuid($this->uuid);
+        return FilesModel::findByUuid($this->uuid);
     }
 
     public function getScrapingState(): int
@@ -154,15 +155,17 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
         }
 
         // check if the same uuid is still used by another element
-        /* @noinspection SelfClassReferencingInspection */
-        if ($args->getEntityManager()
+        /** @noinspection SelfClassReferencingInspection */
+        if (
+            $args->getEntityManager()
                 ->getRepository(self::class)
-                ->count(['uuid' => $this->uuid]) > 1) {
+                ->count(['uuid' => $this->uuid]) > 1
+        ) {
             return;
         }
 
         // if not, remove file from filesystem as well
-        if (null !== $file = \Contao\FilesModel::findByUuid($this->uuid)) {
+        if (null !== $file = FilesModel::findByUuid($this->uuid)) {
             try {
                 (new File($file->path))->delete();
             } catch (\Exception $e) {

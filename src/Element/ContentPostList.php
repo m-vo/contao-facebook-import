@@ -48,8 +48,8 @@ class ContentPostList extends ContentElement
             $objTemplate->title = 'Facebook Posts';
             $objTemplate->wildcard = sprintf(
                 $GLOBALS['TL_LANG']['MSC']['mvo_facebook_postListDisplay'],
-                ($this->mvo_facebook_number_of_elements
-                 > 0) ? $this->mvo_facebook_number_of_elements : $GLOBALS['TL_LANG']['MSC']['mvo_facebook_allAvailable'],
+                $this->mvo_facebook_number_of_elements
+                 > 0 ? $this->mvo_facebook_number_of_elements : $GLOBALS['TL_LANG']['MSC']['mvo_facebook_allAvailable'],
                 '' !== $types ? $types : '-'
             );
 
@@ -73,10 +73,12 @@ class ContentPostList extends ContentElement
                 (int) $this->mvo_facebook_node,
                 (int) $this->mvo_facebook_number_of_elements,
                 StringUtil::deserialize($this->mvo_facebook_allowed_post_types, true)
-            );
+            )
+        ;
 
         // compile posts
         $compiledPosts = [];
+
         foreach ($posts as $post) {
             $compiledPosts[] = $this->compilePost($post);
         }
@@ -109,8 +111,10 @@ class ContentPostList extends ContentElement
         ];
 
         // image
-        if (null !== ($image = $post->getImage())
-            && null !== ($file = $image->getFile())) {
+        if (
+            null !== ($image = $post->getImage())
+            && null !== ($file = $image->getFile())
+        ) {
             $metaData = StringUtil::deserialize($file->meta, true);
 
             $imageTemplate = new FrontendTemplate('image');
@@ -129,9 +133,7 @@ class ContentPostList extends ContentElement
             $compiledPost['hasImage'] = false;
         }
 
-        $compiledPost['getExcerpt'] = function (int $words, int $wordOffset = 0) use ($compiledPost) {
-            return Tools::shortenText($compiledPost['message'], $words, $wordOffset);
-        };
+        $compiledPost['getExcerpt'] = static fn (int $words, int $wordOffset = 0) => Tools::shortenText($compiledPost['message'], $words, $wordOffset);
 
         return $compiledPost;
     }

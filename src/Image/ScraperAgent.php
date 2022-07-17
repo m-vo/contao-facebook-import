@@ -25,27 +25,31 @@ use Psr\Log\LoggerInterface;
 
 class ScraperAgent
 {
-    /** @var Registry */
+    /**
+     * @var Registry
+     */
     private $doctrine;
 
-    /** @var Scraper */
+    /**
+     * @var Scraper
+     */
     private $scraper;
 
-    /** @var GraphApiReaderFactory */
+    /**
+     * @var GraphApiReaderFactory
+     */
     private $graphApiReaderFactory;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     /**
      * ScraperAgent constructor.
      */
-    public function __construct(
-        Registry $doctrine,
-        Scraper $scraper,
-        GraphApiReaderFactory $openGraphParserFactory,
-        LoggerInterface $logger
-    ) {
+    public function __construct(Registry $doctrine, Scraper $scraper, GraphApiReaderFactory $openGraphParserFactory, LoggerInterface $logger)
+    {
         $this->doctrine = $doctrine;
         $this->scraper = $scraper;
         $this->graphApiReaderFactory = $openGraphParserFactory;
@@ -55,8 +59,8 @@ class ScraperAgent
     /**
      * Batch scrape a list of requested images until execution time is reached.
      *
-     * @param FacebookImage[] $images           that implement ScrapableItem
-     * @param int             $maxExecutionTime allowed time in seconds
+     * @param array<FacebookImage> $images           that implement ScrapableItem
+     * @param int                  $maxExecutionTime allowed time in seconds
      *
      * @return int number of items processed
      */
@@ -72,6 +76,7 @@ class ScraperAgent
             if (isset($excludedIssuers[$issuer->getId()])) {
                 return false;
             }
+
             try {
                 return $this->scrape($image);
             } catch (RequestQuotaExceededException $e) {
@@ -86,7 +91,8 @@ class ScraperAgent
                 ->executeTimed(
                     $images,
                     $task
-                );
+                )
+            ;
         } catch (\Exception $e) {
             $this->logError(
                 $taskRunner->getLastProcessedPayload(),
@@ -110,12 +116,14 @@ class ScraperAgent
 
         // get reader
         $reader = $this->graphApiReaderFactory->getTrackedReader($node);
+
         if (null === $reader) {
             throw new \RuntimeException('No GraphAPI reader available. Aborting.', $node->getId());
         }
 
         // get destination path
         $uploadDirectory = $node->getUploadDirectory();
+
         if (null === $uploadDirectory) {
             throw new \RuntimeException('No upload directory specified. Aborting.', $node->getId());
         }
@@ -123,6 +131,7 @@ class ScraperAgent
 
         // get scraping information
         $scrapingInformation = $image->getScrapingInformation();
+
         if (null === $scrapingInformation) {
             $this->logError(
                 $image,
@@ -172,7 +181,7 @@ class ScraperAgent
             return false;
         }
 
-        /* @noinspection NullPointerExceptionInspection */
+        /** @noinspection NullPointerExceptionInspection */
         $image->setScrapingSuccess($imageFile->uuid);
 
         return true;

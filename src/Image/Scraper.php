@@ -30,7 +30,9 @@ class Scraper implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    /** @var ImageFactory */
+    /**
+     * @var ImageFactory
+     */
     private $imageFactory;
 
     /**
@@ -46,12 +48,8 @@ class Scraper implements ContainerAwareInterface
      *
      * @throws RequestQuotaExceededException
      */
-    public function scrape(
-        ScrapingInformation $info,
-        string $destinationDirectory,
-        GraphApiReader $reader,
-        &$error = null
-    ): ?FilesModel {
+    public function scrape(ScrapingInformation $info, string $destinationDirectory, GraphApiReader $reader, &$error = null): ?FilesModel
+    {
         // get source uri
         $sourceUri = $this->getSourceUri($info, $reader);
 
@@ -69,6 +67,7 @@ class Scraper implements ContainerAwareInterface
             $this->container->getParameter('kernel.project_dir'),
             $destinationPath
         );
+
         if (!$this->downloadFile($sourceUri, $absoluteDestinationPath, $error)) {
             return null;
         }
@@ -76,6 +75,7 @@ class Scraper implements ContainerAwareInterface
         // make sure facebook didn't deliver a single pixel image (in any dimension)
         try {
             $imageSize = $this->imageFactory->create($absoluteDestinationPath)->getDimensions()->getSize();
+
             if (1 === $imageSize->getHeight() || 1 === $imageSize->getWidth()) {
                 $this->deleteFileIfExisting($absoluteDestinationPath);
 
@@ -119,6 +119,7 @@ class Scraper implements ContainerAwareInterface
         if (ScrapingInformation::TYPE_RESCRAPE_AS_EVENT === $info->type) {
             // we need to query the graph again to get the image set information
             $node = $reader->getSingleNode($info->objectId, ['id', 'name', 'cover']);
+
             if (null === $node) {
                 return $info->fallbackUrl;
             }
@@ -137,11 +138,13 @@ class Scraper implements ContainerAwareInterface
                 $imageSet = $object->getField('images', null);
             } else {
                 $object = $reader->getSingleNode($info->identifier, ['attachments{subattachments}']);
+
                 if (null === $object) {
                     return $info->fallbackUrl;
                 }
 
                 $attachments = $object->getField('attachments', null);
+
                 if (null === $attachments) {
                     return $info->fallbackUrl;
                 }
@@ -182,8 +185,6 @@ class Scraper implements ContainerAwareInterface
 
     /**
      * Download a file.
-     *
-     * @param GuzzleException| null $error
      */
     private function downloadFile(string $sourceUri, string $destinationPath, GuzzleException &$error = null): bool
     {
