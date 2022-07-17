@@ -74,6 +74,7 @@ class Plugin implements BundlePluginInterface, DependentPluginInterface, ConfigP
     {
         return $resolver
             ->resolve(__DIR__.'/../Resources/config/routing.yml')
-            ->load(__DIR__.'/../Resources/config/routing.yml');
+            ->load(__DIR__.'/../Resources/config/routing.yml')
+        ;
     }
 }

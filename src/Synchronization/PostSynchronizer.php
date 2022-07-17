@@ -85,21 +85,15 @@ class PostSynchronizer
 
         // synchronize
         $postSynchronizer = new Synchronizer(
-            static function (FacebookPost $localItem) {
-                return $localItem->getPostId();
-            },
-            static function (GraphNode $remoteItem) {
-                return $remoteItem->getField('id', null);
-            }
+            static fn (FacebookPost $localItem) => $localItem->getPostId(),
+            static fn (GraphNode $remoteItem) => $remoteItem->getField('id', null)
         );
 
         [$create, $update, $delete] =
             $postSynchronizer->synchronize(
                 $posts,
                 $graphNodes,
-                static function (FacebookPost $post, GraphNode $graphNode) {
-                    return $post->shouldBeUpdated($graphNode);
-                }
+                static fn (FacebookPost $post, GraphNode $graphNode) => $post->shouldBeUpdated($graphNode)
             );
 
         // ... create items

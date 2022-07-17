@@ -133,9 +133,7 @@ class ContentPostList extends ContentElement
             $compiledPost['hasImage'] = false;
         }
 
-        $compiledPost['getExcerpt'] = static function (int $words, int $wordOffset = 0) use ($compiledPost) {
-            return Tools::shortenText($compiledPost['message'], $words, $wordOffset);
-        };
+        $compiledPost['getExcerpt'] = static fn (int $words, int $wordOffset = 0) => Tools::shortenText($compiledPost['message'], $words, $wordOffset);
 
         return $compiledPost;
     }

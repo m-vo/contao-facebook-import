@@ -21,7 +21,7 @@ class FacebookNodeRepository extends EntityRepository
     /**
      * @return array<FacebookNode>
      */
-    public function findEnabled(?int $nodeId = null): array
+    public function findEnabled(int $nodeId = null): array
     {
         $criteria = ['importEnabled' => true];
 

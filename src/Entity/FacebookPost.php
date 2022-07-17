@@ -24,9 +24,6 @@ use Mvo\ContaoFacebookImport\Image\ScrapingInformation;
  */
 class FacebookPost extends FacebookElement
 {
-    /**
-     * @var array List of known types
-     */
     public const types = ['status', 'link', 'photo', 'video', 'event', 'album'];
     /**
      * @ORM\Column(name="fb_post_id", type="string", options={"default": ""})

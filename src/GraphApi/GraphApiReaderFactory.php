@@ -93,9 +93,9 @@ class GraphApiReaderFactory implements ContainerAwareInterface
     {
         if (
             !$node->hasRequestQuotaAvailable(
-            $this->container->getParameter('mvo_contao_facebook_import.request_window_per_node'),
-            $this->container->getParameter('mvo_contao_facebook_import.request_limit_per_node')
-        )
+                $this->container->getParameter('mvo_contao_facebook_import.request_window_per_node'),
+                $this->container->getParameter('mvo_contao_facebook_import.request_limit_per_node')
+            )
         ) {
             throw new RequestQuotaExceededException($node);
         }

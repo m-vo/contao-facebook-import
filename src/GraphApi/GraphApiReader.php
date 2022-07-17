@@ -25,9 +25,6 @@ use Psr\Log\LoggerInterface;
 
 class GraphApiReader
 {
-    /**
-     * @var string
-     */
     public const GRAPH_API_VERSION = 'v7.0';
 
     /**

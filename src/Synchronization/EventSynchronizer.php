@@ -86,21 +86,15 @@ class EventSynchronizer
 
         // synchronize
         $eventSynchronizer = new Synchronizer(
-            static function (FacebookEvent $localItem) {
-                return $localItem->getEventId();
-            },
-            static function (GraphNode $remoteItem) {
-                return $remoteItem->getField('id', null);
-            }
+            static fn (FacebookEvent $localItem) => $localItem->getEventId(),
+            static fn (GraphNode $remoteItem) => $remoteItem->getField('id', null)
         );
 
         [$create, $update, $delete] =
             $eventSynchronizer->synchronize(
                 $events,
                 $graphNodes,
-                static function (FacebookEvent $event, GraphNode $graphNode) {
-                    return $event->shouldBeUpdated($graphNode);
-                }
+                static fn (FacebookEvent $event, GraphNode $graphNode) => $event->shouldBeUpdated($graphNode)
             );
 
         // ... create items

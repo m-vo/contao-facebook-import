@@ -43,5 +43,5 @@ interface ScrapableItemInterface
      *
      * @param ScrapingInformation|null $scrapingInformation optional scraping information to set
      */
-    public function resetScrapingState(?ScrapingInformation $scrapingInformation = null): void;
+    public function resetScrapingState(ScrapingInformation $scrapingInformation = null): void;
 }

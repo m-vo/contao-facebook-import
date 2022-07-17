@@ -150,9 +150,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                 ],
                 'save_callback' => [
                     // do not save
-                    static function () {
-                        return null;
-                    },
+                    static fn () => null,
                 ],
             ],
             'fb_page_name' => [
@@ -179,9 +177,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                 'inputType' => 'checkbox',
                 'eval' => ['isBoolean' => true],
                 'save_callback' => [
-                    static function ($value) {
-                        return '1' === $value;
-                    },
+                    static fn ($value) => '1' === $value,
                 ],
             ],
             'upload_directory' => [

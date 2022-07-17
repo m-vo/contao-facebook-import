@@ -92,7 +92,7 @@ class FacebookImage extends DcaDefault implements ScrapableItemInterface
      *
      * @param ScrapingInformation|null $scrapingInformation optional scraping information to set
      */
-    public function resetScrapingState(?ScrapingInformation $scrapingInformation = null): void
+    public function resetScrapingState(ScrapingInformation $scrapingInformation = null): void
     {
         $state = null === $scrapingInformation ?
             ScrapableItemInterface::STATE_NONE : ScrapableItemInterface::STATE_WAITING;

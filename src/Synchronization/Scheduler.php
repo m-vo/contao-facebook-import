@@ -72,7 +72,7 @@ class Scheduler implements ContainerAwareInterface, FrameworkAwareInterface
     /**
      * Execute all tasks.
      */
-    public function run(?int $nodeId = null): void
+    public function run(int $nodeId = null): void
     {
         set_time_limit(0);
         $this->framework->initialize();
