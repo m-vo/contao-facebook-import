@@ -183,7 +183,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook'] =
                                 return '1' === $value;
                             },
                         ],
-                        'sql' => ['type' => 'boolean', 'default' => false]
+                        'sql' => ['type' => 'boolean', 'default' => false],
                     ],
                 'upload_directory' => [
                         'label' => &$GLOBALS['TL_LANG']['tl_mvo_facebook']['upload_directory'],
