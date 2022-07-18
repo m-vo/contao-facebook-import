@@ -100,6 +100,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_event'] =
                 'visible' => [
                         'inputType' => 'checkbox',
                         'eval' => ['isBoolean' => true],
+                        'sql' => ['type' => 'boolean', 'default' => false],
                     ],
                 'fb_event_id' => [],
                 'start_time' => [],

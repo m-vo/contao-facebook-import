@@ -99,6 +99,7 @@ $GLOBALS['TL_DCA']['tl_mvo_facebook_post'] =
                 'visible' => [
                         'inputType' => 'checkbox',
                         'eval' => ['isBoolean' => true],
+                        'sql' => ['type' => 'boolean', 'default' => false],
                     ],
                 'fb_post_id' => [],
                 'type' => [],
