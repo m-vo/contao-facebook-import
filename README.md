@@ -17,6 +17,13 @@ Contao Open Source CMS. The following things are available:
 This is version 3 of the bundle - to see a list of changes and information on
 how to migrate from older versions please refer to the [changelog](CHANGELOG.md).
 
+#### PHP 8 ####
+Unfortunately, there is no official release of [facebook/graph-sdk](https://packagist.org/packages/facebook/graph-sdk) with support for PHP 8.
+You can, however, require the third-party fork [nickdnk/graph-sdk](https://packagist.org/packages/nickdnk/graph-sdk) in your application, which added support for PHP 8 and acts as a drop-in-replacement. You might want to do this *before* installing this bundle, so that the installation won't fail.
+
+```console
+$ composer require nickdnk/graph-sdk
+```
     
 Setup
 -----

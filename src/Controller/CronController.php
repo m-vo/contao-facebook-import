@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Mvo\ContaoFacebookImport\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route(defaults={"_scope" = "frontend", "_token_check" = true})
  */
-class CronController extends Controller
+class CronController extends AbstractController
 {
     /**
      * @Route("/_sync_fb_nodes", name="sync_fb_nodes")
