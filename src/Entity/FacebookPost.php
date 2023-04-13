@@ -32,6 +32,13 @@ class FacebookPost extends FacebookElement
     protected $postId;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="parent_id", type="string", nullable=true)
+     */
+    protected $parentId;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="post_time", type="integer", options={"unsigned": true, "default": 0})
@@ -77,6 +84,7 @@ class FacebookPost extends FacebookElement
 
     public function updateFromGraphNode(GraphNode $graphNode): void
     {
+        $this->parentId = $graphNode->getField('parent_id');
         $attachments = $graphNode->getField('attachments', [])[0] ?? [];
         $message = $graphNode->getField('message') ?? $attachments['title'] ?? '';
 

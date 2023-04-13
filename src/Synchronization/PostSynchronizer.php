@@ -57,6 +57,7 @@ class PostSynchronizer
             'published_posts',
             [
                 'id',
+                'parent_id',
                 'created_time',
                 'message',
                 'picture',
